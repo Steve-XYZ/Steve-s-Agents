@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Review"
+  short_description: "Ticket-grounded code review workflow"
+  default_prompt: "Use $code-review to review this PR against its ticket and report findings by severity."
