@@ -1,0 +1,3 @@
+#!/bin/sh
+
+"$HOME/src/stive/Steve-s-Agents/scripts/link-worktree-guidance.sh" || true
