@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shape Feature"
+  short_description: "Turn an unclear idea into a focused slice"
+  default_prompt: "Use $shape-feature to turn this idea into an implementable first slice."

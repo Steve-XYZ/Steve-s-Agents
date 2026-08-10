@@ -1,56 +1,66 @@
 ---
 name: code-review
-description: Ticket-grounded code review workflow. Use when reviewing pull requests, diffs, commits, review threads, or ticket implementations, especially when the user asks for a review, PR review, code review, regression check, or whether a change satisfies a Linear/GitHub ticket.
+description: Review a pull request, diff, commit, review thread, or ticket implementation against its stated requirements and repository evidence. Use when the user asks for a PR review, code review, regression review, or confirmation that a change satisfies a ticket. Do not use as an automatic delivery self-review, to implement changes, or to diagnose an unknown failure.
 ---
 
 # Code Review
 
-## Workflow
+Review the exact change the user placed in scope. Inspect and report; do not modify code, publish comments, approve, or request changes externally unless explicitly requested.
 
-1. Understand the ticket first: read the ticket, expected behavior, QA evidence, linked PRs, and user context before judging code.
-2. Map the PR scope: check branch, base, commits, changed files, and whether the diff matches the ticket without scope creep or missing pieces.
-3. Read the code seriously: open surrounding files, follow call chains, and verify end-to-end wiring instead of relying only on the diff or PR title.
-4. Verify objectively: run the narrowest relevant build/test/format checks when practical; explain exact commands and failures if validation cannot complete.
-5. Classify by severity: lead with findings ordered by impact.
-6. Write actionable review feedback: include file/line, why it matters, and a concrete fix or validation path.
+## 1. Establish authority
 
-## What to Check
+Read the ticket, specification, user context, linked evidence, and existing review threads before judging the implementation. If no formal requirement exists, state the behavior being used as the review baseline.
 
-- Correctness: ticket fit, edge cases, idempotency, concurrency, null/error paths, and end-to-end wiring.
-- Security: authorization, input validation, secrets, provider errors, sensitive data in URLs/logs/responses, and rate limiting when relevant.
-- Data: migrations, snapshots, indexes, destructive updates, cache behavior, report/export alignment, and provider-specific SQL behavior.
-- Consistency: existing architecture, naming, ownership boundaries, API contracts, UI/backend payload alignment, and test coverage.
-- Build health: merge breakage, SDK/runtime mismatch, failing focused tests, and unrelated failures that must be called out separately.
+For a live PR, verify repository, base branch, head branch, head SHA, commits, and changed files. Review the latest head rather than relying on the title or an earlier snapshot.
 
-## Output Shape
+## 2. Map the change
 
-Start with a one-line verdict: approve, comment, or request changes.
+Start with:
 
-Then list findings first, ordered by severity:
+1. ticket or specification,
+2. diff and commits,
+3. changed tests,
+4. surrounding implementation only as needed.
 
-- Blocker: cannot merge because it fails to build, breaks required behavior, creates a security issue, or corrupts data.
-- Should fix: likely bug, incomplete implementation, risky assumption, or missing validation.
+Check whether the scope matches the requirement without missing behavior or unrelated expansion. Follow call paths and end-to-end wiring when the changed behavior depends on code outside the diff.
+
+## 3. Review in passes
+
+### Requirement fidelity
+
+Check acceptance criteria, partial or incorrect behavior, scope creep, and edge cases implied by the requirement.
+
+### Engineering correctness
+
+Check functional correctness, failure behavior, repository architecture, contracts, test quality, and unnecessary complexity.
+
+### Conditional risk
+
+Only when relevant, inspect authorization, sensitive data, money calculations, idempotency, concurrency, shared contracts, migrations and rollback, destructive data changes, external providers, and performance.
+
+## 4. Verify
+
+Run the narrowest reliable build, test, lint, format, migration, or runtime checks that can prove or disprove material findings. Distinguish changed-code failures from unrelated environment or baseline failures.
+
+Never present unexecuted validation as completed evidence.
+
+## 5. Report findings
+
+Start with a one-line verdict: approve, comment, or request changes. List findings first, ordered by severity:
+
+- Blocker: cannot merge because of a demonstrated build failure, required-behavior defect, security exposure, or data risk.
+- Should fix: likely defect, incomplete behavior, unsafe assumption, or material missing validation.
 - Nit/follow-up: optional cleanup or non-blocking improvement.
 
-For each finding, include:
+For every finding include:
 
-- `file:line`
-- Problem
-- Impact
-- Suggested fix
+- `file:line`,
+- concrete evidence and problem,
+- impact,
+- recommended correction or validation path.
 
-Call out what looks correct only when it reduces ambiguity or clearly separates reviewed, safe areas from the findings; do not produce routine positive summaries. End with validation performed, open questions, and final verdict.
+Report only evidence-backed defects, regressions, risks, broken requirements, or repository-rule violations. Distinguish proven defects from plausible risks needing validation. Do not report cosmetic preferences unless they violate an explicit local rule.
 
+If no findings remain, say so directly and identify any validation gap or residual risk. End with validation performed and the final verdict.
 
-## Review Boundaries
-
-- Do not turn a review into a refactoring exercise.
-- Report only evidence-backed defects, regressions, security risks, broken requirements, or repository-standard violations. A repository-standard violation counts only when backed by concrete, local evidence: surrounding code, repo documentation, configuration, tests, ADRs, conventions already applied in the codebase, or ticket requirements. Do not turn personal preferences, external patterns, or generic recommendations into blocking findings.
-- Do not request architectural rewrites when the current implementation is correct and within the ticket scope.
-- Put optional design improvements, cleanup opportunities, and broader architectural ideas under `Nit/follow-up` unless they create a concrete correctness, security, operability, or maintainability risk.
-- Distinguish clearly between a proven issue, a plausible risk that needs validation, and a personal preference.
-
-
-## Rule
-
-Do not assume; verify. Read the ticket, follow the code, run what is practical, and report only evidence-backed findings.
+When explicitly asked to publish a live PR review, confirm the head SHA has not changed immediately before posting and follow repository-specific language and formatting rules.

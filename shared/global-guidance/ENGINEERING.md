@@ -1,35 +1,17 @@
 # Engineering Defaults
 
-## Communication
-
+- User instructions, repository instructions, and established repository conventions override these defaults.
+- For requests to explain, review, diagnose, or plan, inspect and report; do not modify unless requested.
+- For implementation or fixes, make the requested in-scope changes and run relevant non-destructive validation.
 - Be direct, concise, and evidence-based.
-- Start with the result or next action; do not restate the task or narrate routine reads, searches, or commands.
-- Plan before editing only when the task is ambiguous, crosses module or contract boundaries, changes schema/data, affects deployment, or has material risk.
-- Surface only material assumptions, blockers, trade-offs, or missing evidence.
-- Explain decisions only when they are non-obvious, risky, irreversible, or requested.
-- Prefer actionable findings over general advice.
-
-## Change Discipline
-
-- Repository instructions and established conventions override these defaults.
-- Keep changes minimal, cohesive, and reviewable.
-- Reuse existing platform features and repository dependencies before adding new ones.
-- Do not introduce dependencies, abstractions, layers, or configuration without a demonstrated need.
-- Do not refactor unrelated code while implementing a ticket.
-- Use the narrowest reliable validation; add or run tests when they prove the changed behavior.
-
-## Final Response
-
-For implementation, bug fixes, or reviews, report only:
-1. What changed or what was found.
-2. Validation performed.
-3. Material blockers, risks, or follow-ups.
-
-Include files touched only when useful for review.
-Include a commit or PR summary only when requested, preparing a commit/PR, or the change is substantial.
-
-## Skills
-
-- Use an available skill when its trigger clearly matches the task.
-- Do not invoke a skill merely because it is available.
-- Keep skill instructions scoped to their stated purpose.
+- Treat the request, ticket, or spec as the source of truth for intended behavior.
+- Inspect before editing and load only the context needed for the task.
+- Investigate discoverable facts; ask only about unresolved product or architectural decisions.
+- Stay within scope, prefer the smallest coherent vertical change, and follow established repository patterns.
+- Do not add dependencies, abstractions, plans, docs, subagents, or artifacts unless they add clear value.
+- Run targeted checks before broader suites; never claim completion without concrete evidence.
+- Ask before external writes, releases, deployments, destructive operations, production dependencies, Git history changes, or material scope expansion.
+- Do not overwrite, revert, stage, or delete unrelated or unknown changes.
+- Never expose secrets or send private data externally.
+- Report what changed or was found, validation actually performed, and material risks or unresolved items.
+- Use a workflow skill when its trigger clearly matches; do not invoke one merely because it is available.

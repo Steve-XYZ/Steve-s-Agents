@@ -1,123 +1,56 @@
 ---
 name: diagnosing-bugs
-description: Evidence-first diagnosis workflow for bugs, regressions, and intermittent failures. Use when the user says "diagnose" or "debug this", or reports something broken, throwing, failing, flaky, or slow — before changing any code.
+description: Diagnose bugs, regressions, flaky failures, and performance problems using reproducible or captured evidence. Use when the cause is unknown or the user asks to diagnose, debug, investigate, or fix something broken, failing, throwing, flaky, or slow. Continue to implementation only when a fix is requested. Do not use for a ticket with an established cause or for pure code review.
 ---
 
 # Diagnosing Bugs
 
-A discipline for diagnosing before changing code. Follow the phases in order; skip a phase only with explicit justification.
+Establish evidence before changing behavior. Prefer reproduction, but accept captured evidence or conclusive static proof when local reproduction is impractical.
 
-**Core rule: do not propose or implement a fix until the local feedback loop or captured evidence demonstrates the reported symptom.** No speculative fixes, no large refactors, no architecture changes before sufficient evidence.
+## 1. Frame the symptom
 
-Read existing repository documentation relevant to the area—such as README, AGENTS.md, CLAUDE.md, ADRs, runbooks, deployment notes, or test documentation—when present. None of it is required to use this skill.
+Establish expected behavior, actual behavior, environment, frequency, and the narrowest affected path. Read only the repository guidance and implementation needed to understand that path.
 
-## Phase 1 — Build a feedback loop or evidence loop
+Separate observed facts from assumptions. Do not convert a nearby error or suspicious code into the reported bug without evidence connecting them.
 
-If you have a tight pass/fail signal that goes red on *this* bug, the rest is mechanical. Spend disproportionate effort here.
+## 2. Build an evidence loop
 
-### Prefer a local red-capable command
+Prefer the cheapest reliable signal that can go red on the reported symptom:
 
-One command you have already run at least once, that:
+1. focused failing test,
+2. local command, request, or script,
+3. replayed request, event, fixture, or captured payload,
+4. differential run between known-good and failing states,
+5. small disposable harness when no existing seam reaches the behavior.
 
-- drives the actual bug code path and asserts the user's exact symptom — not "runs without erroring";
-- gives the same verdict every run (for flaky bugs: a pinned, high reproduction rate);
-- runs unattended.
+When local reproduction is unavailable or disproportionately costly, use verifiable logs, traces, metrics, request/response captures, database evidence, dumps, or staging observations tied to the exact symptom. State the limitation.
 
-Ways to construct one, in rough order:
+Do not run stress, fuzz, repeated-trigger, load, or destructive diagnostics against shared environments, production-like data, queues, or third-party services without explicit approval.
 
-1. Failing test at whatever seam reaches the bug — unit, integration, e2e.
-2. Curl/HTTP script against a locally running service.
-3. CLI or script invocation with a fixture input, diffed against a known-good output.
-4. Replay a captured artifact (request, message payload, event log) through the code path in isolation.
-5. Throwaway harness: one service with mocked dependencies exercising the bug path directly.
-6. Bisection: if the bug appeared between two known states, automate "boot at state X, check, repeat".
-7. Differential run: same input through old vs. new version (or two configs), diff outputs.
-8. Human-in-the-loop script (`scripts/hitl-loop.template.sh`) as a last resort when a human must click or act behind a VPN — the loop stays structured and its output feeds back to you.
+If evidence remains insufficient, continue only with clearly labeled hypotheses and the next evidence needed. Do not implement a speculative fix.
 
-### Loop speed
+## 3. Isolate the cause
 
-Prefer fast feedback: seconds when practical. Reliable integration loops taking roughly one to two minutes are acceptable when they provide meaningful evidence — including Docker Compose, Testcontainers, `WebApplicationFactory`, database integration tests, or message-bus test harnesses (e.g. the MassTransit in-memory test harness).
+Minimize the failing path by removing inputs, callers, configuration, and dependencies while preserving the symptom.
 
-### Captured evidence as a valid substitute
+Form falsifiable hypotheses. Rank multiple hypotheses only when the evidence is ambiguous. Test one prediction or variable at a time with focused instrumentation, tests, a debugger, profiling, query plans, or bisection as appropriate.
 
-When a local loop is impossible, not reproducible, or disproportionately costly — the problem depends on staging, VPN, real data, queues, or external services — accept captured, verifiable evidence instead:
+Measure performance problems before optimizing. Tag temporary instrumentation so it can be found and removed.
 
-- structured logs tied together by correlation ID;
-- distributed traces;
-- MassTransit or queue message payloads;
-- request/response captures;
-- database data snapshots or queries;
-- metrics;
-- dumps;
-- observations reproducible in staging.
+## 4. Respect the requested outcome
 
-The evidence must show the reported symptom, not a nearby failure. State explicitly that you are working from captured evidence and what a full loop would have required.
+For a diagnosis-only request, stop after reporting the demonstrated cause, evidence, confidence, and remaining uncertainty. Do not modify code.
 
-### Shared resources
+When the user requested a fix, implement the smallest change supported by the evidence. Preserve existing contracts, retry and transaction behavior, idempotency, and ownership boundaries unless the confirmed cause requires changing them.
 
-Run stress loops, parallel reproduction, fuzzing, repeated triggers, or load-oriented diagnostics only against isolated local or dedicated test resources. Never run them against shared staging, shared databases, shared queues, production-like shared infrastructure, or third-party services without explicit approval and safeguards.
+## 5. Prove the result
 
-### Intermittent bugs
+When a reliable seam exists:
 
-The goal is a higher reproduction rate, not necessarily a clean repro: loop the trigger, add stress, narrow timing windows — within the shared-resources rule above. A bug that reproduces half the time is debuggable; one-in-a-hundred is not.
+1. convert the minimized symptom into regression coverage and observe it fail when practical,
+2. apply the fix and observe it pass,
+3. rerun the original evidence loop.
 
-### If neither a loop nor evidence is attainable
+If no honest regression seam exists, explain the limitation instead of adding artificial coverage.
 
-Stop and say so. List what you tried, then ask the user for environment access, a captured artifact, or permission to add temporary instrumentation. Do not proceed to hypotheses without a loop or evidence.
-
-## Phase 2 — Reproduce and minimize
-
-Run the loop (or examine the evidence) and confirm:
-
-- it shows the failure mode the user described — wrong bug means wrong fix;
-- it is repeatable, or reproduces at a rate high enough to debug against;
-- you have captured the exact symptom (error message, wrong output, timing) so later phases can verify the fix.
-
-Then minimize: cut inputs, callers, config, data, and steps one at a time, re-checking after each cut, until every remaining element is load-bearing. A minimal repro shrinks the hypothesis space and becomes the regression test later.
-
-## Phase 3 — Form ranked falsifiable hypotheses
-
-Generate 3–5 ranked hypotheses before testing any of them, unless the evidence already points conclusively to a single cause. Single-hypothesis thinking anchors on the first plausible idea.
-
-Each hypothesis must state a falsifiable prediction:
-
-> "If X is the cause, then changing Y will make the bug disappear / changing Z will make it worse."
-
-If you cannot state the prediction, discard or sharpen the hypothesis. Show the ranked list to the user before testing — they often re-rank it instantly — but do not block on a reply.
-
-## Phase 4 — Instrument one variable at a time
-
-Each probe must test one concrete prediction from Phase 3. Change one variable at a time.
-
-- Prefer a debugger or REPL when the environment supports it; otherwise targeted tests, distributed traces, and structured logs with correlation IDs at the boundaries that distinguish hypotheses.
-- Do not "log everything and grep".
-- Tag every piece of temporary instrumentation with a unique prefix (e.g. `[DEBUG-a4f2]`) so removal is a single grep.
-- For performance regressions, measure first: establish a baseline (timing harness, profiler, `EXPLAIN ANALYZE`, query plan), then bisect. Logs are usually the wrong tool.
-
-## Phase 5 — Fix and regression coverage
-
-The fix must be minimal and specific to the confirmed hypothesis. Do not turn the diagnosis into an unrequested refactoring or redesign.
-
-Add a regression test or equivalent coverage only when a correct, reliable seam exists — one where the test exercises the real bug pattern as it occurs at the call site. Do not write artificial tests that give false confidence; if no correct seam exists, that itself is a finding worth recording.
-
-When a correct seam exists:
-
-1. Turn the minimized repro into a failing test at that seam and watch it fail.
-2. Apply the fix and watch it pass.
-3. Re-run the original Phase 1 loop or re-verify against the original captured evidence.
-
-### Durable messaging boundary
-
-Preserve existing consumer boundaries, retry semantics, idempotency conventions, outbox behavior, transaction boundaries, and message contracts. Do not move durable queue-driven work into HTTP request handlers or in-process hosted services merely to simplify a local fix.
-
-## Phase 6 — Cleanup and prevention follow-up
-
-Before declaring done:
-
-- [ ] The original repro no longer reproduces (loop re-run or evidence re-verified).
-- [ ] Regression test passes, or the absence of a correct seam is documented.
-- [ ] All tagged temporary instrumentation is removed (grep the prefix).
-- [ ] Throwaway harnesses and prototypes are deleted.
-- [ ] The confirmed hypothesis is stated in the commit or PR message so the next debugger learns.
-
-Then ask what would have prevented this bug. Record any prevention opportunity as a concise non-blocking follow-up in the PR description, Linear ticket, bug report, or repository documentation when relevant.
+Remove temporary instrumentation and disposable artifacts created for the diagnosis. Report the cause, change if authorized, validation actually executed, and unresolved risks. Do not commit, push, update tickets, or publish external findings unless explicitly requested.

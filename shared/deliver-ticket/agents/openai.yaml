@@ -1,0 +1,4 @@
+interface:
+  display_name: "Deliver Ticket"
+  short_description: "Implement a clear ticket end to end"
+  default_prompt: "Use $deliver-ticket to implement this well-defined ticket end to end."
