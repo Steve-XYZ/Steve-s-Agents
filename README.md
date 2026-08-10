@@ -9,6 +9,7 @@ Personal agent guidance shared across development machines.
 - `dotnet/`: .NET and ASP.NET Core domain skills.
 - `configs/macos/`: reference copies of the local macOS configuration, including BOS project guidance.
 - `configs/macos/bos/dotnetrc.zsh`: branch- and worktree-aware BOS SDK selection.
+- `configs/wsl/`: reference copies adapted for Ubuntu on WSL, including BOS project guidance.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
 
 ## Canonical Installation
@@ -33,6 +34,6 @@ Git stores this hook in the clone's common Git directory, so it applies to workt
 
 ## Adapting To Another Machine
 
-Clone this repository in the target environment and ask the local agent to inspect `configs/macos/`, `shared/`, and `dotnet/`. The macOS files are reference material: adapt paths, shell commands, SDK setup, repository locations, and local excludes before installing them on Linux or WSL.
+Clone this repository in the target environment and ask the local agent to inspect the closest configuration under `configs/`, plus `shared/` and `dotnet/`. Treat machine-specific files as reference material: adapt paths, shell commands, SDK setup, repository locations, and local excludes before installing them elsewhere.
 
 Do not replace an existing `~/.codex/config.toml` wholesale. Merge only the safe settings needed by the target environment, and never commit credentials, tokens, secrets, trust state, or machine-generated configuration.

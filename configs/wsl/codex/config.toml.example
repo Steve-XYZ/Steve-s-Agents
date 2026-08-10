@@ -1,0 +1,4 @@
+# Merge selected settings into the target machine's existing Codex config.
+
+[features]
+default_mode_request_user_input = true
