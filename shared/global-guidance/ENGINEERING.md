@@ -7,6 +7,7 @@
 - Treat the request, ticket, or spec as the source of truth for intended behavior.
 - Inspect before editing and load only the context needed for the task.
 - Investigate discoverable facts; ask only about unresolved product or architectural decisions.
+- Distinguish a missing CLI from sandboxed network or authentication failures. When `gh --version` succeeds but a GitHub check fails in a restricted sandbox, retry with approved network access before reporting `gh` unavailable or unauthenticated.
 - Stay within scope, prefer the smallest coherent vertical change, and follow established repository patterns.
 - Do not add dependencies, abstractions, plans, docs, subagents, or artifacts unless they add clear value.
 - Run targeted checks before broader suites; never claim completion without concrete evidence.

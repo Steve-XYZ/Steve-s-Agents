@@ -14,6 +14,8 @@ Linear is the source of truth for BOS ticket intent. Confirm the target reposito
 
 Keep builds and repositories under the Linux filesystem rather than `/mnt/c`.
 
+GitHub CLI `gh` is installed and configured for `Steve-XYZ`. Confirm local availability with `gh --version`. If an authentication or network check fails inside a restricted sandbox, retry it with approved network access before reporting `gh` unavailable or unauthenticated.
+
 For .NET repositories, use the user-local SDK selected by each repository's `global.json`:
 
 ```bash
