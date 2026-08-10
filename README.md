@@ -8,6 +8,18 @@ Personal agent guidance shared across development machines.
 - `shared/`: reusable workflow skills.
 - `dotnet/`: .NET and ASP.NET Core domain skills.
 - `configs/macos/`: reference copies of the local macOS configuration, including BOS project guidance.
+- `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
+
+## Worktree Guidance
+
+Install a local `post-checkout` hook in each clone that should inherit its main checkout's ignored `AGENTS.md` and `CLAUDE.md`:
+
+```sh
+#!/bin/sh
+"$HOME/agent-skills/scripts/link-worktree-guidance.sh" || true
+```
+
+Git stores this hook in the clone's common Git directory, so it applies to worktrees created by Git, T3 Code, Paseo, or another orchestrator. The helper only acts in linked worktrees and never replaces an existing file or link.
 
 ## Adapting To Another Machine
 
