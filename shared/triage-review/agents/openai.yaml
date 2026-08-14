@@ -1,0 +1,4 @@
+interface:
+  display_name: "Triage Review"
+  short_description: "Validate incoming review findings, then fix, defer, or reject"
+  default_prompt: "Use $triage-review to validate and address every current finding on this PR."

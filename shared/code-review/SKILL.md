@@ -13,6 +13,8 @@ Read the ticket, specification, user context, linked evidence, and existing revi
 
 For a live PR, verify repository, base branch, head branch, head SHA, commits, and changed files. Review the latest head rather than relying on the title or an earlier snapshot.
 
+If the user supplied an expected head SHA and the live head differs, stop and report the mismatch unless the user explicitly asked to review the latest head.
+
 ## 2. Map the change
 
 Start with:

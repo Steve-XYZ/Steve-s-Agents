@@ -18,6 +18,8 @@ Read the ticket and relevant linked context. Inspect only enough of the reposito
 
 Investigate discoverable facts. Ask only about unresolved decisions that materially change the implementation. If a reported bug has no established cause, use `diagnosing-bugs` as the primary workflow.
 
+When the user supplies a repository, base, or branch, verify those live refs before editing. Do not silently continue from an unexpected branch, stale base, or conflicting remote branch.
+
 ## 2. Brief
 
 Before substantial work, establish a compact execution brief containing:
@@ -61,3 +63,5 @@ Report:
 - remaining risks or unresolved items.
 
 Do not create extra documentation, commit, push, open a PR, publish comments, or send external messages unless explicitly requested or required by an established repository workflow.
+
+When commit, push, or PR creation is authorized, review the final diff and validation first. Confirm the intended repository, remote branch state, and PR base immediately before publishing, then verify the resulting remote head and PR base/head.
