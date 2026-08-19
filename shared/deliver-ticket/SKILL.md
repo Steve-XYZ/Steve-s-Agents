@@ -31,6 +31,8 @@ Before substantial work, establish a compact execution brief containing:
 
 Keep the brief in the conversation. Skip it for trivial, single-file, low-risk changes.
 
+When implementation requires a material choice about API/module design, a safe seam in weakly tested code, cross-boundary data semantics, or non-trivial construction, consult the single matching reference in [engineering-judgment](../engineering-judgment/SKILL.md) before editing. Skip it when the repository pattern already determines the choice.
+
 ## 3. Implement
 
 Implement the smallest coherent vertical change that satisfies the ticket. Follow repository patterns and preserve existing contracts unless the ticket explicitly changes them.

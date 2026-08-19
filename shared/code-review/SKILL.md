@@ -26,6 +26,8 @@ Start with:
 
 Check whether the scope matches the requirement without missing behavior or unrelated expansion. Follow call paths and end-to-end wiring when the changed behavior depends on code outside the diff.
 
+When the diff contains a material API/module, legacy-change, data-system, or non-trivial construction decision, consult the single matching reference in [engineering-judgment](../engineering-judgment/SKILL.md). Use it to choose what evidence to inspect, never as independent grounds for a finding.
+
 ## 3. Review in passes
 
 ### Requirement fidelity

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Engineering Judgment"
+  short_description: "Focused judgment for material design decisions"
+  default_prompt: "Use $engineering-judgment to evaluate this engineering decision with the narrowest relevant lens."
+
+policy:
+  allow_implicit_invocation: true
