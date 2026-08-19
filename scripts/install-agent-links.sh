@@ -1,0 +1,105 @@
+#!/bin/sh
+
+# Create or repair this machine's canonical agent symlinks.
+#
+# Idempotent: a target that is already the correct link is left untouched.
+# Anything else occupying a target path is moved into a timestamped backup
+# directory before the link is created, so nothing is silently discarded.
+set -u
+
+usage() {
+	cat <<'USAGE'
+Usage: install-agent-links.sh [--dry-run]
+
+Links the global guidance file into every installed agent CLI, and links each
+skill directory under shared/ and dotnet/ into every skills directory that
+belongs to an installed agent CLI.
+
+  --dry-run  report the actions without changing anything
+USAGE
+}
+
+dry_run=0
+for arg in "$@"; do
+	case "$arg" in
+		--dry-run) dry_run=1 ;;
+		-h|--help) usage; exit 0 ;;
+		*) echo "unknown option: $arg" >&2; usage >&2; exit 2 ;;
+	esac
+done
+
+repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd) || exit 1
+guidance="$repo_root/shared/global-guidance/ENGINEERING.md"
+if [ ! -f "$guidance" ]; then
+	echo "not a Steve-s-Agents clone: $repo_root" >&2
+	exit 1
+fi
+
+backup_root="$HOME/.agent-links-backup"
+backup_dir="$backup_root/$(date +%Y%m%d-%H%M%S)"
+linked=0
+kept=0
+moved=0
+failed=0
+
+link() {
+	source_path=$1
+	target_path=$2
+
+	if [ -L "$target_path" ] && [ "$(readlink "$target_path")" = "$source_path" ]; then
+		kept=$((kept + 1))
+		return 0
+	fi
+
+	if [ -e "$target_path" ] || [ -L "$target_path" ]; then
+		# Flatten the path so two skills of the same name cannot collide.
+		stash="$backup_dir/$(printf '%s' "${target_path#"$HOME"/}" | tr '/' '_')"
+		if [ "$dry_run" -eq 1 ]; then
+			echo "would back up $target_path"
+		else
+			mkdir -p "$backup_dir" || { failed=$((failed + 1)); return 1; }
+			mv "$target_path" "$stash" || { failed=$((failed + 1)); return 1; }
+			echo "backed up $target_path -> $stash"
+		fi
+		moved=$((moved + 1))
+	fi
+
+	if [ "$dry_run" -eq 1 ]; then
+		echo "would link $target_path -> $source_path"
+	else
+		ln -s "$source_path" "$target_path" || { failed=$((failed + 1)); return 1; }
+		echo "linked $target_path -> $source_path"
+	fi
+	linked=$((linked + 1))
+}
+
+# Global guidance, once per installed CLI.
+for spec in ".claude/CLAUDE.md" ".codex/AGENTS.md"; do
+	target="$HOME/$spec"
+	# Only install for a CLI that is actually present on this machine.
+	[ -d "$(dirname "$target")" ] || continue
+	link "$guidance" "$target"
+done
+
+# Skills. The Codex directory depends on the installed Codex version rather
+# than the operating system, so link into whichever variants exist.
+for skills_root in "$HOME/.claude/skills" "$HOME/.codex/skills" "$HOME/.agents/skills"; do
+	[ -d "$(dirname "$skills_root")" ] || continue
+	if [ ! -d "$skills_root" ]; then
+		if [ "$dry_run" -eq 1 ]; then
+			echo "would create $skills_root"
+		else
+			mkdir -p "$skills_root" || { failed=$((failed + 1)); continue; }
+		fi
+	fi
+
+	for candidate in "$repo_root"/shared/*/ "$repo_root"/dotnet/*/; do
+		skill_dir=${candidate%/}
+		[ -f "$skill_dir/SKILL.md" ] || continue
+		link "$skill_dir" "$skills_root/$(basename "$skill_dir")"
+	done
+done
+
+echo "linked=$linked kept=$kept backed-up=$moved failed=$failed"
+[ "$failed" -eq 0 ] || exit 1
+exit 0
