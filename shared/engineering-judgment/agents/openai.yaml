@@ -1,7 +1,7 @@
 interface:
   display_name: "Engineering Judgment"
-  short_description: "Focused judgment for material design decisions"
-  default_prompt: "Use $engineering-judgment to evaluate this engineering decision with the narrowest relevant lens."
+  short_description: "Compact judgment pass for ticket delivery"
+  default_prompt: "Use $engineering-judgment to examine what makes this engineering change difficult and what it would cost to be wrong."
 
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

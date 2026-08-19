@@ -1,21 +1,22 @@
 ---
 name: engineering-judgment
-description: Apply focused engineering judgment to a material decision about module or API design, safe legacy change, data or distributed-system semantics, or non-trivial code construction. Use when such a decision can materially affect correctness, change cost, or failure behavior. Do not use for routine edits or reviews with no substantive design decision.
+description: Apply a compact cross-cutting judgment pass to a material engineering decision. Loaded by deliver-ticket and conditionally by shape-feature; outside those workflows, use only when the user explicitly asks for engineering judgment.
 ---
 
 # Engineering Judgment
 
-Use this skill as a decision aid, not as a separate workflow or a source of requirements. The user request, ticket, repository evidence, and local conventions remain authoritative.
+Before committing to an implementation or first slice, identify what makes this change difficult: what callers must know, what behavior cannot be verified, where work can succeed partially, and what states or failures the code must distinguish. These concerns overlap. Name the dominant difficulty, its evidence, and the cost of being wrong.
 
-Identify the concrete decision before loading detail. If no material decision exists, continue without a reference. Read exactly one reference by default; read two only when the same decision genuinely crosses both concerns.
+Trace the real path, callers, observable behavior, ownership, side effects, and validation. Decide what must remain unchanged, where the invariant should live, and what evidence will prove the result. Prefer the smallest design that lets the owner enforce the rule, makes partial failure visible, and represents important distinctions directly.
 
-## Route
+After inspecting the repository, read [deepening.md](references/deepening.md) only when the cost of being wrong is material and evidence still leaves at least one concrete risk unresolved:
 
-- Read [design-complexity.md](references/design-complexity.md) for public APIs, module boundaries, responsibility placement, information hiding, or abstractions that change how callers reason about the system.
-- Read [legacy-change.md](references/legacy-change.md) when changing poorly understood, weakly tested, or tightly coupled behavior requires a safe seam or characterization strategy.
-- Read [data-systems.md](references/data-systems.md) for ownership, consistency, transactions, retries, ordering, idempotency, schema evolution, caches, workers, events, or partial failures across boundaries.
-- Read [construction.md](references/construction.md) for a non-trivial routine, state transition, algorithm, validation boundary, data representation, or error-handling design.
+- no honest validation seam reaches the affected behavior;
+- failure can leave durable or external state partially updated;
+- a shared contract, schema, migration, or ownership boundary changes;
+- several callers coordinate the same knowledge or invariant;
+- the implementation must distinguish states or failures that the current representation obscures.
 
-Apply only guidance that is supported by the task's evidence and proportional to its risk. Do not enlarge the diff to satisfy a principle, introduce speculative abstractions, or replace an established repository pattern without a concrete reason.
+Touching legacy code, a database, an API, or complex-looking code does not qualify by itself. When none of these risks remains unresolved, continue without deepening. Do not create a separate plan, explanation, or artifact for this pass.
 
-In code review, a principle may suggest what to investigate but is never a finding by itself. Report only a demonstrated defect, material risk, broken requirement, or explicit repository-rule violation, with concrete impact and evidence.
+Do not add abstractions, tests, error handling, or generality merely to satisfy this pass. Requirements, evidence, and local patterns outrank these heuristics; a principle alone is never a code-review finding. If the pass only confirms the existing decision, do not change the code or enlarge the scope.

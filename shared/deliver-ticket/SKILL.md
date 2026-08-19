@@ -1,11 +1,11 @@
 ---
 name: deliver-ticket
-description: Deliver a well-defined engineering ticket end to end. Use when the user asks to implement, fix, complete, or deliver work whose intended behavior is already defined in Linear, GitHub, Jira, or another tracker. Do not use for unclear product requirements, unknown-cause diagnosis, planning-only requests, or pure code review.
+description: Deliver well-defined engineering work end to end. Use when the user asks to implement, fix, complete, or deliver behavior already defined in a tracker, an accepted feature brief, or the user request itself. Do not use for unclear product requirements, unknown-cause diagnosis, planning-only requests, or pure code review.
 ---
 
 # Deliver Ticket
 
-Use the ticket as the source of truth for intended behavior. User corrections, repository instructions, and verified repository facts still apply. Do not rewrite the ticket into another specification.
+Use the ticket, accepted feature brief, or explicit user requirements as the source of truth for intended behavior. User corrections, repository instructions, and verified repository facts still apply. Do not rewrite clear requirements into another specification.
 
 ## 1. Understand
 
@@ -31,7 +31,7 @@ Before substantial work, establish a compact execution brief containing:
 
 Keep the brief in the conversation. Skip it for trivial, single-file, low-risk changes.
 
-When implementation requires a material choice about API/module design, a safe seam in weakly tested code, cross-boundary data semantics, or non-trivial construction, consult the single matching reference in [engineering-judgment](../engineering-judgment/SKILL.md) before editing. Skip it when the repository pattern already determines the choice.
+Before editing, read [engineering-judgment](../engineering-judgment/SKILL.md) and apply its compact judgment pass. Do not turn it into a separate plan or artifact.
 
 ## 3. Implement
 

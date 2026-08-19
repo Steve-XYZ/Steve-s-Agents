@@ -29,7 +29,7 @@ Use external, primary-source research only when correctness depends on current f
 
 Use a small prototype or experiment only when it is cheaper and more reliable than reasoning about the uncertainty. Do not turn exploration into production code accidentally.
 
-When the feature brief depends on a material API/module, legacy-change, data-system, or construction decision, consult the single matching reference in [engineering-judgment](../engineering-judgment/SKILL.md). Use two only when one decision genuinely crosses both concerns; skip it when no such decision remains.
+When the feature brief requires a material decision about ownership, contracts, state, failure behavior, or an implementation boundary, read [engineering-judgment](../engineering-judgment/SKILL.md) before finalizing the first slice. Do not use it to invent implementation detail prematurely.
 
 ## 4. Establish the brief
 
