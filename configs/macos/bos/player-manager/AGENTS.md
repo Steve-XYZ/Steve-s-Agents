@@ -8,12 +8,14 @@ Linear is the source of truth for ticket intent. For Winning Palace work, use `w
 
 ## Build and Test
 
-Load the BOS SDK switcher and select .NET 10 when required by the branch:
+Load the BOS SDK switcher before .NET commands. The branch's `global.json` is authoritative; branches without one use the legacy .NET 8 fallback:
 
 ```bash
 source /Users/stive/Documents/Code/BOS/.dotnetrc.zsh
-dotnet10201
+dotnet --version
 ```
+
+After changing branches in a non-interactive or compound shell command, source the switcher again before running `dotnet`.
 
 - Restore: `dotnet restore`
 - Core: `dotnet build src/PlayerManager.Core/PlayerManager.Core.csproj --no-restore`

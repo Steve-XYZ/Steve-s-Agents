@@ -8,10 +8,14 @@ Linear is the source of truth for ticket intent. The current reference branch is
 
 ## Build and Test
 
+The branch's `global.json` is authoritative; branches without one use the legacy .NET 8 fallback. Load the BOS switcher before .NET commands:
+
 ```bash
 source /Users/stive/Documents/Code/BOS/.dotnetrc.zsh
-dotnet10201
+dotnet --version
 ```
+
+After changing branches in a non-interactive or compound shell command, source the switcher again before running `dotnet`.
 
 - Restore: `dotnet restore`
 - Build: `dotnet build --no-restore`

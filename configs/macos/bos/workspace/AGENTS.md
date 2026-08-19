@@ -19,7 +19,7 @@ Before .NET commands, load the BOS SDK switcher:
 source /Users/stive/Documents/Code/BOS/.dotnetrc.zsh
 ```
 
-Select the SDK required by the target branch. For frontend work, inspect lockfiles and existing package scripts before choosing a package-manager command.
+The switcher uses the nearest valid `global.json` in Player Manager and Lotto Propagator worktrees; branches without one are legacy .NET 8. In interactive zsh, branch changes are reevaluated at the next prompt. In non-interactive shells, or after a branch change inside a compound command, source the switcher again before running `dotnet`. For frontend work, inspect lockfiles and existing package scripts before choosing a package-manager command.
 
 ## Cross-repo Invariants
 

@@ -8,7 +8,17 @@ Personal agent guidance shared across development machines.
 - `shared/`: reusable workflow skills.
 - `dotnet/`: .NET and ASP.NET Core domain skills.
 - `configs/macos/`: reference copies of the local macOS configuration, including BOS project guidance.
+- `configs/macos/bos/dotnetrc.zsh`: branch- and worktree-aware BOS SDK selection.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
+
+## Canonical Installation
+
+- `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md` link to `shared/global-guidance/ENGINEERING.md`.
+- Codex skills under `~/.agents/skills/` and Claude skills under `~/.claude/skills/` link to the matching directories in this repository.
+- `/Users/stive/Documents/Code/BOS/.dotnetrc.zsh` mirrors `configs/macos/bos/dotnetrc.zsh` and is sourced from `~/.zshrc`.
+- BOS repository `AGENTS.md` and `CLAUDE.md` files mirror `configs/macos/bos/` and remain local through `.git/info/exclude`.
+
+Machine-generated trust state, plugin caches, marketplace metadata, runtime hooks, accumulated tool permissions, and credentials are intentionally not canonicalized here.
 
 ## Worktree Guidance
 
@@ -19,7 +29,7 @@ Install a local `post-checkout` hook in each clone that should inherit its main 
 "$HOME/agent-skills/scripts/link-worktree-guidance.sh" || true
 ```
 
-Git stores this hook in the clone's common Git directory, so it applies to worktrees created by Git, T3 Code, Paseo, or another orchestrator. The helper only acts in linked worktrees and never replaces an existing file or link.
+Git stores this hook in the clone's common Git directory, so it applies to worktrees created by Git, T3 Code, or another orchestrator. The helper only acts in linked worktrees and never replaces an existing file or link.
 
 ## Adapting To Another Machine
 
