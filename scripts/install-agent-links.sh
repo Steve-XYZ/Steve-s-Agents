@@ -103,8 +103,8 @@ done
 #
 # The presence of ~/.codex/skills therefore does not mean it is a personal
 # root; on a 0.148 machine it exists solely to hold .system. Treat the two as
-# mutually exclusive and prefer the dedicated personal root when it exists, so
-# that upgrading Codex moves the target instead of installing into both.
+# mutually exclusive and prefer the dedicated personal root when it exists.
+# An explicit override is required when a changed root does not exist yet.
 codex_skills_root=""
 if [ -n "$codex_root_override" ]; then
 	codex_skills_root="$codex_root_override"

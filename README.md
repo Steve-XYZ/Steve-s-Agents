@@ -25,8 +25,18 @@ configuration directory, and the Codex skills directory differ.
 - BOS repository `AGENTS.md` and `CLAUDE.md` files mirror this machine's `configs/<machine>/bos/` copies and stay untracked through `.git/info/exclude`.
 - Selected settings from `configs/<machine>/codex/config.toml.example` are merged into the existing `~/.codex/config.toml`, which is never replaced wholesale.
 
-Run `scripts/install-agent-links.sh` from the clone to create or repair every
-symlink above. It is idempotent, links only into CLIs that are installed,
+Run the installer from the clone with this machine's observed personal-skills
+root:
+
+```sh
+# macOS with Codex 0.148.0
+scripts/install-agent-links.sh --codex-skills-root="$HOME/.agents/skills"
+
+# Ubuntu on WSL with Codex 0.147.0
+scripts/install-agent-links.sh --codex-skills-root="$HOME/.codex/skills"
+```
+
+The installer is idempotent, links only into CLIs that are installed,
 discovers skills by scanning for `SKILL.md`, and moves anything already
 occupying a target path into `~/.agent-links-backup/<timestamp>/` rather than
 deleting it. Use `--dry-run` first to see what it would do.
@@ -52,10 +62,11 @@ not make it a personal root.
 
 The installer treats the two as mutually exclusive and prefers
 `~/.agents/skills/` when that directory exists, so personal skills are never
-installed into both. Because the root can move between Codex versions, re-run
-the installer after upgrading Codex: skills left in the old root go unread with
-no error to signal it. Pass `--codex-skills-root=DIR` when detection picks
-wrongly.
+installed into both. This fallback cannot detect a newly changed root before
+that directory exists, which is why the canonical commands pass it explicitly.
+After upgrading Codex, verify its active personal-skills root and re-run the
+installer with that value: skills left in the old root go unread with no error
+to signal it.
 
 T3 Code has no skills directory of its own. It launches the Claude Code and
 Codex CLIs, so linking the directories above is what makes skills reachable
@@ -71,9 +82,10 @@ Machine-generated trust state, plugin caches, marketplace metadata, runtime hook
 ### Verifying an installation
 
 ```sh
-scripts/install-agent-links.sh --dry-run   # expect kept=N backed-up=0
-readlink ~/.claude/CLAUDE.md               # expect .../shared/global-guidance/ENGINEERING.md
-ls -l ~/.claude/skills ~/.codex/skills     # expect symlinks into the clone
+# Use ~/.codex/skills instead on the observed WSL installation.
+scripts/install-agent-links.sh --dry-run --codex-skills-root="$HOME/.agents/skills"
+readlink ~/.claude/CLAUDE.md
+ls -l ~/.claude/skills ~/.agents/skills
 ```
 
 Skills are read at CLI start-up, so restart Claude Code or Codex after linking.
