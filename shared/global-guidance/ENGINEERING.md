@@ -19,9 +19,9 @@
 
 ## Writing
 
-- Prefer the plain word and the active voice, one idea per sentence. "utilize" is "use"; "queries are validated" is "the compiler validates queries".
+- Prefer the plain word and the active voice. "utilize" is "use"; "queries are validated" is "the compiler validates queries".
 - Cut adverbs that prop up a weak verb. "runs quickly" is "is fast", or the measured number.
 - Name the mechanism, the number, or the file rather than the feeling it produces. Not "the API is cleaner" but "callers no longer pass the connection".
-- If a sentence would read the same in another project's report, it says nothing about this one. Delete it.
-- State a position and its reasoning instead of listing balanced options.
+- If a claim would read the same in another project's report, it says nothing about this one. Cut it. Facts and measurements are exempt.
+- State a position and its reasoning rather than listing balanced options. When the evidence genuinely does not separate them, say so and say what would.
 - This applies to explanation and reporting prose. Command results, diffs, file lists, and checklists stay terse. For prose longer than a short report, read [WRITING.md](WRITING.md).

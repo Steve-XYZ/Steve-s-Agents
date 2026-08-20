@@ -15,14 +15,19 @@ Links the global guidance file into every installed agent CLI, and links each
 skill directory under shared/ and dotnet/ into every skills directory that
 belongs to an installed agent CLI.
 
-  --dry-run  report the actions without changing anything
+  --dry-run             report the actions without changing anything
+  --codex-skills-root=DIR
+                        install personal skills into DIR instead of the
+                        detected Codex root
 USAGE
 }
 
 dry_run=0
+codex_root_override=""
 for arg in "$@"; do
 	case "$arg" in
 		--dry-run) dry_run=1 ;;
+		--codex-skills-root=*) codex_root_override=${arg#*=} ;;
 		-h|--help) usage; exit 0 ;;
 		*) echo "unknown option: $arg" >&2; usage >&2; exit 2 ;;
 	esac
@@ -92,10 +97,31 @@ for spec in ".claude/WRITING.md" ".codex/WRITING.md"; do
 	link "$writing" "$target"
 done
 
-# Skills. The Codex directory depends on the installed Codex version rather
-# than the operating system, so link into whichever variants exist.
-for skills_root in "$HOME/.claude/skills" "$HOME/.codex/skills" "$HOME/.agents/skills"; do
-	[ -d "$(dirname "$skills_root")" ] || continue
+# Which directory holds *personal* Codex skills depends on the installed Codex
+# version, not on the operating system: 0.147 used ~/.codex/skills, 0.148 uses
+# ~/.agents/skills and keeps only bundled skills under ~/.codex/skills/.system.
+#
+# The presence of ~/.codex/skills therefore does not mean it is a personal
+# root; on a 0.148 machine it exists solely to hold .system. Treat the two as
+# mutually exclusive and prefer the dedicated personal root when it exists, so
+# that upgrading Codex moves the target instead of installing into both.
+codex_skills_root=""
+if [ -n "$codex_root_override" ]; then
+	codex_skills_root="$codex_root_override"
+elif [ -d "$HOME/.agents/skills" ]; then
+	codex_skills_root="$HOME/.agents/skills"
+elif [ -d "$HOME/.codex" ]; then
+	codex_skills_root="$HOME/.codex/skills"
+fi
+
+skills_roots=""
+[ -d "$HOME/.claude" ] && skills_roots="$HOME/.claude/skills"
+if [ -n "$codex_skills_root" ]; then
+	skills_roots="$skills_roots $codex_skills_root"
+	echo "codex personal skills root: $codex_skills_root"
+fi
+
+for skills_root in $skills_roots; do
 	if [ ! -d "$skills_root" ]; then
 		if [ "$dry_run" -eq 1 ]; then
 			echo "would create $skills_root"

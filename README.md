@@ -33,16 +33,29 @@ deleting it. Use `--dry-run` first to see what it would do.
 
 ### Per-machine paths
 
+These are the roots each machine was observed to use, not a rule derived from
+its operating system.
+
 | | macOS | Ubuntu on WSL |
 | --- | --- | --- |
 | Clone | `~/agent-skills` | `~/src/stive/Steve-s-Agents` |
 | Reference configs | `configs/macos/` | `configs/wsl/` |
-| Codex skills | `~/.agents/skills/` | `~/.codex/skills/` |
 | BOS workspace | `/Users/stive/Documents/Code/BOS` | `/home/stive/src/BOS` |
+| Codex version observed | 0.148.0 | 0.147.0 |
+| Codex personal skills | `~/.agents/skills/` | `~/.codex/skills/` |
 
-The Codex skills directory follows the installed Codex version rather than the
-operating system: Codex 0.147.0 scans `~/.codex/skills/`. The installer links
-into whichever variants exist, so both are safe to leave in place.
+The Codex personal-skills root is a property of the installed Codex version,
+not of the operating system. 0.147 reads `~/.codex/skills/`; 0.148 reads
+`~/.agents/skills/` and keeps only bundled skills under
+`~/.codex/skills/.system/`. The presence of `~/.codex/skills/` therefore does
+not make it a personal root.
+
+The installer treats the two as mutually exclusive and prefers
+`~/.agents/skills/` when that directory exists, so personal skills are never
+installed into both. Because the root can move between Codex versions, re-run
+the installer after upgrading Codex: skills left in the old root go unread with
+no error to signal it. Pass `--codex-skills-root=DIR` when detection picks
+wrongly.
 
 T3 Code has no skills directory of its own. It launches the Claude Code and
 Codex CLIs, so linking the directories above is what makes skills reachable
