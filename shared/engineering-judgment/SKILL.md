@@ -5,11 +5,11 @@ description: Apply a compact cross-cutting judgment pass to a material engineeri
 
 # Engineering Judgment
 
-Before committing to an implementation or first slice, identify what makes this change difficult: what callers must know, what behavior cannot be verified, where work can succeed partially, and what states or failures the code must distinguish. These concerns overlap. Name the dominant difficulty, its evidence, and the cost of being wrong.
+Before committing to an implementation or first slice, identify what makes this change difficult: what callers must know, what behavior cannot be verified, where work can succeed partially, and what states or failures the code must distinguish. These concerns overlap. Name the dominant difficulty, its evidence, and the cost of being wrong. Retain any independent material risk that could violate required behavior or corrupt durable or external state; do not discard it merely to force the change into one category.
 
 Trace the real path, callers, observable behavior, ownership, side effects, and validation. Decide what must remain unchanged, where the invariant should live, and what evidence will prove the result. Prefer the smallest design that lets the owner enforce the rule, makes partial failure visible, and represents important distinctions directly.
 
-After inspecting the repository, read [deepening.md](references/deepening.md) only when the cost of being wrong is material and evidence still leaves at least one concrete risk unresolved:
+After inspecting the repository, read [deepening.md](references/deepening.md) only when the cost of being wrong is material and evidence still leaves one or more concrete risks unresolved:
 
 - no honest validation seam reaches the affected behavior;
 - failure can leave durable or external state partially updated;

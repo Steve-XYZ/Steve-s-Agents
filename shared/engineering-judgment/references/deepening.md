@@ -1,6 +1,6 @@
 # Deepening Engineering Judgment
 
-Load this file only after the compact pass and repository inspection have identified a specific unresolved risk with a material cost of being wrong. Do not use it to search broadly for improvements. Before continuing, state internally the risk, the missing evidence, and the decision this deeper pass must support. Stop when that decision is supported; unrelated concerns remain out of scope.
+Load this file only after the compact pass and repository inspection have identified one or more specific unresolved risks with a material cost of being wrong. Do not use it to search broadly for improvements. Before continuing, state internally each material risk, its missing evidence, and the decision this deeper pass must support. Stop when those decisions are supported; concerns without a material connection to the change remain out of scope.
 
 ## Establish the change boundary
 

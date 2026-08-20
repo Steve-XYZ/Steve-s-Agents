@@ -20,7 +20,13 @@ Investigate discoverable facts. Ask only about unresolved decisions that materia
 
 When the user supplies a repository, base, or branch, verify those live refs before editing. Do not silently continue from an unexpected branch, stale base, or conflicting remote branch.
 
-## 2. Brief
+## 2. Judge and brief
+
+After the initial repository inspection and before settling an implementation
+approach or execution plan, read
+[engineering-judgment](../engineering-judgment/SKILL.md) and apply its compact
+pass. Let the result shape the brief; do not treat an earlier draft plan as
+fixed. Do not turn this pass into a separate plan or artifact.
 
 Before substantial work, establish a compact execution brief containing:
 
@@ -29,9 +35,16 @@ Before substantial work, establish a compact execution brief containing:
 - validation approach,
 - material risks or blockers.
 
-Keep the brief in the conversation. Skip it for trivial, single-file, low-risk changes.
+When the change materially affects money, durable state, concurrency, shared
+contracts, migrations, or partial success, also capture only what applies:
 
-Before editing, read [engineering-judgment](../engineering-judgment/SKILL.md) and apply its compact judgment pass. Do not turn it into a separate plan or artifact.
+- the invariant and the component that owns it,
+- relevant states, transitions, and writers,
+- the transaction or partial-failure boundary,
+- adversarial cases that must be verified.
+
+Keep the brief in the conversation. Skip it for trivial, single-file, low-risk
+changes when the judgment pass confirms no material risk.
 
 ## 3. Implement
 
@@ -52,7 +65,13 @@ Never claim success from inspection alone. State exactly what ran and what remai
 
 ## 5. Self-review
 
-Review the resulting diff against the ticket, correctness, repository conventions, tests, failure behavior, and unrelated changes. Apply deeper security, money, authorization, concurrency, migration, compatibility, performance, or cross-system scrutiny only when relevant.
+Review the resulting diff against the ticket, correctness, repository
+conventions, tests, failure behavior, and unrelated changes. When the brief
+identified material invariants, states, writers, or partial-failure boundaries,
+challenge the implementation and tests against that same model rather than
+only confirming the intended path. Apply deeper security, money,
+authorization, concurrency, migration, compatibility, performance, or
+cross-system scrutiny only when relevant.
 
 Treat those areas as high risk. Surface the need for an independent review; do not create a subagent or invoke `code-review` automatically.
 
