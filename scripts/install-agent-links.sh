@@ -11,9 +11,9 @@ usage() {
 	cat <<'USAGE'
 Usage: install-agent-links.sh [--dry-run]
 
-Links the global guidance file into every installed agent CLI, and links each
-skill directory under shared/ and dotnet/ into every skills directory that
-belongs to an installed agent CLI.
+Links the global guidance file into every installed agent CLI, grants Claude
+read access to on-demand guidance, and links each skill directory under shared/
+and dotnet/ into every skills directory that belongs to an installed agent CLI.
 
   --dry-run             report the actions without changing anything
   --codex-skills-root=DIR
@@ -35,6 +35,7 @@ done
 
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd) || exit 1
 guidance="$repo_root/shared/global-guidance/ENGINEERING.md"
+claude_settings_merger="$repo_root/scripts/merge-claude-settings.py"
 if [ ! -f "$guidance" ]; then
 	echo "not a Steve-s-Agents clone: $repo_root" >&2
 	exit 1
@@ -92,6 +93,43 @@ done
 # changes.
 link "$repo_root/shared/global-guidance" "$HOME/.agent-guidance"
 
+# Claude checks both a symlink path and its resolved target. Add both as user
+# working directories so the neutral guidance path remains readable from any
+# repository. Merge only this array entry and preserve every existing setting.
+claude_settings_status="skipped"
+if [ -d "$HOME/.claude" ]; then
+	if ! command -v python3 >/dev/null 2>&1; then
+		echo "python3 is required to merge Claude settings" >&2
+		claude_settings_status="failed"
+		failed=$((failed + 1))
+	elif [ ! -f "$claude_settings_merger" ]; then
+		echo "missing Claude settings merger: $claude_settings_merger" >&2
+		claude_settings_status="failed"
+		failed=$((failed + 1))
+	else
+		if [ "$dry_run" -eq 1 ]; then
+			claude_settings_status=$(python3 "$claude_settings_merger" \
+				--dry-run \
+				--settings "$HOME/.claude/settings.json" \
+				--backup-dir "$backup_dir" \
+				--required-directory "~/.agent-guidance" \
+				--required-directory "$repo_root/shared/global-guidance") || {
+				claude_settings_status="failed"
+				failed=$((failed + 1))
+			}
+		else
+			claude_settings_status=$(python3 "$claude_settings_merger" \
+				--settings "$HOME/.claude/settings.json" \
+				--backup-dir "$backup_dir" \
+				--required-directory "~/.agent-guidance" \
+				--required-directory "$repo_root/shared/global-guidance") || {
+				claude_settings_status="failed"
+				failed=$((failed + 1))
+			}
+		fi
+	fi
+fi
+
 # Which directory holds *personal* Codex skills depends on the installed Codex
 # version, not on the operating system: 0.147 used ~/.codex/skills, 0.148 uses
 # ~/.agents/skills and keeps only bundled skills under ~/.codex/skills/.system.
@@ -132,6 +170,6 @@ for skills_root in $skills_roots; do
 	done
 done
 
-echo "linked=$linked kept=$kept backed-up=$moved failed=$failed"
+echo "linked=$linked kept=$kept backed-up=$moved claude-settings=$claude_settings_status failed=$failed"
 [ "$failed" -eq 0 ] || exit 1
 exit 0

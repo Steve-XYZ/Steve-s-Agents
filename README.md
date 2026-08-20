@@ -21,9 +21,10 @@ configuration directory, and the Codex skills directory differ.
 
 - `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md` are symlinks to `shared/global-guidance/ENGINEERING.md`.
 - `~/.agent-guidance` is a symlink to `shared/global-guidance/`, providing a neutral readable path for guidance loaded on demand by either harness.
+- `~/.claude/settings.json` preserves its existing configuration while the installer ensures `permissions.additionalDirectories` includes both the neutral guidance path and its resolved source directory.
 - Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's skills directory.
 - BOS repository `AGENTS.md` and `CLAUDE.md` files mirror this machine's `configs/<machine>/bos/` copies and stay untracked through `.git/info/exclude`.
-- Selected settings from `configs/<machine>/codex/config.toml.example` are merged into the existing `~/.codex/config.toml`, which is never replaced wholesale.
+- Machine-specific Codex examples remain reference material; merge selected settings into `~/.codex/config.toml` without replacing it wholesale.
 
 Run the installer from the clone with this machine's observed personal-skills
 root:
@@ -39,7 +40,10 @@ scripts/install-agent-links.sh --codex-skills-root="$HOME/.codex/skills"
 The installer is idempotent, links only into CLIs that are installed,
 discovers skills by scanning for `SKILL.md`, and moves anything already
 occupying a target path into `~/.agent-links-backup/<timestamp>/` rather than
-deleting it. Use `--dry-run` first to see what it would do.
+deleting it. When Claude is installed, it uses Python 3 to merge the two
+required directories into the existing user settings and backs that file up
+before changing it. Invalid or unexpected JSON fails without modifying the
+file. Use `--dry-run` first to see what it would do.
 
 ### Per-machine paths
 
@@ -82,7 +86,8 @@ Machine-generated trust state, plugin caches, marketplace metadata, runtime hook
 ### Verifying an installation
 
 ```sh
-# Use ~/.codex/skills instead on the observed WSL installation.
+# Use ~/.codex/skills instead on the observed WSL installation. Expect
+# linked=0, backed-up=0, claude-settings=kept, and failed=0.
 scripts/install-agent-links.sh --dry-run --codex-skills-root="$HOME/.agents/skills"
 readlink ~/.claude/CLAUDE.md
 readlink ~/.agent-guidance
