@@ -5,6 +5,7 @@ Personal agent guidance shared across development machines.
 ## Contents
 
 - `shared/global-guidance/`: global engineering defaults for Codex and Claude.
+- `shared/global-guidance/WRITING.md`: prose substitutions, read on demand for anything longer than a short report.
 - `shared/`: reusable workflow skills.
 - `dotnet/`: .NET and ASP.NET Core domain skills.
 - `configs/macos/`: reference copies of the local macOS configuration, including BOS project guidance.
@@ -19,6 +20,7 @@ The same shape applies on every machine; only the clone path, the reference
 configuration directory, and the Codex skills directory differ.
 
 - `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md` are symlinks to `shared/global-guidance/ENGINEERING.md`.
+- `~/.codex/WRITING.md` and `~/.claude/WRITING.md` are symlinks to `shared/global-guidance/WRITING.md`, placed beside each entry point so that entry point's relative reference resolves whichever way the agent resolves it.
 - Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's skills directory.
 - BOS repository `AGENTS.md` and `CLAUDE.md` files mirror this machine's `configs/<machine>/bos/` copies and stay untracked through `.git/info/exclude`.
 - Selected settings from `configs/<machine>/codex/config.toml.example` are merged into the existing `~/.codex/config.toml`, which is never replaced wholesale.

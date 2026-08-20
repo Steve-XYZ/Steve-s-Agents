@@ -30,6 +30,7 @@ done
 
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd) || exit 1
 guidance="$repo_root/shared/global-guidance/ENGINEERING.md"
+writing="$repo_root/shared/global-guidance/WRITING.md"
 if [ ! -f "$guidance" ]; then
 	echo "not a Steve-s-Agents clone: $repo_root" >&2
 	exit 1
@@ -79,6 +80,16 @@ for spec in ".claude/CLAUDE.md" ".codex/AGENTS.md"; do
 	# Only install for a CLI that is actually present on this machine.
 	[ -d "$(dirname "$target")" ] || continue
 	link "$guidance" "$target"
+done
+
+# WRITING.md sits beside each entry point on purpose. The entry point is a
+# symlink, so its relative reference to WRITING.md may be resolved either
+# against the link's directory or against the clone. Linking it here makes both
+# resolutions land on the same file.
+for spec in ".claude/WRITING.md" ".codex/WRITING.md"; do
+	target="$HOME/$spec"
+	[ -d "$(dirname "$target")" ] || continue
+	link "$writing" "$target"
 done
 
 # Skills. The Codex directory depends on the installed Codex version rather

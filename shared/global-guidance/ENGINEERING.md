@@ -16,3 +16,12 @@
 - Never expose secrets or send private data externally.
 - Report what changed or was found, validation actually performed, and material risks or unresolved items.
 - Use a workflow skill when its trigger clearly matches; do not invoke one merely because it is available.
+
+## Writing
+
+- Prefer the plain word and the active voice, one idea per sentence. "utilize" is "use"; "queries are validated" is "the compiler validates queries".
+- Cut adverbs that prop up a weak verb. "runs quickly" is "is fast", or the measured number.
+- Name the mechanism, the number, or the file rather than the feeling it produces. Not "the API is cleaner" but "callers no longer pass the connection".
+- If a sentence would read the same in another project's report, it says nothing about this one. Delete it.
+- State a position and its reasoning instead of listing balanced options.
+- This applies to explanation and reporting prose. Command results, diffs, file lists, and checklists stay terse. For prose longer than a short report, read [WRITING.md](WRITING.md).
