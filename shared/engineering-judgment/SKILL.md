@@ -1,6 +1,6 @@
 ---
 name: engineering-judgment
-description: Apply a compact cross-cutting judgment pass to a material engineering decision. Loaded by deliver-ticket and conditionally by shape-feature; outside those workflows, use only when the user explicitly asks for engineering judgment.
+description: Apply a compact cross-cutting judgment pass to a material engineering decision. Loaded by deliver-ticket and conditionally by shape-feature; outside those workflows, use only when the user explicitly asks for engineering judgment. Do not auto-select for routine edits, diagnosis, code review, or review triage.
 ---
 
 # Engineering Judgment
