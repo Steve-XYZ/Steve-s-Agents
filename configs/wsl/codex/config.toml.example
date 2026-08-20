@@ -1,4 +1,16 @@
 # Merge selected settings into the target machine's existing Codex config.
-
-[features]
-default_mode_request_user_input = true
+# Never replace that file wholesale.
+#
+# Nothing to merge at present.
+#
+# Rejected 2026-08-20: features.default_mode_request_user_input.
+#
+# Measured on Codex 0.147.0 under WSL, twice and consistent to the token, it
+# adds ~11,000 tokens to the base prompt of every session. The tool it looked
+# like it unlocked, request_user_input, is exposed with the flag off as well, so
+# it does not grant the ability to ask a question; at most it raises the
+# propensity to use it. That propensity was never measured on either machine.
+# Codex additionally reports the flag as an under-development feature.
+#
+# Re-enable only against an observed behavioural difference that justifies the
+# cost, and record the observation here.
