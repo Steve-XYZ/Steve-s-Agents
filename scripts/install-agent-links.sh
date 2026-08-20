@@ -35,7 +35,6 @@ done
 
 repo_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd) || exit 1
 guidance="$repo_root/shared/global-guidance/ENGINEERING.md"
-writing="$repo_root/shared/global-guidance/WRITING.md"
 if [ ! -f "$guidance" ]; then
 	echo "not a Steve-s-Agents clone: $repo_root" >&2
 	exit 1
@@ -87,15 +86,11 @@ for spec in ".claude/CLAUDE.md" ".codex/AGENTS.md"; do
 	link "$guidance" "$target"
 done
 
-# WRITING.md sits beside each entry point on purpose. The entry point is a
-# symlink, so its relative reference to WRITING.md may be resolved either
-# against the link's directory or against the clone. Linking it here makes both
-# resolutions land on the same file.
-for spec in ".claude/WRITING.md" ".codex/WRITING.md"; do
-	target="$HOME/$spec"
-	[ -d "$(dirname "$target")" ] || continue
-	link "$writing" "$target"
-done
+# On-demand guidance uses one neutral path because Claude protects ~/.claude
+# from ordinary file reads and relative paths depend on the working directory.
+# Link the directory so future guidance files are available without installer
+# changes.
+link "$repo_root/shared/global-guidance" "$HOME/.agent-guidance"
 
 # Which directory holds *personal* Codex skills depends on the installed Codex
 # version, not on the operating system: 0.147 used ~/.codex/skills, 0.148 uses

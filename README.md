@@ -20,7 +20,7 @@ The same shape applies on every machine; only the clone path, the reference
 configuration directory, and the Codex skills directory differ.
 
 - `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md` are symlinks to `shared/global-guidance/ENGINEERING.md`.
-- `~/.codex/WRITING.md` and `~/.claude/WRITING.md` are symlinks to `shared/global-guidance/WRITING.md`, placed beside each entry point so that entry point's relative reference resolves whichever way the agent resolves it.
+- `~/.agent-guidance` is a symlink to `shared/global-guidance/`, providing a neutral readable path for guidance loaded on demand by either harness.
 - Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's skills directory.
 - BOS repository `AGENTS.md` and `CLAUDE.md` files mirror this machine's `configs/<machine>/bos/` copies and stay untracked through `.git/info/exclude`.
 - Selected settings from `configs/<machine>/codex/config.toml.example` are merged into the existing `~/.codex/config.toml`, which is never replaced wholesale.
@@ -85,6 +85,7 @@ Machine-generated trust state, plugin caches, marketplace metadata, runtime hook
 # Use ~/.codex/skills instead on the observed WSL installation.
 scripts/install-agent-links.sh --dry-run --codex-skills-root="$HOME/.agents/skills"
 readlink ~/.claude/CLAUDE.md
+readlink ~/.agent-guidance
 ls -l ~/.claude/skills ~/.agents/skills
 ```
 

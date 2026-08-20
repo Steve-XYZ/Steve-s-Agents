@@ -24,4 +24,4 @@
 - Name the mechanism, the number, or the file rather than the feeling it produces. Not "the API is cleaner" but "callers no longer pass the connection".
 - If a claim would read the same in another project's report, it says nothing about this one. Cut it. Facts and measurements are exempt.
 - State a position and its reasoning rather than listing balanced options. When the evidence genuinely does not separate them, say so and say what would.
-- This applies to explanation and reporting prose. Command results, diffs, file lists, and checklists stay terse. For prose longer than a short report, read the harness-local guide: `~/.claude/WRITING.md` in Claude Code or `~/.codex/WRITING.md` in Codex.
+- This applies to explanation and reporting prose. Command results, diffs, file lists, and checklists stay terse. For prose longer than a short report, read `~/.agent-guidance/WRITING.md`.
