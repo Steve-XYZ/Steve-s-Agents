@@ -7,7 +7,10 @@ description: Deliver well-defined engineering work end to end. Use when the user
 
 Use the ticket, accepted feature brief, or explicit user requirements as the source of truth for intended behavior. User corrections, repository instructions, and verified repository facts still apply. Do not rewrite clear requirements into another specification.
 
-## 1. Understand
+Breadth in discovery. Depth in judgment. Discipline in execution. Independence
+in review. Evidence against the claim.
+
+## 1. Discover
 
 Read the ticket and relevant linked context. Inspect only enough of the repository to identify:
 
@@ -15,6 +18,33 @@ Read the ticket and relevant linked context. Inspect only enough of the reposito
 - the existing analogous implementation,
 - relevant tests and validation seams,
 - public, shared, data, or cross-system contracts involved.
+
+Then enumerate the change surface. For each symbol, setting, table, message, or
+endpoint the change touches, list what already exists around it:
+
+- readers and writers,
+- callers, and sibling paths that solve the same problem,
+- persistence and migrations,
+- configuration layers and per-environment overrides,
+- deployment scopes and tenants,
+- asynchronous consumers and external contracts,
+- reachable failure paths.
+
+The scan enumerates; it does not judge. Record concrete locations rather than
+categories: `Api/appsettings.Development.json:16` is checkable, `configuration:
+reviewed` is not. Leave a category out when it genuinely has no members instead
+of asserting that you checked it. A missing entry is a discovery gap someone
+else can find; an unfalsifiable claim is not. Judgment happens in step 2, and
+this scan produces no findings of its own.
+
+Read [change-surface.md](references/change-surface.md) for the enumeration
+recipe when the surface is unfamiliar or the change is material.
+
+When the change affects money, migrations, tenants, shared contracts, or more
+than one system, produce this scan in a fresh context whose only inputs are the
+ticket and the repository, and whose only output is the list. An enumeration
+made by someone with no implementation to defend is more complete. For ordinary
+changes, produce it inline.
 
 Investigate discoverable facts. Ask only about unresolved decisions that materially change the implementation. If a reported bug has no established cause, use `diagnosing-bugs` as the primary workflow.
 
@@ -54,6 +84,12 @@ Do not expand scope or perform unrelated cleanup. Add or update tests when behav
 
 ## 4. Verify
 
+Validate the requirement, not the implementation. That a setting exists with the
+intended value is evidence about the edit; that every supported environment
+resolves it and behaves correctly is the claim the ticket makes. State the claim,
+then produce evidence that could have falsified it. Evidence that could only
+have confirmed you proves nothing.
+
 Run the cheapest reliable checks first:
 
 1. directly affected tests or checks,
@@ -61,7 +97,8 @@ Run the cheapest reliable checks first:
 3. relevant build,
 4. broader suites only when risk or repository CI justifies them.
 
-Never claim success from inspection alone. State exactly what ran and what remains unverified.
+Never claim success from inspection alone. State exactly what ran, which claim
+it settles, and what remains unverified.
 
 ## 5. Self-review
 

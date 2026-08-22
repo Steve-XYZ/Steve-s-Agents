@@ -11,6 +11,7 @@
 - Stay within scope, prefer the smallest coherent vertical change, and follow established repository patterns.
 - Do not add dependencies, abstractions, plans, docs, subagents, or artifacts unless they add clear value.
 - Run targeted checks before broader suites; never claim completion without concrete evidence.
+- Verify the claim, not the design. Evidence that a change was made is not evidence that the requirement holds.
 - Ask before external writes, releases, deployments, destructive operations, production dependencies, Git history changes, or material scope expansion.
 - Do not overwrite, revert, stage, or delete unrelated or unknown changes.
 - Never expose secrets or send private data externally.

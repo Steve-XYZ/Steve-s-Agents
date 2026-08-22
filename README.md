@@ -11,6 +11,7 @@ Personal agent guidance shared across development machines.
 - `configs/macos/`: reference copies of the local macOS configuration, including BOS project guidance.
 - `configs/macos/bos/dotnetrc.zsh`: branch- and worktree-aware BOS SDK selection.
 - `configs/wsl/`: reference copies adapted for Ubuntu on WSL, including BOS project guidance.
+- `docs/`: notes for humans about how the workflow is measured; not installed.
 - `scripts/install-agent-links.sh`: creates or repairs this machine's guidance and skill symlinks.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
 
