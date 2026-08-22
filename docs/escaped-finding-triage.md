@@ -3,6 +3,9 @@
 This file is for humans reviewing how the workflow performed. It is not agent
 guidance and is not installed anywhere.
 
+Its purpose is to turn "the agent missed something again" into a verdict about
+one stage, so the fix lands on that stage instead of on the whole workflow.
+
 ## The metric that matters
 
 Count **external escaped blockers per pull request**: real defects that the
@@ -31,7 +34,8 @@ Ask the questions in order and stop at the first "no".
 | Was the risk named during judgment? | **Judgment failure** — the surface was known, the risk was not drawn |
 | Did the implementation address the named risk? | **Execution failure** |
 | Would the executed validation have caught it? | **Evidence failure** — validated the implementation, not the claim |
-| Did internal review see it and dismiss it? | **Review failure** — anchoring on the builder's own decisions |
+| Did the critic reconstruct that surface? | **Review failure** — the critic's reconstruction did not reach it |
+| Did the critic raise it and the fix dismiss it? | **Adjudication failure** — a demonstrated finding was argued away |
 
 Each verdict points at one stage, which is the point of recording the scan as
 an artifact: without it, discovery failures and judgment failures are
@@ -43,12 +47,5 @@ indistinguishable after the fact.
 - Judgment: the gap is in `engineering-judgment`, not in discovery.
 - Execution: usually scope or pattern adherence, not process.
 - Evidence: the validation proved the edit rather than the requirement.
-- Review: the case for an independent reviewer with no implementation history.
-
-## Sequencing
-
-Verifiable discovery is deliberately the only workflow change being measured
-first. An independent reviewer is the second intervention, justified when
-escaped findings are concentrated in the review row while the surface was
-present in the scan. Introducing both at once makes either outcome
-unattributable.
+- Review: the critic's inputs or reconstruction scope, not its independence. Check whether it received the scan and the diff it needed.
+- Adjudication: the builder overrode a demonstrated finding. The weakest link in the chain, because it converts a working review into a discarded one.

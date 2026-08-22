@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Review a pull request, diff, commit, review thread, or ticket implementation against its stated requirements and repository evidence. Use when the user asks for a PR review, code review, regression review, or confirmation that a change satisfies a ticket. Do not use as an automatic delivery self-review, to implement changes, or to diagnose an unknown failure.
+description: Review a pull request, diff, commit, review thread, or ticket implementation against its stated requirements and repository evidence. Use when the user asks for a PR review, code review, regression review, or confirmation that a change satisfies a ticket. Do not use as the automatic review step inside a delivery workflow, to implement changes, or to diagnose an unknown failure.
 ---
 
 # Code Review

@@ -41,10 +41,17 @@ Read [change-surface.md](references/change-surface.md) for the enumeration
 recipe when the surface is unfamiliar or the change is material.
 
 When the change affects money, migrations, tenants, shared contracts, or more
-than one system, produce this scan in a fresh context whose only inputs are the
-ticket and the repository, and whose only output is the list. An enumeration
-made by someone with no implementation to defend is more complete. For ordinary
-changes, produce it inline.
+than one system, a Scout produces this scan in a fresh context. Its inputs are
+the ticket, the linked context the ticket depends on, the repository
+instructions, and the repository. It does not receive a brief, an approach, or
+any part of the intended solution: an enumeration made with nothing to defend
+is more complete. Its only output is the list. For ordinary changes, produce
+the scan inline.
+
+Emit the scan verbatim rather than summarising it, so the run preserves it. When
+the change is published, carry it into the pull request or the ticket. An escaped
+defect can only be attributed to a stage if what discovery actually contained is
+still recoverable.
 
 Investigate discoverable facts. Ask only about unresolved decisions that materially change the implementation. If a reported bug has no established cause, use `diagnosing-bugs` as the primary workflow.
 
@@ -82,13 +89,20 @@ Implement the smallest coherent vertical change that satisfies the ticket. Follo
 
 Do not expand scope or perform unrelated cleanup. Add or update tests when behavior changes or a regression could recur. For a bug with an established cause, reproduce the failure first when practical and safe.
 
+Run a surface delta as you go. When the implementation ends up touching a
+setting, symbol, table, event, or contract the scan does not list, stop and
+enumerate that one entity's immediate surface before continuing: its readers and
+writers, its configuration layers, its consumers. Add it to the scan. A design
+that grows past its own enumeration is the ordinary way a complete scan goes
+stale, and the entities added late are the ones nobody has looked around.
+
 ## 4. Verify
 
-Validate the requirement, not the implementation. That a setting exists with the
-intended value is evidence about the edit; that every supported environment
-resolves it and behaves correctly is the claim the ticket makes. State the claim,
-then produce evidence that could have falsified it. Evidence that could only
-have confirmed you proves nothing.
+Validate the requirement, not the implementation. State the claim the ticket
+makes, then prefer evidence that could falsify it. Evidence that only proves the
+edit exists does not establish that the requirement holds: that a setting
+carries the intended value is evidence about the edit, while the claim is that
+every supported environment resolves it and behaves correctly.
 
 Run the cheapest reliable checks first:
 
@@ -100,25 +114,46 @@ Run the cheapest reliable checks first:
 Never claim success from inspection alone. State exactly what ran, which claim
 it settles, and what remains unverified.
 
-## 5. Self-review
+## 5. Fresh Critic
 
-Review the resulting diff against the ticket, correctness, repository
-conventions, tests, failure behavior, and unrelated changes. When the brief
-identified material invariants, states, writers, or partial-failure boundaries,
-challenge the implementation and tests against that same model rather than
-only confirming the intended path. Apply deeper security, money,
-authorization, concurrency, migration, compatibility, performance, or
-cross-system scrutiny only when relevant.
+A material or risky change is reviewed by a critic in a fresh context, not by
+the agent that built it. Treat security, money, authorization, durable state,
+concurrency, shared contracts, migrations, tenants, cross-system behavior, and
+partial success as material. A trivial, low-risk change is reviewed against the
+ticket and the diff directly.
 
-Treat those areas as high risk. Surface the need for an independent review; do not create a subagent or invoke `code-review` automatically.
+The critic receives the ticket, the scan, the brief, the diff, and the
+repository instructions and conventions. It does not receive the reasoning that
+produced the change. The scan and the brief are handed over as claims to
+falsify, not as established fact: the point of the fresh context is that nothing
+in it inherits the builder's confidence.
 
-## 6. Finish
+Its brief is [fresh-critic.md](references/fresh-critic.md). This review is not
+`code-review`, which is for a change you do not own.
+
+## 6. Fix and revalidate
+
+Address only findings the critic demonstrated. For each remaining finding,
+either fix it or state why it is not a defect; do not leave it unanswered and do
+not accept it because a reviewer raised it. Revalidate the claims the fix
+touches rather than rerunning everything, and do not let review commentary
+expand the scope of the ticket.
+
+Return to the critic when a fix changes behavior it has not seen.
+
+This is not `triage-review`, which handles findings that arrive from outside
+on a change already open for review.
+
+## 7. Report
 
 Report:
 
 - what changed,
-- validation actually executed,
+- validation actually executed, and which claim each check settles,
+- findings raised and how each was resolved,
 - remaining risks or unresolved items.
+
+Carry the scan into the pull request or the ticket when the change is published.
 
 Do not create extra documentation, commit, push, open a PR, publish comments, or send external messages unless explicitly requested or required by an established repository workflow.
 
