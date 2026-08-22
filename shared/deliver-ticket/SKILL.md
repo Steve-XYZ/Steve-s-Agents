@@ -37,6 +37,11 @@ of asserting that you checked it. A missing entry is a discovery gap someone
 else can find; an unfalsifiable claim is not. Judgment happens in step 2, and
 this scan produces no findings of its own.
 
+Record what you could not reach, next to what you found. A surface that exists
+but cannot be inspected from here is not the same as a surface that does not
+exist, and silence collapses the two into false confidence. Naming the limit is
+still enumeration.
+
 Read [change-surface.md](references/change-surface.md) for the enumeration
 recipe when the surface is unfamiliar or the change is material.
 
@@ -45,8 +50,8 @@ than one system, a Scout produces this scan in a fresh context. Its inputs are
 the ticket, the linked context the ticket depends on, the repository
 instructions, and the repository. It does not receive a brief, an approach, or
 any part of the intended solution: an enumeration made with nothing to defend
-is more complete. Its only output is the list. For ordinary changes, produce
-the scan inline.
+is more complete. Its output is the list and the limits of the list, and nothing
+else. For ordinary changes, produce the scan inline.
 
 Emit the scan verbatim rather than summarising it, so the run preserves it. When
 the change is published, carry it into the pull request or the ticket. An escaped
@@ -122,9 +127,11 @@ concurrency, shared contracts, migrations, tenants, cross-system behavior, and
 partial success as material. A trivial, low-risk change is reviewed against the
 ticket and the diff directly.
 
-The critic receives the ticket, the scan, the brief, the diff, and the
-repository instructions and conventions. It does not receive the reasoning that
-produced the change. The scan and the brief are handed over as claims to
+The critic receives the ticket, the scan, the brief, the diff, the record of the
+validation that was run and what it showed, and the repository instructions and
+conventions. It does not receive the reasoning that produced the change.
+
+The scan and the brief are handed over as claims to
 falsify, not as established fact: the point of the fresh context is that nothing
 in it inherits the builder's confidence.
 
@@ -133,13 +140,21 @@ Its brief is [fresh-critic.md](references/fresh-critic.md). This review is not
 
 ## 6. Fix and revalidate
 
-Address only findings the critic demonstrated. For each remaining finding,
-either fix it or state why it is not a defect; do not leave it unanswered and do
-not accept it because a reviewer raised it. Revalidate the claims the fix
-touches rather than rerunning everything, and do not let review commentary
-expand the scope of the ticket.
+The critic returns coverage gaps and findings, and they are handled differently.
 
-Return to the critic when a fix changes behavior it has not seen.
+A coverage gap corrects the scan: add the surface, and enumerate it as the delta
+step already requires. It is not a defect and it does not become work by itself.
+Extra breadth that turns into extra tasks is how a wider map becomes noise.
+
+A finding is addressed only when the critic demonstrated it. For each remaining
+finding, either fix it or state why it is not a defect; do not leave it
+unanswered and do not accept it because a reviewer raised it. Revalidate the
+claims the fix touches rather than rerunning everything, and do not let review
+commentary expand the scope of the ticket.
+
+Return to the critic when a fix materially changes the design, the surface, a
+contract or an invariant, or introduces behavior beyond the demonstrated repair.
+A local fix with targeted validation does not need another pass.
 
 This is not `triage-review`, which handles findings that arrive from outside
 on a change already open for review.
@@ -151,6 +166,7 @@ Report:
 - what changed,
 - validation actually executed, and which claim each check settles,
 - findings raised and how each was resolved,
+- coverage gaps found, and the scan corrected to include them,
 - remaining risks or unresolved items.
 
 Carry the scan into the pull request or the ticket when the change is published.

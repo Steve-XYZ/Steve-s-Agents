@@ -65,6 +65,28 @@ execution can stop between them. Include the fallback or legacy path that is
 still live, if one exists; a superseded path that was never removed behaves as
 a second writer.
 
+## What you could not reach
+
+Some surfaces are referenced from the repository and not inspectable from it: an
+external template or campaign body, a per-tenant override that lives in a
+deployment system, a consumer in a repository you do not have, a value supplied
+by a secret store. Record them by name with the reference that points at them,
+and say what remains unverified.
+
+```
+External contracts:
+- provider template RETRY_NOTICE - referenced at BillingEmailService:88,
+  template body not inspectable from this repository
+
+Deployment scopes:
+- production tenant override - referenced in deploy/compose.tenant.yml:46,
+  effective value not available here
+```
+
+An unrecorded limit reads as "no such surface exists". A recorded one tells the
+next reader exactly where the map ends, and it is the difference between an
+honest scan and a confident one.
+
 ## Output shape
 
 Group by the thing that changed, and cite locations:
@@ -89,5 +111,6 @@ External consumers:
 - BillingEmailService -> provider template RETRY_NOTICE
 ```
 
-Stop when the categories that apply are enumerated. Do not add a category with
-no members, and do not annotate entries with opinions.
+Stop when the categories that apply are enumerated, and list what you could not
+reach. Do not add a category with no members, and do not annotate entries with
+opinions.

@@ -31,6 +31,7 @@ Ask the questions in order and stop at the first "no".
 | Question | If no |
 | --- | --- |
 | Was the affected surface listed in the change-surface scan? | **Discovery failure** — enumeration missed it |
+| If it was unreachable, did the scan record that limit? | **Discovery failure** — an unrecorded limit reads as "no such surface" |
 | Was the risk named during judgment? | **Judgment failure** — the surface was known, the risk was not drawn |
 | Did the implementation address the named risk? | **Execution failure** |
 | Would the executed validation have caught it? | **Evidence failure** — validated the implementation, not the claim |
@@ -43,7 +44,7 @@ indistinguishable after the fact.
 
 ## What each verdict changes
 
-- Discovery: extend the enumeration recipe, or move the scan to a fresh context for that class of change.
+- Discovery: extend the enumeration recipe, or move the scan to a fresh context for that class of change. A surface that was correctly recorded as unreachable is not a discovery failure; it is a known limit that judgment should have weighed.
 - Judgment: the gap is in `engineering-judgment`, not in discovery.
 - Execution: usually scope or pattern adherence, not process.
 - Evidence: the validation proved the edit rather than the requirement.
