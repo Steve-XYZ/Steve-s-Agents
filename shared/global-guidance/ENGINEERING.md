@@ -16,6 +16,7 @@
 - Never expose secrets or send private data externally.
 - Report what changed or was found, validation actually performed, and material risks or unresolved items.
 - Use a workflow skill when its trigger clearly matches; do not invoke one merely because it is available.
+- For a defined ticket, use `deliver-ticket`. It grills the plan, maps blast radius, implements, and proves the result before a PR. Do not skip those steps on money, durable state, or shared contracts. Stay on one harness for the ticket.
 
 ## Writing
 

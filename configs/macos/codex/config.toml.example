@@ -1,6 +1,12 @@
 # Merge selected settings into the target machine's existing Codex config.
 # Never replace that file wholesale.
 #
+# Delivery: one Codex session per ticket when the budget allows. Grill and
+# blast-radius before edits; prove against tests or a throwaway host before
+# a PR. Do not enable extra prompt features without measuring their token
+# cost. Nothing below is a model or thinking-level override; those stay at
+# Codex defaults until a measured difference justifies a change.
+#
 # Nothing to merge at present.
 #
 # Rejected 2026-08-20: features.default_mode_request_user_input.

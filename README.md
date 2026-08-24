@@ -14,6 +14,27 @@ Personal agent guidance shared across development machines.
 - `scripts/install-agent-links.sh`: creates or repairs this machine's guidance and skill symlinks.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
 
+## Delivery loop
+
+For a defined ticket, one harness runs the ticket end to end. Codex is the
+default; Claude Code is the same loop when that session is the one in use.
+Do not split a ticket across both.
+
+`deliver-ticket` is the entry:
+
+1. `grill` — pressure-test invariants, states, and unresolved product decisions.
+2. `blast-radius` — list services, contracts, and deploy files in play.
+3. implement the smallest vertical change, with a test of the invariant when one exists.
+4. `prove-it-works` — focused tests, or a throwaway host when tests cannot reach the contract. A green build is not proof.
+5. self-review against the brief. Do not spawn `code-review`.
+6. `unslop` — only when writing a PR description or similar prose.
+
+`diagnosing-bugs`, `shape-feature`, `code-review`, and `triage-review` stay
+the entry points for those jobs. `engineering-judgment` is loaded by grill
+and deliver-ticket, not chosen on its own.
+
+After linking new skills, restart the CLI so it rereads `SKILL.md`.
+
 ## Canonical Installation
 
 The same shape applies on every machine; only the clone path, the reference
@@ -96,8 +117,9 @@ ls -l ~/.claude/skills ~/.agents/skills
 
 Skills are read at CLI start-up, so restart Claude Code or Codex after linking.
 A skill whose `agents/openai.yaml` sets `allow_implicit_invocation: false`
-(currently `engineering-judgment`) will not appear in Codex's skill list; it is
-still reachable when named explicitly.
+(currently `engineering-judgment`, `grill`, `blast-radius`, `prove-it-works`,
+and `unslop`) will not appear in Codex's skill list; it is still reachable
+when named explicitly or loaded by `deliver-ticket`.
 
 ## Worktree Guidance
 

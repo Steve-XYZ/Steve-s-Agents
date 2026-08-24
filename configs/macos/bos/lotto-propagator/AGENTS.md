@@ -32,6 +32,7 @@ After changing branches in a non-interactive or compound shell command, source t
 - Schema changes require migration `.cs`, `.Designer.cs`, and model snapshot alignment.
 - Do not edit generated migrations or snapshots manually unless intentionally resolving model drift; verify with EF commands afterward.
 - Check concurrent updates, duplicate transitions, N+1 queries, unbounded queries, and indexes when relevant.
+- Every setting a service reads must exist in that service's deploy configuration; Admin, API, and Worker are separate.
 - Validate provider-specific behavior against local MariaDB when it materially affects the change: container `mariadb-mysqldb`, database `lotto_propagator`.
 
 ## Review Rules

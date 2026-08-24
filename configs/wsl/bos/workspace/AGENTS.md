@@ -42,5 +42,7 @@ Use the WSL `docker` CLI and configured Docker context for local containers; do 
 - Check affected consumers when changing frontend-visible payloads or shared lotto behavior.
 - Preserve timezone semantics: draw operations follow draw/schedule timezone; Admin display and reporting follow configured Admin timezone.
 - Surface partial external-provider failures rather than presenting incomplete data as complete success.
+- Capability flags returned to a client are not the same as performing the provider or ledger action.
+- Deploy configuration for a setting belongs on the service that reads it, not only on a sibling.
 - PR descriptions should link the Linear ticket when a PR is requested.
 - When explicitly asked to publish BOS review feedback, write concise English comments ordered by severity.
