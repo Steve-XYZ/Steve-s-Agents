@@ -1,7 +1,0 @@
-interface:
-  display_name: "Grill"
-  short_description: "Pressure-test a ticket before writing code"
-  default_prompt: "Use $grill to pressure-test this ticket and produce a compact implementation brief, or stop on an unresolved decision."
-
-policy:
-  allow_implicit_invocation: false

@@ -16,7 +16,6 @@
 - Never expose secrets or send private data externally.
 - Report what changed or was found, validation actually performed, and material risks or unresolved items.
 - Use a workflow skill when its trigger clearly matches; do not invoke one merely because it is available.
-- For a defined ticket, use `deliver-ticket`. It grills the plan, maps blast radius, implements, and proves the result before a PR. Do not skip those steps on money, durable state, or shared contracts. Stay on one harness for the ticket.
 
 ## Writing
 
@@ -25,4 +24,4 @@
 - Name the mechanism, the number, or the file rather than the feeling it produces. Not "the API is cleaner" but "callers no longer pass the connection".
 - If a claim would read the same in another project's report, it says nothing about this one. Cut it. Facts and measurements are exempt.
 - State a position and its reasoning rather than listing balanced options. When the evidence genuinely does not separate them, say so and say what would.
-- This applies to explanation and reporting prose. Command results, diffs, file lists, and checklists stay terse. For prose longer than a short report, read `~/.agent-guidance/WRITING.md`.
+- Apply these rules to all user-facing prose, including normal conversation, explanations, design discussions, status updates, reviews, and pull request text. Command results, diffs, file lists, and checklists stay terse. Before substantial prose, read `~/.agent-guidance/WRITING.md` without announcing the editing pass.

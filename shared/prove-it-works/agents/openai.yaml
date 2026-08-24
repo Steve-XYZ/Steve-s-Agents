@@ -1,7 +1,0 @@
-interface:
-  display_name: "Prove It Works"
-  short_description: "Prove the change against tests or a live host"
-  default_prompt: "Use $prove-it-works to run the cheapest honest check of this change and report exactly what executed."
-
-policy:
-  allow_implicit_invocation: false

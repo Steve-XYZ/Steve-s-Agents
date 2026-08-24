@@ -39,9 +39,10 @@ The expected SDK is `10.0.201`. Before a restore that needs the private GitHub p
 - Draw operations follow draw/schedule timezone; Admin reporting and display follow configured Admin timezone.
 - Cashier and other money flows: the invariant lives in a Core service. Endpoints orchestrate; they do not own balances, stamps, or transitions.
 - Distinguish capability (`canCancel`, eligibility, entitlement) from performing the provider or ledger side effect. They are not the same type and not the same call.
-- Every setting a service reads must exist in that service's deploy configuration (`deploy/compose.tenant.yml` or equivalent). Admin, API, and Worker are separate.
-- A catalogue, seed, or allow-list guard is only a guard if a test goes red on the case it claims to catch.
-- Do not leave unused confirmation, cancellation, actor, or stamp fields on a new money path.
+- When adding or overriding a deploy-time setting, update every service that reads it (`deploy/compose.tenant.yml` or equivalent). Admin, API, and Worker are separate.
+- Before changing a shared setting or default, inspect every reader and creation path, including regular, guest, SSO, and legacy flows; prove both target and non-target tenant behavior.
+- Migration and backfill eligibility must match runtime eligibility and be tested against representative legacy rows.
+- Treat provider templates, template IDs, and notification payloads as external contracts when changing tenant-specific content.
 
 ## Review Rules
 

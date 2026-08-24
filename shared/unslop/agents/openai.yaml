@@ -1,6 +1,6 @@
 interface:
   display_name: "Unslop"
-  short_description: "Rewrite PR and review prose without LLM filler"
+  short_description: "Rewrite user-facing prose without LLM filler"
   default_prompt: "Use $unslop to rewrite this prose so it is specific, active, and free of filler."
 
 policy:

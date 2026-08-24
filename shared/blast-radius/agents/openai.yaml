@@ -1,7 +1,0 @@
-interface:
-  display_name: "Blast Radius"
-  short_description: "List every surface a change must touch"
-  default_prompt: "Use $blast-radius to list the services, contracts, and deploy files this change must touch or keep aligned."
-
-policy:
-  allow_implicit_invocation: false
