@@ -14,6 +14,28 @@ Personal agent guidance shared across development machines.
 - `scripts/install-agent-links.sh`: creates or repairs this machine's guidance and skill symlinks.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
 
+## Delivery loop
+
+For a defined ticket, one harness runs the ticket end to end. Codex is the
+default; Claude Code is the same loop when that session is the one in use.
+Do not split a ticket across both.
+
+`deliver-ticket` is the entry:
+
+1. map concrete callers, data paths, configuration, and consumers before choosing a design;
+2. grill the mapped behavior, invariants, failure cases, and unresolved decisions;
+3. implement the smallest vertical change, with a test of the invariant when one exists;
+4. prove the target behavior and any material behavior that must remain unchanged;
+5. perform a cold self-review, compare the final diff with the original map, and mark missing evidence `UNPROVEN`;
+6. apply the shared writing guidance to substantial user-facing prose.
+
+`diagnosing-bugs`, `shape-feature`, `code-review`, and `triage-review` stay
+the entry points for those jobs. The map, grill, and proof procedures are
+supporting references inside `deliver-ticket`, so they do not compete for
+automatic skill selection. `engineering-judgment` is loaded by the grill.
+
+After linking new skills, restart the CLI so it rereads `SKILL.md`.
+
 ## Canonical Installation
 
 The same shape applies on every machine; only the clone path, the reference
@@ -96,8 +118,9 @@ ls -l ~/.claude/skills ~/.agents/skills
 
 Skills are read at CLI start-up, so restart Claude Code or Codex after linking.
 A skill whose `agents/openai.yaml` sets `allow_implicit_invocation: false`
-(currently `engineering-judgment`) will not appear in Codex's skill list; it is
-still reachable when named explicitly.
+(currently `engineering-judgment` and `unslop`) will not appear in Codex's
+skill list. Claude also keeps `unslop` manual through
+`disable-model-invocation: true` in its frontmatter.
 
 ## Worktree Guidance
 

@@ -25,6 +25,7 @@ Inspect lockfiles before selecting the package manager, then prefer existing scr
 - Prefer existing MUI, Redux, service, and Playwright patterns over new abstractions.
 - Do not edit generated files manually unless intentionally resolving tool-output drift; regenerate or verify afterward.
 - For player-visible flows, cover relevant loading, success, failure, cancellation, refresh, and retry states.
+- Treat API capability flags (`canCancel`, eligibility, method entitlement) as display and enablement only. Performing the action is a separate call with its own failure path.
 
 ## Review Rules
 

@@ -33,6 +33,7 @@ The expected SDK is `10.0.201`.
 - Schema changes require migration `.cs`, `.Designer.cs`, and model snapshot alignment.
 - Do not edit generated migrations or snapshots manually unless intentionally resolving model drift; verify with EF commands afterward.
 - Check concurrent updates, duplicate transitions, N+1 queries, unbounded queries, and indexes when relevant.
+- When adding or overriding a deploy-time setting, update every service that reads it; Admin, API, and Worker are separate.
 - Validate provider-specific behavior against local MariaDB when it materially affects the change: use the WSL `docker` CLI with container `mariadb-mysqldb` and database `lotto_propagator`.
 
 ## Review Rules

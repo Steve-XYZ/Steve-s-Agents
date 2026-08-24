@@ -37,6 +37,12 @@ The expected SDK is `10.0.201`. Before a restore that needs the private GitHub p
 - Do not edit generated migrations or snapshots manually unless intentionally resolving model drift; verify with EF commands afterward.
 - Use relational tests for SQL-sensitive behavior and MySQL/MariaDB when provider behavior matters.
 - Draw operations follow draw/schedule timezone; Admin reporting and display follow configured Admin timezone.
+- Cashier and other money flows: the invariant lives in a Core service. Endpoints orchestrate; they do not own balances, stamps, or transitions.
+- Distinguish capability (`canCancel`, eligibility, entitlement) from performing the provider or ledger side effect. They are not the same type and not the same call.
+- When adding or overriding a deploy-time setting, update every service that reads it (`deploy/compose.tenant.yml` or equivalent). Admin, API, and Worker are separate.
+- Before changing a shared setting or default, inspect every reader and creation path, including regular, guest, SSO, and legacy flows; prove both target and non-target tenant behavior.
+- Migration and backfill eligibility must match runtime eligibility and be tested against representative legacy rows.
+- Treat provider templates, template IDs, and notification payloads as external contracts when changing tenant-specific content.
 
 ## Review Rules
 
