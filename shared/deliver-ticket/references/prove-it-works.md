@@ -2,7 +2,7 @@
 
 Run the cheapest check that can go red on the behavior the ticket requires. Prove the requested change and the material behavior that must remain unchanged.
 
-For changed C#, JavaScript, or TypeScript functions, follow [local-complexity](local-complexity.md). Use repository-native complexity rules when they exist; otherwise use its local fallback without modifying the target repository.
+For changed C#, JavaScript, or TypeScript functions, follow [local-complexity](local-complexity.md). Run repository-native complexity rules and use its local fallback only for dimensions those rules do not cover, without modifying the target repository.
 
 Prefer, in order:
 

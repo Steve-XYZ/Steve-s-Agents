@@ -1,4 +1,5 @@
 is_global = true
+# Orders this file against other global configs; .editorconfig and NoWarn still win.
 global_level = 999
 
 # CA1502: Avoid excessive cyclomatic complexity.

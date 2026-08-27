@@ -4,40 +4,68 @@ Use complexity as local delivery evidence, not as permission to change repositor
 
 ## Select the check
 
-Inspect the repository's analyzer or linter configuration and established commands.
+Inspect the repository's analyzer or linter configuration and established commands. Track cyclomatic complexity, cognitive complexity, and nesting depth as separate dimensions.
 
-- When it already enforces cyclomatic complexity, cognitive complexity, or nesting depth, run that check through the repository's affected build or lint command. Its configured thresholds are authoritative.
-- Otherwise, use the local fallback below only when the required SDK or installed linter is already available. Do not install a tool or modify the repository to make the fallback work. Mark the complexity path `UNPROVEN` when neither route is available.
+- Run every repository-native dimension through the affected build or lint command. Its configured metric and threshold are authoritative for that dimension.
+- Use the local fallback only for a dimension the repository does not enforce: C# can fill cyclomatic complexity; JavaScript and TypeScript can fill cyclomatic complexity and nesting depth. Cognitive complexity is complementary and does not disable either fallback dimension.
+- Use a fallback only when the required SDK or installed linter is already available. Do not install a tool or modify the repository to make it work. Mark each unavailable dimension `UNPROVEN`.
 
-## Capture the baseline
+## Check final code first
 
-Before editing, run the selected check against the mapped files or affected project and retain diagnostics for the functions that may change. If editing already started, analyze the verified task base in an isolated worktree only when it represents the actual pre-change state; do not reset, stash, or overwrite existing work.
+Run the selected checks on the final changed functions. If none violates its threshold, stop; no baseline pass is needed.
+
+Only when a final function violates a threshold, run the same metric and threshold against its actual pre-change version. Use the verified task base in an isolated worktree when it represents that state. If the function was already dirty before delivery or its pre-change state will otherwise be unrecoverable, retain its source or diagnostic before editing. Do not reset, stash, or overwrite existing work. Mark the comparison `UNPROVEN` if the actual pre-change function cannot be recovered.
 
 Compare functions by file and symbol, accounting for an evident rename or move. A repository-wide warning count is not a baseline because one removed warning can hide one added warning.
 
 ## Local fallback
 
-For C#, run the affected-project build before and after the edit. Add `--no-incremental` to the pre-change build unless the established command already guarantees compilation, then append this property, resolving the targets path from this reference directory:
+For a missing C# cyclomatic check, run the affected-project build below. Resolve the targets path from this reference directory. Keep `--no-incremental` on every diagnostic pass so Roslyn must emit fresh analyzer diagnostics.
 
-```text
--p:CustomAfterMicrosoftCommonTargets=<deliver-ticket>/references/complexity.targets
+```sh
+dotnet build <project> --no-incremental \
+  -p:EnableNETAnalyzers=true \
+  -p:RunAnalyzersDuringBuild=true \
+  -p:CustomAfterMicrosoftCommonTargets=<deliver-ticket>/references/complexity.targets
 ```
 
 The injected Roslyn `CA1502` check uses a cyclomatic-complexity limit of 25 and keeps that diagnostic at warning severity even when the project treats other warnings as errors. It changes only that command invocation and does not write project configuration. Do not replace an existing `CustomAfterMicrosoftCommonTargets` value; if the build already uses that extension point, mark the fallback `UNPROVEN`.
 
-For JavaScript or TypeScript, invoke the repository's installed ESLint binary on the changed files with these command-line rules:
+Before accepting a clean C# result, verify the evaluated build includes this reference directory's `complexity.globalconfig` as an `EditorConfigFiles` item, `CodeMetricsConfig.txt` as an `AdditionalFiles` item, and the SDK's .NET analyzer assembly. When the installed MSBuild supports evaluation queries, obtain that evidence without another build:
+
+```sh
+dotnet msbuild <project> --nologo \
+  -p:EnableNETAnalyzers=true \
+  -p:RunAnalyzersDuringBuild=true \
+  -p:CustomAfterMicrosoftCommonTargets=<deliver-ticket>/references/complexity.targets \
+  -getProperty:NoWarn,CodeAnalysisRuleSet \
+  -getItem:EditorConfigFiles,AdditionalFiles,Analyzer
+```
+
+Inspect the evaluated `NoWarn`, applicable `.editorconfig` files, and any ruleset for an effective `CA1502` suppression. `global_level = 999` wins only against other global configs; a repository `.editorconfig` or compiler `NoWarn` can still suppress it. If the analyzer inputs or absence of suppression cannot be established, mark cyclomatic complexity `UNPROVEN` even when the build succeeds.
+
+For missing JavaScript or TypeScript dimensions, invoke the repository's installed ESLint binary on the changed files with the applicable command-line rule:
 
 ```sh
 ./node_modules/.bin/eslint <changed-files> \
-  --rule 'complexity:["warn",{"max":20,"variant":"modified"}]' \
+  --rule 'complexity:["warn",{"max":20,"variant":"modified"}]'
+
+./node_modules/.bin/eslint <changed-files> \
   --rule 'max-depth:["warn",{"max":4}]'
 ```
 
-Do not use a package runner that can download ESLint. The fallback requires an existing compatible ESLint installation.
+Combine the rules when both dimensions are missing. If the installed ESLint rejects the `variant` option, rerun cyclomatic complexity with the compatible classic form below and use that same form for any baseline comparison. Report that the classic metric was used. If one rule remains unusable, mark only that dimension `UNPROVEN` and still run the other.
+
+```sh
+./node_modules/.bin/eslint <changed-files> \
+  --rule 'complexity:["warn",20]'
+```
+
+Do not use a package runner that can download or upgrade ESLint.
 
 ## Decide the result
 
-Compare each touched function with its pre-change result under the same rule and threshold. Proof fails when:
+For each final violation, compare the touched function with its pre-change result under the same rule, variant, and threshold. Proof fails when:
 
 - a new function exceeds a threshold;
 - a previously compliant function crosses a threshold;
