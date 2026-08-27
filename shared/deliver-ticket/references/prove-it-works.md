@@ -2,7 +2,7 @@
 
 Run the cheapest check that can go red on the behavior the ticket requires. Prove the requested change and the material behavior that must remain unchanged.
 
-When the repository configures complexity diagnostics, run them through the existing affected build or lint command. During a warning-only rollout, compare every touched function by symbol with its pre-change version: capture its diagnostics before editing, or analyze the verified task base in an isolated worktree when that represents the pre-change state. A repository-wide warning count is not enough. A new violation, increased reported complexity in a previously violating touched function, or broad suppression fails proof. Refactor along an existing responsibility boundary and rerun the affected behavior tests; do not create pass-through helpers only to lower the metric. Leave untouched legacy violations out of scope. If an inherently branch-heavy decision table or state machine remains readable, require focused tests and a narrow documented suppression, then report the exception.
+For changed C#, JavaScript, or TypeScript functions, follow [local-complexity](local-complexity.md). Use repository-native complexity rules when they exist; otherwise use its local fallback without modifying the target repository.
 
 Prefer, in order:
 

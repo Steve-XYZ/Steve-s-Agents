@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);CA1502</WarningsNotAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)complexity.globalconfig" />
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)CodeMetricsConfig.txt" />
+  </ItemGroup>
+</Project>

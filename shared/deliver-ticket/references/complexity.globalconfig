@@ -1,0 +1,5 @@
+is_global = true
+global_level = 999
+
+# CA1502: Avoid excessive cyclomatic complexity.
+dotnet_diagnostic.CA1502.severity = warning

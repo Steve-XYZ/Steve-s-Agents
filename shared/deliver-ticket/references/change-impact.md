@@ -14,6 +14,8 @@ Start from the requested behavioral change. Find its owner and analogous path, t
 
 Use symbol search, text search, repository structure, tests, and configuration. Follow behavior across names when a shared setting, database column, event, JSON field, or external identifier connects it. A search that finds no relevant dependency is evidence when its query and scope are clear.
 
+When the mapped change touches C#, JavaScript, or TypeScript functions, read [local-complexity](local-complexity.md) and capture the applicable pre-change complexity evidence before editing.
+
 Record only:
 
 - **Changes:** exact file, symbol, contract, or data path and the intended behavior.
