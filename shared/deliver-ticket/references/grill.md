@@ -7,6 +7,7 @@ Pressure-test the mapped behavior before choosing the implementation. Apply the 
 - Which states and transitions exist, and which combinations must remain impossible?
 - What happens to existing data, defaults, and in-flight work?
 - What remains after failure, retry, duplicate delivery, concurrency, or partial success?
+- Which effects are primary and which are ancillary? For each reachable failure, is it transient and retryable, permanent configuration or business failure, an idempotent conflict, or still unknown; should the primary effect commit, roll back, or remain visibly partial?
 - Which deploy process, tenant, environment, external provider, or consumer can observe the change?
 - Which target, negative, and preserved cases can prove the result?
 - Does every proposed field, setting, branch, or abstraction have a demonstrated caller or contract?

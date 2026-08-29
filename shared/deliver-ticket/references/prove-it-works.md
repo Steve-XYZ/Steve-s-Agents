@@ -2,7 +2,7 @@
 
 Run the cheapest check that can go red on the behavior the ticket requires. Prove the requested change and the material behavior that must remain unchanged.
 
-For changed C#, JavaScript, or TypeScript functions, follow [local-complexity](local-complexity.md). Run repository-native complexity rules and use its local fallback only for dimensions those rules do not cover, without modifying the target repository.
+Use repository-native complexity rules when the normal affected build or lint command already enforces them. Read [local-complexity](local-complexity.md) and consider its fallback only when the final diff adds or reshapes material branching, nesting, state selection, retry, or failure coordination, or when a native diagnostic or reviewer has identified a concrete complexity risk. Routine changed functions do not justify a separate whole-project complexity pass.
 
 Prefer, in order:
 
@@ -16,6 +16,8 @@ Do not disturb a stack the user already has running. Use a throwaway port, datab
 
 For money, durable state, retries, migrations, concurrency, or partial failure, test the applicable failure class. For configuration or tenant-specific behavior, prove both the intended target and a non-target/default path. For an API or external contract, observe the response or serialized artifact rather than inferring it from source code.
 
-Assertions must distinguish expected from actual state. A successful restore, green build, clean diff, or test that cannot fail for the changed behavior is not proof of the ticket.
+For a changed shared state or predicate, confirm that at least one test executes the changed branch and would fail if the old behavior returned. Inspect every test project and fixture that seeds the affected state; a green changed-test project does not cover stale integration fixtures elsewhere.
+
+Assertions must distinguish expected from actual state. A successful restore, green build, clean diff, or test that cannot fail for the changed behavior is not proof of the ticket. A relevant failure blocks completion unless the same command fails on the verified base for the same reason. Record the head/base delta; do not turn recurring baseline failures into a permanent exemption. Fix or explicitly quarantine them with an owner and follow-up outside the ticket when necessary.
 
 Report the exact command, filter or request, observed result, and any path that remains unverified. Mark missing material evidence `UNPROVEN`.

@@ -7,7 +7,7 @@ description: Deliver well-defined engineering work end to end. Use when the user
 
 Use the ticket, accepted feature brief, or explicit user requirements as the source of truth for intended behavior. User corrections, repository instructions, and verified repository facts still apply. Do not rewrite clear requirements into another specification.
 
-Keep the ticket in one Codex or Claude Code session. Do not hand it to another harness mid-delivery.
+Keep investigation and implementation in one Codex or Claude Code harness. After external review arrives, use `triage-review` in a fresh session of that same harness so the review is not evaluated through an exhausted delivery context. Do not switch harnesses mid-ticket.
 
 ## 1. Understand
 
@@ -28,12 +28,15 @@ Before choosing an implementation, read [change-impact](references/change-impact
 
 Then read [grill](references/grill.md) and pressure-test the behavior found in the map. If a product or architectural decision remains unresolved, stop and ask with a recommendation when evidence supports one. Do not implement around the gap.
 
+If the map contains multiple independently deliverable state machines or durable or external side-effect clusters, stop before editing and recommend a split. Keep them together only when one acceptance criterion or invariant requires the combined change to be atomic; record that reason in the brief.
+
 Keep one compact brief in the conversation containing only what applies:
 
 - goal and acceptance criteria,
 - existing pattern,
 - locations that change and behavior that must remain unchanged,
 - invariant, owner, states, writers, or partial-failure boundary,
+- scope decision when more than one behavioral cluster was inspected,
 - validation approach,
 - material risks or blockers.
 
@@ -53,6 +56,8 @@ Read [prove-it-works](references/prove-it-works.md) and follow it. Prove both th
 
 Never claim success from inspection alone. A green build is not proof. State exactly what ran and what remains unverified.
 
+If a required acceptance criterion remains materially `UNPROVEN`, do not describe the change as ready, publish it as non-draft, or request review. Obtain the missing evidence, keep the change draft, or ask the user to accept the named risk explicitly. An unavailable optional metric is not material evidence by itself.
+
 ## 5. Cold self-review
 
 Re-read the ticket, final diff, and test results without using the implementation rationale as proof. Derive what changed from the diff itself.
@@ -63,8 +68,8 @@ Confirm only what applies:
 
 1. Every acceptance criterion has an observable implementation and proof.
 2. The owning component enforces each invariant; callers do not duplicate or bypass it.
-3. Existing callers, stored data, defaults, deploy configuration, and downstream consumers preserve the intended behavior.
-4. Failure, retry, concurrency, and partial success have defined outcomes when relevant.
+3. Every writer and reader of a changed shared fact uses compatible states and predicates, including stored data, defaults, legacy rows, migrations, backfills, deploy configuration, and downstream consumers.
+4. Primary and ancillary effects have defined outcomes for permanent failure, transient failure, retry, concurrency, and partial success when relevant.
 5. Tests can fail for the target behavior and at least one material preserved or negative case.
 6. The diff contains no dead fields, speculative compatibility, or unrequested cleanup.
 

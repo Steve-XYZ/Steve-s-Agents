@@ -16,25 +16,38 @@ Personal agent guidance shared across development machines.
 
 ## Delivery loop
 
-For a defined ticket, one harness runs the ticket end to end. Codex is the
-default; Claude Code is the same loop when that session is the one in use.
-Do not split a ticket across both.
+For a defined ticket, one harness runs investigation and implementation. Codex
+is the default; Claude Code is the same loop when that session is the one in
+use. Do not split a ticket across both. After external review, start
+`triage-review` in a fresh session of the same harness.
 
 `deliver-ticket` is the entry:
 
-1. map concrete callers, data paths, configuration, and consumers before choosing a design;
-2. grill the mapped behavior, invariants, failure cases, and unresolved decisions;
+1. map concrete callers, data paths, configuration, consumers, and independent behavioral clusters before choosing a design;
+2. split independently deliverable state machines or side-effect clusters, then grill shared-state provenance, invariants, failure classes, and unresolved decisions;
 3. implement the smallest vertical change, with a test of the invariant when one exists;
 4. prove the target behavior and any material behavior that must remain unchanged;
-5. perform a cold self-review, compare the final diff with the original map, and mark missing evidence `UNPROVEN`;
+5. perform a cold self-review, compare the final diff with the original map, and keep the change draft while required evidence is materially `UNPROVEN`;
 6. apply the shared writing guidance to substantial user-facing prose.
 
 `diagnosing-bugs`, `shape-feature`, `code-review`, and `triage-review` stay
 the entry points for those jobs. The map, grill, and proof procedures are
 supporting references inside `deliver-ticket`, so they do not compete for
 automatic skill selection. `engineering-judgment` is loaded by the grill.
+`code-review` loads its adversarial reference only for shared state, money,
+durable effects, providers, concurrency, migrations, partial failure, or broad
+multi-cluster changes.
 
 After linking new skills, restart the CLI so it rereads `SKILL.md`.
+
+## Workflow change evaluation
+
+Before adopting a material workflow rule broadly, replay a fixed set of
+historical cases through the same model and harness: a clean control, a known
+escape, an oversized or multi-cluster change, and a representative pre-change
+control. Score known-defect recall, invalid findings, elapsed time, and output
+size. Prefer the smallest rule that improves the target cases without adding
+noise to the clean control.
 
 ## Canonical Installation
 

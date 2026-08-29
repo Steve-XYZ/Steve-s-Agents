@@ -14,13 +14,18 @@ Start from the requested behavioral change. Find its owner and analogous path, t
 
 Use symbol search, text search, repository structure, tests, and configuration. Follow behavior across names when a shared setting, database column, event, JSON field, or external identifier connects it. A search that finds no relevant dependency is evidence when its query and scope are clear.
 
-When mapped C#, JavaScript, or TypeScript work will edit a function whose actual pre-edit source cannot be recovered later—typically because it already has uncommitted changes—read [local-complexity](local-complexity.md) and retain that function's pre-edit source or diagnostic outside the target repository. Otherwise defer complexity evidence to Prove.
+Partition the map by behavioral cluster. A cluster has its own state machine, invariant owner, or durable or external side-effect boundary and can be delivered and proved independently. When more than one independent cluster is required, stop before editing and recommend separate tickets or pull requests. Keep the work together only when splitting would violate one acceptance criterion or invariant; record the coupling evidence.
+
+For a changed shared flag, status, enum, predicate, or serialized fact, build a compact provenance map: owner, every writer, every reader or action surface, initial and null/default states, legacy rows, migration or backfill, and every test project or fixture that creates the state. Compare the predicates used by guards, queues, commands, user interfaces, and reports; matching names do not prove matching behavior.
+
+Only when the map identifies material function-level complexity risk and the actual pre-edit source cannot be recovered later—typically because the function already has uncommitted changes—read [local-complexity](local-complexity.md) and retain that function's pre-edit source or diagnostic outside the target repository. Otherwise defer any complexity decision to Prove.
 
 Record only:
 
 - **Changes:** exact file, symbol, contract, or data path and the intended behavior.
 - **Must remain unchanged:** concrete callers or consumers and their expected behavior.
 - **Checked clear:** plausible locations inspected and the evidence that excluded them.
+- **Scope:** one coherent cluster, or the invariant that requires multiple clusters to move together.
 
 Do not add a location merely because it is adjacent. If the change is demonstrably local, has no shared state, configuration, contract, persistence, or downstream consumer, record `impact: local; no material fan-out` and continue.
 

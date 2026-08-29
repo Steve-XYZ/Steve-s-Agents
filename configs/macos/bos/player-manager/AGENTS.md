@@ -24,6 +24,14 @@ After changing branches in a non-interactive or compound shell command, source t
 - Focused tests: `dotnet test tests/PlayerManager.Tests/PlayerManager.Tests.csproj --no-restore --filter <Filter>`
 - Diff hygiene: `git diff --check`
 
+## CI and Merge
+
+- Protect the exact `refs/heads/wp/develop` ref in the GitHub ruleset; a rule for `refs/heads/develop` does not cover it.
+- Treat application tests as blocking. Do not use `continue-on-error` for them. When a failure may be preexisting, run the same command at the exact head and base and compare the reason.
+- Fix recurring baseline failures or quarantine each one explicitly with an owner and follow-up. Do not use a blanket baseline exemption.
+- Keep artifact retention within the repository maximum of 5 days. Make artifact upload non-blocking or separate so a quota failure does not hide the build or test result.
+- Before marking a PR ready to merge, require at least one independent approval on the current head after the latest push and resolve all material threads. Author fixes or comments do not clear an earlier `CHANGES_REQUESTED` review.
+
 ## Architecture and Data
 
 - Keep domain and report logic in Core services rather than controllers, endpoints, Razor components, or workers.
@@ -39,9 +47,11 @@ After changing branches in a non-interactive or compound shell command, source t
 - Cashier and other money flows: the invariant lives in a Core service. Endpoints orchestrate; they do not own balances, stamps, or transitions.
 - Distinguish capability (`canCancel`, eligibility, entitlement) from performing the provider or ledger side effect. They are not the same type and not the same call.
 - When adding or overriding a deploy-time setting, update every service that reads it (`deploy/compose.tenant.yml` or equivalent). Admin, API, and Worker are separate.
-- Before changing a shared setting or default, inspect every reader and creation path, including regular, guest, SSO, and legacy flows; prove both target and non-target tenant behavior.
+- Before changing a shared setting or default, inspect every reader and creation path, including direct-auth, guest, SSO, and legacy flows; prove both target and non-target tenant behavior.
+- Before changing a shared flag, status, enum, or eligibility predicate, inspect every writer and action surface plus initial, null/default, legacy, migration, backfill, and test-fixture states. Keep guards, queues, commands, Admin actions, reports, and stored-data handling on one compatible predicate.
 - Migration and backfill eligibility must match runtime eligibility and be tested against representative legacy rows.
 - Treat provider templates, template IDs, and notification payloads as external contracts when changing tenant-specific content.
+- For a bonus, notification, audit, provider, or projection effect attached to a money operation, separate the primary and ancillary effects. Classify permanent, transient, idempotent-conflict, and unknown failures and decide explicitly whether the primary operation commits, rolls back, retries, or remains visibly partial.
 
 ## Review Rules
 

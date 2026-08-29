@@ -10,6 +10,8 @@ Compare candidate changes by what callers must know, where policy is duplicated,
 
 For shared contracts, schemas, or messages, inspect actual producers and consumers, compatibility expectations, deployment order, rollback behavior, and any generated artifacts. Preserve existing contracts unless the requirement explicitly changes them.
 
+For a shared flag, status, enum, or eligibility predicate, inspect every writer and reader plus initial, null/default, legacy, migration, backfill, and test-fixture states. Compare the actual predicates used at each action surface. A new write-side rule does not repair already stored rows or a reader that independently reconstructs the old rule.
+
 ## Create an honest feedback path
 
 Use the narrowest existing test, public boundary, integration path, replay, fixture, or captured payload that can demonstrate the affected behavior. For a bug, observe the signal fail before the fix when practical and safe.
@@ -21,6 +23,8 @@ Characterization records current behavior; it does not prove that behavior is co
 ## Walk the failure timeline
 
 List durable and external side effects in execution order. Ask what remains visible if execution stops before or after each one, and what happens when the operation is retried, duplicated, delayed, reordered, or replayed. Use actual platform guarantees rather than assumed exactly-once behavior.
+
+Separate the primary effect from ancillary effects such as bonuses, notifications, audit enrichment, provider callbacks, or projections. Classify each reachable ancillary failure as transient and retryable, permanent configuration or business failure, idempotent conflict, or unknown. Decide explicitly whether the primary effect commits, rolls back, retries, or remains visibly partial for each class; do not retry a permanent ancillary failure forever by rolling back successful primary work.
 
 Keep updates in one transaction when they protect one invariant owned by one durable boundary. Across boundaries, define only the retry, idempotency, compensation, reconciliation, or partial-failure behavior needed for reachable failures. Put uniqueness and idempotency at the durable owner, not only in process memory. Make incomplete or degraded outcomes visible instead of presenting them as complete success.
 
