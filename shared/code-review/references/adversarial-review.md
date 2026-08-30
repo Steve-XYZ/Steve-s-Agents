@@ -21,7 +21,7 @@ Compare the actual predicates. Similar names do not establish equivalent eligibi
 
 List durable and external effects in execution order. Separate the primary effect from ancillary effects such as bonuses, notifications, audit enrichment, provider callbacks, or projections.
 
-For each reachable failure, classify it as transient and retryable, permanent configuration or business failure, idempotent conflict, or unknown. Determine whether the primary effect commits, rolls back, retries, or remains visibly partial. Check duplicate delivery, concurrency, reordering, and replay when the platform can produce them.
+For each reachable failure, classify it as transient, permanent, idempotent conflict, or unknown. Record retryability separately. Determine whether the primary effect commits, rolls back, retries, or remains visibly partial. Check duplicate delivery, concurrency, reordering, and replay when the platform can produce them.
 
 ## Make findings concrete
 

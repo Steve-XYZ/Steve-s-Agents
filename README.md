@@ -5,7 +5,7 @@ Personal agent guidance shared across development machines.
 ## Contents
 
 - `shared/global-guidance/`: global engineering defaults for Codex and Claude.
-- `shared/global-guidance/WRITING.md`: prose substitutions, read on demand for anything longer than a short report.
+- `shared/global-guidance/WRITING.md`: prose guidance, read before every user-facing response.
 - `shared/`: reusable workflow skills.
 - `dotnet/`: .NET and ASP.NET Core domain skills.
 - `configs/macos/`: reference copies of the local macOS configuration, including BOS project guidance.

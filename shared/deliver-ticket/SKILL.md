@@ -77,7 +77,7 @@ Mark material claims without executable evidence as `UNPROVEN`. Do not create a 
 
 ## 6. Finish
 
-For a pull request description, review comment, design explanation, or other substantial prose, read [WRITING.md](../global-guidance/WRITING.md) before responding.
+Read [WRITING.md](../global-guidance/WRITING.md) before every user-facing response and apply it during the original draft.
 
 Report:
 
