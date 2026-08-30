@@ -1,0 +1,2 @@
+# Local Steve-s-Agents complexity policy.
+CA1502(Method): 25

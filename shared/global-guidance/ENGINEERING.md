@@ -24,4 +24,5 @@
 - Name the mechanism, the number, or the file rather than the feeling it produces. Not "the API is cleaner" but "callers no longer pass the connection".
 - If a claim would read the same in another project's report, it says nothing about this one. Cut it. Facts and measurements are exempt.
 - State a position and its reasoning rather than listing balanced options. When the evidence genuinely does not separate them, say so and say what would.
-- Apply these rules to all user-facing prose, including normal conversation, explanations, design discussions, status updates, reviews, and pull request text. Command results, diffs, file lists, and checklists stay terse. Before substantial prose, read `~/.agent-guidance/WRITING.md` without announcing the editing pass.
+- Apply these rules while drafting all user-facing prose, including normal conversation, explanations, design discussions, status updates, reviews, and pull request text. Command results, diffs, file lists, and checklists stay terse.
+- Before drafting any user-facing prose, read `~/.agent-guidance/WRITING.md` without announcing the editing pass.

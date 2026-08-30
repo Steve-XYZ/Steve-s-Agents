@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Review"
   short_description: "Evidence-based review against requirements"
-  default_prompt: "Use $code-review to review this PR against its ticket and report findings by severity."
+  default_prompt: "Use $code-review to review the current PR head against its ticket, trace reachable failure paths, and report compact evidence-backed findings by severity."

@@ -24,7 +24,7 @@ Start with:
 3. changed tests,
 4. surrounding implementation only as needed.
 
-Check whether the scope matches the requirement without missing behavior or unrelated expansion. Follow call paths and end-to-end wiring when the changed behavior depends on code outside the diff.
+Partition the diff into behavioral clusters, then check whether the scope matches the requirement without missing behavior or unrelated expansion. Follow call paths and end-to-end wiring when the changed behavior depends on code outside the diff. If independent clusters make the review too broad to cover with confidence, identify the uncovered cluster and recommend a split rather than implying complete coverage.
 
 ## 3. Review in passes
 
@@ -40,28 +40,29 @@ Check functional correctness, failure behavior, repository architecture, contrac
 
 Only when relevant, inspect authorization, sensitive data, money calculations, idempotency, concurrency, shared contracts, migrations and rollback, destructive data changes, external providers, and performance.
 
+When the change touches money or durable state, a shared flag, status, predicate, or contract, migrations, provider effects, concurrency, retries, partial failure, or several behavioral clusters, read [adversarial review](references/adversarial-review.md) and apply only its relevant lanes.
+
 ## 4. Verify
 
-Run the narrowest reliable build, test, lint, format, migration, or runtime checks that can prove or disprove material findings. Distinguish changed-code failures from unrelated environment or baseline failures.
+Run the narrowest reliable build, test, lint, format, migration, or runtime checks that can prove or disprove material findings. Confirm that tests execute the changed branch and would fail for the behavior being challenged. Distinguish changed-code failures from unrelated environment or baseline failures with an exact head/base comparison when that distinction affects the verdict.
 
 Never present unexecuted validation as completed evidence.
 
 ## 5. Report findings
 
-Start with a one-line verdict: approve, comment, or request changes. List findings first, ordered by severity:
+Start with a one-line verdict: approve, comment, or request changes. Request changes when a blocker remains, comment when only should-fix findings remain, and approve when only nits or no findings remain unless repository rules require another disposition. List findings first, ordered by severity:
 
 - Blocker: cannot merge because of a demonstrated build failure, required-behavior defect, security exposure, or data risk.
 - Should fix: likely defect, incomplete behavior, unsafe assumption, or material missing validation.
 - Nit/follow-up: optional cleanup or non-blocking improvement.
 
-For every finding include:
-
-- `file:line`,
-- concrete evidence and problem,
-- impact,
-- recommended correction or validation path.
+Write each finding compactly as `[category] file:line — mechanism; reachable trigger and wrong observable outcome; impact. Fix: correction or validation path.` Keep blocker and should-fix findings visible. Collapse optional nits in a disclosure block when the review surface supports it.
 
 Report only evidence-backed defects, regressions, risks, broken requirements, or repository-rule violations. Distinguish proven defects from plausible risks needing validation. Do not report cosmetic preferences unless they violate an explicit local rule.
+
+Do not repeat a full finding in both the review body and an inline comment. When publishing inline findings, use the body for the verdict, severity counts, validation, and residual risk.
+
+On a repeated review, account for prior findings as fixed, withdrawn, still open, outdated, or newly introduced. Re-read the current diff rather than limiting the pass to the author's responses.
 
 If no findings remain, say so directly and identify any validation gap or residual risk. End with validation performed and the final verdict.
 

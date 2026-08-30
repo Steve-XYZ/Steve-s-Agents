@@ -1,12 +1,14 @@
 # Writing Prose
 
-Read this when producing prose a person will read closely: a substantial
-explanation or design discussion, a pull request description, a README, a
-design note, or review feedback. The `## Writing` rules in `ENGINEERING.md`
-already cover short conversation and status updates. This file adds the
-substitutions worth applying deliberately. It is not a checklist to run over
-finished text, and none of it outranks being correct, in scope, and
-evidence-based.
+Read this before producing user-facing prose, including short conversation,
+explanations, status updates, pull request descriptions, design notes, and
+review feedback. The `## Writing` rules in `ENGINEERING.md` summarize the same
+direction; this file adds substitutions worth applying deliberately. It is not
+a checklist to run over finished text, and none of it outranks being correct,
+in scope, and evidence-based.
+
+Apply the guidance while drafting the final response. Do not create an
+intermediate response and start a separate model pass solely to polish it.
 
 ## Cut what carries no information
 
