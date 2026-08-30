@@ -8,6 +8,9 @@ substitutions worth applying deliberately. It is not a checklist to run over
 finished text, and none of it outranks being correct, in scope, and
 evidence-based.
 
+Apply the guidance while drafting the final response. Do not create an
+intermediate response and start a separate model pass solely to polish it.
+
 ## Cut what carries no information
 
 Filler goes without replacement: "in order to" is "to", "due to the fact that"

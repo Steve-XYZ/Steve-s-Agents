@@ -1,12 +1,12 @@
 ---
 name: unslop
-description: Rewrite user-facing prose so it is specific, active, and free of LLM filler. Use only when the user invokes unslop or explicitly asks to rewrite prose. Do not auto-select for routine conversation, code, diffs, command output, or checklists.
+description: Polish user-facing prose while drafting a requested deliverable, or rewrite supplied prose so it is specific, active, and free of LLM filler. Use only when the user invokes unslop or explicitly asks for a rewrite. Do not auto-select for routine conversation, code, diffs, command output, or checklists.
 disable-model-invocation: true
 ---
 
 # Unslop
 
-Read [WRITING.md](../global-guidance/WRITING.md) and apply it to the supplied prose.
+Read [WRITING.md](../global-guidance/WRITING.md). When prose does not exist yet, apply it while drafting the final output in the current task. When the user supplies prose, rewrite it directly.
 
 Preserve:
 
