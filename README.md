@@ -28,7 +28,7 @@ use. Do not split a ticket across both. After external review, start
 3. implement the smallest vertical change, with a test of the invariant when one exists;
 4. prove the target behavior and any material behavior that must remain unchanged;
 5. perform a cold self-review, compare the final diff with the original map, and keep the change draft while required evidence is materially `UNPROVEN`;
-6. apply the shared writing guidance while drafting substantial user-facing prose.
+6. apply the shared writing guidance while drafting every user-facing response.
 
 `diagnosing-bugs`, `shape-feature`, `code-review`, and `triage-review` stay
 the entry points for those jobs. The map, grill, and proof procedures are
@@ -38,9 +38,9 @@ automatic skill selection. `engineering-judgment` is loaded by the grill.
 durable effects, providers, concurrency, migrations, partial failure, or broad
 multi-cluster changes.
 
-Writing guidance applies during the first draft. `unslop` remains explicit-only
-for supplied prose or a named prose deliverable; invoking it must not add a
-second workflow pass solely for polishing.
+Writing guidance applies during the first draft of every interaction. `unslop`
+allows implicit invocation in Codex and model invocation in Claude; it must not
+add a second workflow pass solely for polishing.
 
 After linking new skills, restart the CLI so it rereads `SKILL.md`.
 
@@ -135,9 +135,9 @@ ls -l ~/.claude/skills ~/.agents/skills
 
 Skills are read at CLI start-up, so restart Claude Code or Codex after linking.
 A skill whose `agents/openai.yaml` sets `allow_implicit_invocation: false`
-(currently `engineering-judgment` and `unslop`) will not appear in Codex's
-skill list. Claude also keeps `unslop` manual through
-`disable-model-invocation: true` in its frontmatter.
+(currently `engineering-judgment`) remains explicitly invokable but is not
+injected for implicit selection. `unslop` permits implicit or model invocation
+in both Codex and Claude.
 
 ## Worktree Guidance
 
