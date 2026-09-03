@@ -7,7 +7,7 @@ read the same files through symlinks; nothing here is harness-specific.
 
 - `shared/global-guidance/ENGINEERING.md`: global defaults, symlinked to `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md`.
 - `shared/`: workflow skills — `deliver-ticket`, `code-review`, `triage-review`, `diagnosing-bugs`, `shape-feature`, `unslop`.
-- `dotnet/aspnet-core/`: .NET web domain skill.
+- `dotnet/aspnet-core/`: the ASP.NET Core facts a model gets wrong from memory — target-framework and breaking changes, middleware order, Blazor render modes. Not a documentation summary.
 - `configs/macos/`, `configs/wsl/`: reference copies of each machine's local configuration, including the untracked BOS project guidance.
 - `scripts/install-agent-links.sh`: creates or repairs this machine's skill and guidance symlinks.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
