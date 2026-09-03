@@ -9,6 +9,17 @@ Use the ticket, accepted feature brief, or explicit user requirements as the sou
 
 Keep investigation and implementation in one Codex or Claude Code harness. After external review arrives, use `triage-review` in a fresh session of that same harness so the review is not evaluated through an exhausted delivery context. Do not switch harnesses mid-ticket.
 
+## 0. Orient
+
+Before reading the ticket, run one batch of commands so the rest of the workflow reasons from observed state rather than assumption:
+
+```sh
+git rev-parse --abbrev-ref HEAD && git status --short && git log --oneline -5
+git remote -v && git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null
+```
+
+Add the repository's own version and toolchain check when its `AGENTS.md` names one. Do not restate the output; use it. If the branch, base, or working tree does not match what the request assumes, stop and say so before editing.
+
 ## 1. Understand
 
 Read the ticket and relevant linked context. Inspect enough of the repository to identify:
@@ -20,7 +31,7 @@ Read the ticket and relevant linked context. Inspect enough of the repository to
 
 Investigate discoverable facts. Ask only about unresolved decisions that materially change the implementation. If a reported bug has no established cause, use `diagnosing-bugs` as the primary workflow.
 
-When the user supplies a repository, base, or branch, verify those live refs before editing. Do not silently continue from an unexpected branch, stale base, or conflicting remote branch.
+When the user supplies a repository, base, or branch, reconcile it against the orientation output above. Do not silently continue from an unexpected branch, stale base, or conflicting remote branch.
 
 ## 2. Map and brief
 
@@ -77,7 +88,7 @@ Mark material claims without executable evidence as `UNPROVEN`. Do not create a 
 
 ## 6. Finish
 
-Read [WRITING.md](../global-guidance/WRITING.md) before every user-facing response and apply it during the original draft.
+Invoke `unslop` if it has not already loaded in this session, and apply it during the original draft.
 
 Report:
 

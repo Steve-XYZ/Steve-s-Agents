@@ -19,10 +19,6 @@
 
 ## Writing
 
-- Prefer the plain word and the active voice. "utilize" is "use"; "queries are validated" is "the compiler validates queries".
-- Cut adverbs that prop up a weak verb. "runs quickly" is "is fast", or the measured number.
-- Name the mechanism, the number, or the file rather than the feeling it produces. Not "the API is cleaner" but "callers no longer pass the connection".
-- If a claim would read the same in another project's report, it says nothing about this one. Cut it. Facts and measurements are exempt.
-- State a position and its reasoning rather than listing balanced options. When the evidence genuinely does not separate them, say so and say what would.
-- Apply these rules while drafting all user-facing prose, including normal conversation, explanations, design discussions, status updates, reviews, and pull request text. Command results, diffs, file lists, and checklists stay terse.
-- Before drafting any user-facing prose, read `~/.agent-guidance/WRITING.md` without announcing the editing pass.
+- Lead with the finding. Name the mechanism, the file, the number, or the command; when the fact is not available, say so instead of reaching for an adjective.
+- Prefer the plain word and the active voice, state a position with its reasoning rather than a balanced menu, and cut any sentence that would read identically in another project's report.
+- Invoke the `unslop` skill before the first substantial user-facing response in a session — a report, review, PR description, design note, or explanation. Its rules then apply to every later response in that session. Do not re-read guidance files per response, and do not run a separate polishing pass over a finished draft.

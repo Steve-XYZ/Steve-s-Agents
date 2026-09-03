@@ -1,7 +1,7 @@
 interface:
   display_name: "Unslop"
-  short_description: "Polish every user-facing response"
-  default_prompt: "Use $unslop to make this response specific, active, and free of filler."
+  short_description: "Write prose worth reading"
+  default_prompt: "Use $unslop to write this so it is specific, active, and worth reading."
 
 policy:
   allow_implicit_invocation: true

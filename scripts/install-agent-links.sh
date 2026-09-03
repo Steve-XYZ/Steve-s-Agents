@@ -87,15 +87,9 @@ for spec in ".claude/CLAUDE.md" ".codex/AGENTS.md"; do
 	link "$guidance" "$target"
 done
 
-# On-demand guidance uses one neutral path because Claude protects ~/.claude
-# from ordinary file reads and relative paths depend on the working directory.
-# Link the directory so future guidance files are available without installer
-# changes.
-link "$repo_root/shared/global-guidance" "$HOME/.agent-guidance"
-
-# Claude checks both a symlink path and its resolved target. Add both as user
-# working directories so the neutral guidance path remains readable from any
-# repository. Merge only this array entry and preserve every existing setting.
+# Skills are symlinked into ~/.claude/skills, so Claude resolves their
+# reference files back to this clone. Grant read access to the clone itself.
+# Merge only this array entry and preserve every existing setting.
 claude_settings_status="skipped"
 if [ -d "$HOME/.claude" ]; then
 	if ! command -v python3 >/dev/null 2>&1; then
@@ -112,8 +106,7 @@ if [ -d "$HOME/.claude" ]; then
 				--dry-run \
 				--settings "$HOME/.claude/settings.json" \
 				--backup-dir "$backup_dir" \
-				--required-directory "~/.agent-guidance" \
-				--required-directory "$repo_root/shared/global-guidance") || {
+				--required-directory "$repo_root") || {
 				claude_settings_status="failed"
 				failed=$((failed + 1))
 			}
@@ -121,8 +114,7 @@ if [ -d "$HOME/.claude" ]; then
 			claude_settings_status=$(python3 "$claude_settings_merger" \
 				--settings "$HOME/.claude/settings.json" \
 				--backup-dir "$backup_dir" \
-				--required-directory "~/.agent-guidance" \
-				--required-directory "$repo_root/shared/global-guidance") || {
+				--required-directory "$repo_root") || {
 				claude_settings_status="failed"
 				failed=$((failed + 1))
 			}
