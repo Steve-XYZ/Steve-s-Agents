@@ -12,8 +12,10 @@ the affected project, or in the `Directory.Build.props` it imports.
 
 - An existing repository stays on its current target unless the task is
   explicitly an upgrade.
-- New production work prefers the latest stable .NET; BOS repositories are on
-  `net10.0` with SDK `10.0.201`.
+- New production work prefers the latest stable .NET. Read the SDK pin from the
+  repository's own `global.json` and do not assume one version across
+  repositories: pins here sit on different feature bands with different
+  `rollForward` policies, and the newest SDK installed locally is not the pin.
 - Do not introduce preview-only APIs or preview guidance unless the user asks
   for preview adoption or the repository already runs a preview SDK.
 

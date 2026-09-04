@@ -2,6 +2,14 @@
 
 Use complexity as local delivery evidence when the diff creates a concrete readability or verification risk, not as a mandatory metric for every changed function or as permission to change repository policy. Do not add analyzer packages, configuration, suppressions, or CI steps to the target repository unless the ticket explicitly requires a shared rule.
 
+Verified end to end on 2026-09-04. With .NET SDK 10.0.400 the injection below
+emitted `CA1502: 'Pick' has a cyclomatic complexity of '40' ... below '26'` on a
+project that built with zero warnings without it. With ESLint 10.10.0 all three
+rule forms fired on a function of complexity 31 and nesting depth 5, including
+the `variant: "modified"` option. Read counts cannot condemn this file: the
+gates are narrow by design, so no opens means no gate opened, not that the
+harness is broken.
+
 ## Decide whether to run
 
 Inspect the repository's analyzer or linter configuration and established commands. Run repository-native rules through the normal affected build or lint command when they already apply. Use a local fallback only when at least one of these is true:

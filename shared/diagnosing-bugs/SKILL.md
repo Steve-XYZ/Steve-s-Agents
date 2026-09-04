@@ -7,6 +7,17 @@ description: Diagnose bugs, regressions, flaky failures, and performance problem
 
 Establish evidence before changing behavior. Prefer reproduction, but accept captured evidence or conclusive static proof when local reproduction is impractical.
 
+## 0. Orient
+
+Run one batch before framing the symptom, so the first hypothesis rests on observed state:
+
+```sh
+git rev-parse --abbrev-ref HEAD; git status --short; git log --oneline -10
+git stash list
+```
+
+A dirty tree and a forgotten stash are ordinary causes of "it worked yesterday". When the symptom is a regression, get the last known good ref from the user or the tracker and run `git log --oneline <good>..HEAD` before reading code; that bounds the search instead of opening it.
+
 ## 1. Frame the symptom
 
 Establish expected behavior, actual behavior, environment, frequency, and the narrowest affected path. Read only the repository guidance and implementation needed to understand that path.
@@ -34,6 +45,16 @@ If evidence remains insufficient, continue only with clearly labeled hypotheses 
 Minimize the failing path by removing inputs, callers, configuration, and dependencies while preserving the symptom.
 
 Form falsifiable hypotheses. Rank multiple hypotheses only when the evidence is ambiguous. Test one prediction or variable at a time with focused instrumentation, tests, a debugger, profiling, query plans, or bisection as appropriate.
+
+For a regression with a known good ref, bisect instead of reading forward from the diff. Write a predicate that exits non-zero only on the reported symptom, then let git find the commit:
+
+```sh
+git bisect start HEAD <last-good-ref>
+git bisect run <predicate>
+git bisect reset
+```
+
+To locate when one behavior changed, `git log -S'<symbol>' --oneline` reports the commits that added or removed it, and `git log -L :<function>:<file>` reports that function's history alone.
 
 Measure performance problems before optimizing. Tag temporary instrumentation so it can be found and removed.
 
