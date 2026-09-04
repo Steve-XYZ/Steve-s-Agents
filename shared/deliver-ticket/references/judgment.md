@@ -1,6 +1,6 @@
 # Deep Judgment Pass
 
-Load this only when the compact pass in [grill](grill.md) left a named risk unresolved and the cost of being wrong is material. State the risk, its missing evidence, and the decision this pass must support, then stop once those decisions are supported. Concerns without a material connection to the change stay out of scope.
+Load this only when a named risk survives the caller's compact pass — [grill](grill.md) when `deliver-ticket` sent you here — and the cost of being wrong is material. State the risk, its missing evidence, and the decision this pass must support, then stop once those decisions are supported. Concerns without a material connection to the change stay out of scope.
 
 Do not use this file to search for improvements, generate review findings, or produce a separate plan or artifact.
 

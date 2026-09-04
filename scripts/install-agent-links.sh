@@ -131,7 +131,7 @@ fi
 codex_skills_root=""
 if [ -n "$codex_root_override" ]; then
 	codex_skills_root="$codex_root_override"
-elif [ -d "$HOME/.codex" ]; then
+elif [ -d "${CODEX_HOME:-$HOME/.codex}" ]; then
 	codex_skills_root="${CODEX_HOME:-$HOME/.codex}/skills"
 fi
 

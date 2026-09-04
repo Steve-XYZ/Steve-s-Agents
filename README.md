@@ -99,7 +99,7 @@ the live value and pass it explicitly:
 
 ```sh
 codex doctor                       # reports CODEX_HOME
-scripts/install-agent-links.sh --codex-skills-root="$HOME/.codex/skills"
+scripts/install-agent-links.sh --codex-skills-root="${CODEX_HOME:-$HOME/.codex}/skills"
 ```
 
 A skill left in an abandoned root is never read and Codex reports no error, so

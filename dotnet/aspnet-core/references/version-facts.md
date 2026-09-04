@@ -6,8 +6,9 @@ the repository's target framework.
 
 ## Target framework
 
-Read the target framework from the repository, not from this file:
-`global.json`, then `<TargetFramework>` in the affected project.
+Read the target framework from `<TargetFramework>` or `<TargetFrameworks>` in
+the affected project, or in the `Directory.Build.props` it imports.
+`global.json` pins the SDK and toolchain, not the target.
 
 - An existing repository stays on its current target unless the task is
   explicitly an upgrade.

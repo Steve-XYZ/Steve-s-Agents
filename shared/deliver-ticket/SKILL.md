@@ -15,10 +15,10 @@ Before reading the ticket, run one batch of commands so the rest of the workflow
 
 ```sh
 git rev-parse --abbrev-ref HEAD && git status --short && git log --oneline -5
-git remote -v && git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null
+git remote; git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || echo '<no upstream>'
 ```
 
-Add the repository's own version and toolchain check when its `AGENTS.md` names one. Do not restate the output; use it. If the branch, base, or working tree does not match what the request assumes, stop and say so before editing.
+Use `git remote` and not `git remote -v`: a remote URL can carry an embedded token, and the name is all this step needs. Add the repository's own version and toolchain check when its `AGENTS.md` names one. Do not restate the output; use it. If the branch, base, or working tree does not match what the request assumes, stop and say so before editing.
 
 ## 1. Understand
 
