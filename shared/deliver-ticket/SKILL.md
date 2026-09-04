@@ -31,7 +31,14 @@ Read the ticket and relevant linked context. Inspect enough of the repository to
 
 Investigate discoverable facts. Ask only about unresolved decisions that materially change the implementation. If a reported bug has no established cause, use `diagnosing-bugs` as the primary workflow.
 
-When the user supplies a repository, base, or branch, reconcile it against the orientation output above. Do not silently continue from an unexpected branch, stale base, or conflicting remote branch.
+When the user supplies a repository, base, or branch, resolve it rather than reconciling against the orientation output, which carries only the current branch's own upstream:
+
+```sh
+git rev-parse --verify <ref>              # exit 128: the ref does not exist here
+git merge-base --is-ancestor <ref> HEAD   # exit 1: the base moved, this branch is stale
+```
+
+Do not silently continue from an unexpected branch, a base the branch has diverged from, or a conflicting remote branch.
 
 ## 2. Map and brief
 

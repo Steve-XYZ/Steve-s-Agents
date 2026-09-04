@@ -1,6 +1,6 @@
 # Deep Judgment Pass
 
-Load this only when a named risk survives the caller's compact pass — [grill](grill.md) when `deliver-ticket` sent you here — and the cost of being wrong is material. State the risk, its missing evidence, and the decision this pass must support, then stop once those decisions are supported. Concerns without a material connection to the change stay out of scope.
+Load this only when a specific risk to this change is named, still unresolved after the caller's questions, and material if wrong. The gate lives at the call site — [grill](grill.md) in `deliver-ticket`, the brief in `shape-feature` — so arriving here means it is already satisfied. State the risk, its missing evidence, and the decision this pass must support, then stop once those decisions are supported. Concerns without a material connection to the change stay out of scope.
 
 Do not use this file to search for improvements, generate review findings, or produce a separate plan or artifact.
 

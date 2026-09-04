@@ -17,12 +17,15 @@ target rather than a default:
 
 ```sh
 cat global.json 2>/dev/null; dotnet --version
-grep -rhoE '<TargetFramework[s]?>[^<]+' --include='*.csproj' --include='*.props' --include='*.targets' . | sort -u
+grep -roE '<TargetFramework[s]?>[^<]+' --include='*.csproj' --include='*.props' --include='*.targets' . | sort -u
 grep -rlE '@rendermode|AddInteractiveServerComponents|AddInteractiveWebAssemblyComponents' --include='*.razor' --include='*.cs' . | head
 ```
 
 Most of these repositories set the target in `Directory.Build.props` rather
-than the project file, so a `*.csproj`-only search reports nothing.
+than the project file, so a `*.csproj`-only search reports nothing. Keep the
+paths in the output: when more than one target appears — a platform head such
+as `net10.0-android` beside plain libraries — the version rules follow the
+project being changed, not the set.
 
 Do not restate the output. If the target framework differs from what the task
 assumes, say so before writing code.
