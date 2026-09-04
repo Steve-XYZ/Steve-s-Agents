@@ -33,10 +33,13 @@ those jobs. `shape-feature` covers solo and greenfield work where you are both
 author and implementer; it is set to `user-invocable-only` in Claude so it never
 competes for selection on a specified ticket.
 
-Writing guidance lives in the `unslop` skill. Load it once per session before
-the first substantial response; it then applies to every later response.
-`ENGINEERING.md` keeps only the three rules that must hold even when the skill
-never loads. Nothing re-reads a guidance file per response.
+Writing guidance lives in `ENGINEERING.md`, which both harnesses load
+unconditionally as `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`. It was a
+skill for one release and the measurement killed that: an instruction telling
+the model to invoke `unslop` fired in 1 of 16 real sessions, so 15 of 16
+responses were written without the rules. A symlinked file fires in all of
+them. The `unslop` skill is now only a shim for rewriting prose the user
+pastes. Nothing re-reads a guidance file per response.
 
 ## When a reference earns its place
 

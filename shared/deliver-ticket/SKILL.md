@@ -95,7 +95,7 @@ Mark material claims without executable evidence as `UNPROVEN`. Do not create a 
 
 ## 6. Finish
 
-Invoke `unslop` if it has not already loaded in this session, and apply it during the original draft.
+Apply the writing rules from global guidance during the original draft, not as a polishing pass over a finished one.
 
 Report:
 
