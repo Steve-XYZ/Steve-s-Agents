@@ -67,6 +67,39 @@ control. Score known-defect recall, invalid findings, elapsed time, and output
 size. Prefer the smallest rule that improves the target cases without adding
 noise to the clean control.
 
+Run repository checks before spending model tokens:
+
+```sh
+python3 scripts/validate-skills.py
+python3 scripts/test-install-agent-links.py
+python3 scripts/test-workflow-helpers.py
+```
+
+The [evaluation cases](evals/README.md) distinguish structural checks from live
+routing and behavior. Passing the local validator does not prove skill selection.
+
+For repeated reviews, `scripts/review-package.py --repo <project> --base <sha>`
+captures an exact committed diff in a new temporary directory without changing
+the project. The [review procedure](shared/code-review/references/review-evidence.md)
+defines evidence reuse, fix-round scope, and the remaining approval requirements.
+
+### Practices adapted for this workflow
+
+These are focused adaptations, not installed frameworks:
+
+- [Peter Steinberger](https://github.com/steipete/agent-scripts): managed skill links, portable helpers, and fixture validation.
+- [Matt Pocock](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md): observable test seams and independent expected results.
+- [Addy Osmani](https://github.com/addyosmani/agent-skills/blob/main/evals/README.md): separate structural, routing, and behavioral checks.
+- [Superpowers](https://github.com/obra/superpowers/blob/main/skills/subagent-driven-development/re-review-prompt.md): scoped fix rounds and traceable evidence reuse.
+- [pstack](https://github.com/cursor/plugins/blob/main/pstack/skills/create-verification-skill/SKILL.md): runnable project verification and structural prevention of recurring mistakes.
+- [T3 Code](https://github.com/pingdotgg/t3code/blob/main/AGENTS.md): targeted checks and project-owned operational traps.
+- [Armin Ronacher](https://github.com/mitsuhiko/agent-stuff/blob/main/skills/librarian/SKILL.md): reuse local reference checkouts and record their revisions. No cache manager is installed here.
+
+For personal learning after a difficult ticket, explain the invariant owner,
+partial-failure outcome, and falsifying test before asking the agent for feedback.
+Keep a lesson only if it changes a future decision. This is optional reflection,
+not a new delivery gate or automatic teaching pass.
+
 ## Canonical installation
 
 The same shape applies on every machine; only the clone path and the reference

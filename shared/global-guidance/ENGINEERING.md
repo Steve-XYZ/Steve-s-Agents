@@ -16,6 +16,7 @@
 - Never expose secrets or send private data externally.
 - Report what changed or was found, validation actually performed, and material risks or unresolved items.
 - Use a workflow skill when its trigger clearly matches; do not invoke one merely because it is available.
+- When a correction recurs, prefer an in-scope test, type, lint rule, or helper that prevents it. Keep prose for decisions requiring judgment; do not add another global rule for a one-off failure.
 
 ## Writing
 
