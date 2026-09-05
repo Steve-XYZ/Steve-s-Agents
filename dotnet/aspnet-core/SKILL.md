@@ -1,66 +1,64 @@
 ---
 name: aspnet-core
-description: Build, review, refactor, or architect ASP.NET Core web applications using current official guidance for .NET web development. Use when working on Blazor Web Apps, Razor Pages, MVC, Minimal APIs, controller-based Web APIs, SignalR, gRPC, middleware, dependency injection, configuration, authentication, authorization, testing, performance, deployment, or ASP.NET Core upgrades.
+description: Correct version-gated, pipeline-order, and Blazor render-mode decisions in ASP.NET Core work. Use when changing Program.cs or middleware order, choosing or changing a Blazor render mode, introducing a platform API that may not exist in the target framework, or upgrading across major versions. Do not use for ordinary feature work inside an established app model, where the repository's own conventions govern.
 ---
 
 # ASP.NET Core
 
-## Overview
+This skill holds the facts a model gets wrong from memory: what exists in which
+framework version, what order the pipeline must run in, and which Blazor render
+mode a component needs. Everything else about ASP.NET Core it already knows.
+The repository's conventions, architecture, and dependencies outrank all of it.
 
-Choose the right ASP.NET Core application model, compose the host and request pipeline correctly, and implement features in the framework style Microsoft documents today.
+## Orient
 
-Load the smallest set of references that fits the task. Do not load every reference by default.
+Resolve the affected project first and load the repository's SDK setup before
+running .NET commands. From that project's directory, inspect the applicable
+`global.json` in it or its ancestors, then evaluate its imported properties:
 
-## Workflow
+```sh
+dotnet --version
+dotnet msbuild <affected-project.csproj> --nologo -getProperty:TargetFramework,TargetFrameworks
+rg -n '@rendermode|AddInteractiveServerComponents|AddInteractiveWebAssemblyComponents' <affected-source-directory> -g '*.razor' -g '*.cs'
+```
 
-1. Confirm the target framework, SDK, and current app model.
-2. Open [references/stack-selection.md](references/stack-selection.md) first for new apps or major refactors.
-3. Open [references/program-and-pipeline.md](references/program-and-pipeline.md) next for `Program.cs`, DI, configuration, middleware, routing, logging, and static assets.
-4. Open exactly one primary app-model reference:
-   - [references/ui-blazor.md](references/ui-blazor.md)
-   - [references/ui-razor-pages.md](references/ui-razor-pages.md)
-   - [references/ui-mvc.md](references/ui-mvc.md)
-   - [references/apis-minimal-and-controllers.md](references/apis-minimal-and-controllers.md)
-5. Add cross-cutting references only as needed:
-   - [references/data-state-and-services.md](references/data-state-and-services.md)
-   - [references/security-and-identity.md](references/security-and-identity.md)
-   - [references/realtime-grpc-and-background-work.md](references/realtime-grpc-and-background-work.md)
-   - [references/testing-performance-and-operations.md](references/testing-performance-and-operations.md)
-6. Open [references/versioning-and-upgrades.md](references/versioning-and-upgrades.md) before introducing new platform APIs into an older solution or when migrating between major versions.
-7. Use [references/source-map.md](references/source-map.md) when you need the Microsoft Learn section that corresponds to a task not already covered by the focused references.
+Use the same configuration and platform properties as the affected build. Repeat
+for each affected project; an SDK pin or a sibling project's framework does not
+establish this project's target. Evaluation includes `Directory.Build.props`
+and other imports. If evaluation fails, inspect those imports and report the
+unresolved target instead of selecting a framework from a repository-wide scan.
 
-## Default Operating Assumptions
+Do not restate the output. If the target framework differs from what the task
+assumes, say so before writing code.
 
-- Prefer the latest stable .NET and ASP.NET Core for new production work, currently .NET 10. Treat the next major release as preview unless the user explicitly asks for preview features.
-- Verify the current stable release and target-framework availability from official Microsoft documentation when version currency matters.
-- Existing repositories remain pinned to their current target framework unless the task is explicitly an upgrade.
-- Prefer `WebApplicationBuilder` and `WebApplication`. Avoid older `Startup` and `WebHost` patterns unless the codebase already uses them or the task is migration.
-- Prefer built-in DI, options/configuration, logging, ProblemDetails, OpenAPI, health checks, rate limiting, output caching, and Identity before adding third-party infrastructure.
-- Prefer platform features before introducing new dependencies, but do not replace an established repository dependency or infrastructure pattern merely because ASP.NET Core has a built-in alternative.
-- Reuse the repository's existing conventions for messaging, persistence, validation, caching, telemetry, authentication, and deployment unless the task explicitly requires a migration.
-- Keep feature slices cohesive so the page, component, endpoint, controller, validation, service, data access, and tests are easy to trace.
-- Respect the existing app model. Do not rewrite Razor Pages to MVC or controllers to Minimal APIs without a clear reason.
+## References
 
-## Reference Guide
+Open only what the change touches:
 
-- [references/_sections.md](references/_sections.md): Quick index and reading order.
-- [references/stack-selection.md](references/stack-selection.md): Choose the right ASP.NET Core application model and template.
-- [references/program-and-pipeline.md](references/program-and-pipeline.md): Structure `Program.cs`, services, middleware, routing, configuration, logging, and static assets.
-- [references/ui-blazor.md](references/ui-blazor.md): Build Blazor Web Apps, choose render modes, and use components, forms, and JS interop correctly.
-- [references/ui-razor-pages.md](references/ui-razor-pages.md): Build page-focused server-rendered apps with handlers, model binding, and conventions.
-- [references/ui-mvc.md](references/ui-mvc.md): Build controller/view applications with clear separation of concerns.
-- [references/apis-minimal-and-controllers.md](references/apis-minimal-and-controllers.md): Build HTTP APIs with Minimal APIs or controllers, including validation and response patterns.
-- [references/data-state-and-services.md](references/data-state-and-services.md): Use EF Core, `DbContext`, options, `IHttpClientFactory`, session, temp data, and app state responsibly.
-- [references/security-and-identity.md](references/security-and-identity.md): Apply authentication, authorization, Identity, secrets, data protection, CORS, CSRF, and HTTPS guidance.
-- [references/realtime-grpc-and-background-work.md](references/realtime-grpc-and-background-work.md): Use SignalR, gRPC, and hosted services.
-- [references/testing-performance-and-operations.md](references/testing-performance-and-operations.md): Add integration tests, browser tests, caching, compression, health checks, rate limits, and deployment concerns.
-- [references/versioning-and-upgrades.md](references/versioning-and-upgrades.md): Handle target frameworks, breaking changes, obsolete APIs, and migrations.
-- [references/source-map.md](references/source-map.md): Map the official ASP.NET Core documentation tree to the references in this skill.
+- [version-facts.md](references/version-facts.md) — target framework rules, what .NET 10 added, and the breaking changes for each version hop. Read before introducing a platform API or starting an upgrade.
+- [pipeline-order.md](references/pipeline-order.md) — middleware order and the ordering mistakes that compile, start, and fail in production. Read before adding, moving, or reviewing middleware.
+- [blazor.md](references/blazor.md) — render-mode choice, `IDbContextFactory` in components, and the trust boundary.
 
-## Execution Notes
+For anything else — globalization, hosting details, a narrow API page — go
+straight to Microsoft Learn. A summary of it here would only restate what the
+model has.
 
-- For a new application, start from the appropriate `dotnet new` template unless the repository provides an established bootstrap path.
-- For an existing solution, repository conventions, architectural boundaries, test patterns, deployment constraints, and existing dependencies override template defaults.
-- Do not introduce template-driven folders, services, abstractions, or framework patterns unless the existing codebase has a clear place for them.
-- When editing an existing solution, follow the solution's conventions first and use these references to avoid framework misuse or outdated patterns.
-- When a task mentions "latest", verify the feature on Microsoft Learn or the ASP.NET Core docs repo before relying on memory.
+## Defaults
+
+- Prefer `WebApplicationBuilder` and `WebApplication`. Use `Startup` or
+  `WebHost` patterns only where the codebase already does, or when migrating.
+- Prefer built-in DI, options, logging, ProblemDetails, OpenAPI, health checks,
+  rate limiting, output caching, and Identity before adding a third-party
+  dependency — but do not replace an established repository dependency or
+  infrastructure pattern merely because a built-in alternative exists.
+- Respect the existing app model. Do not rewrite Razor Pages to MVC or
+  controllers to Minimal APIs without a reason the ticket states.
+- Reuse the repository's conventions for messaging, persistence, validation,
+  caching, telemetry, authentication, and deployment.
+- Keep domain and report logic in services rather than controllers, endpoints,
+  components, or workers.
+- Do not introduce template-driven folders, services, or abstractions unless
+  the codebase has a clear place for them.
+
+`LICENSE.txt` is the Apache 2.0 license of `dotnet/AspNetCore.Docs`, from which
+these references were synthesized.

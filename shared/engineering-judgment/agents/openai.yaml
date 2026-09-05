@@ -1,7 +1,0 @@
-interface:
-  display_name: "Engineering Judgment"
-  short_description: "Compact judgment pass for ticket delivery"
-  default_prompt: "Use $engineering-judgment to examine what makes this engineering change difficult and what it would cost to be wrong."
-
-policy:
-  allow_implicit_invocation: false

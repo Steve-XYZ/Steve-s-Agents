@@ -44,6 +44,8 @@ When the change touches money or durable state, a shared flag, status, predicate
 
 ## 4. Verify
 
+For repeated rounds or a review handoff, read [review evidence](references/review-evidence.md). Reuse traceable validation that covers the code being reviewed; run new checks for changed behavior or a concrete unresolved doubt. A claimed result without accessible evidence is not a passed check.
+
 Run the narrowest reliable build, test, lint, format, migration, or runtime checks that can prove or disprove material findings. Confirm that tests execute the changed branch and would fail for the behavior being challenged. Distinguish changed-code failures from unrelated environment or baseline failures with an exact head/base comparison when that distinction affects the verdict.
 
 Never present unexecuted validation as completed evidence.
@@ -62,7 +64,7 @@ Report only evidence-backed defects, regressions, risks, broken requirements, or
 
 Do not repeat a full finding in both the review body and an inline comment. When publishing inline findings, use the body for the verdict, severity counts, validation, and residual risk.
 
-On a repeated review, account for prior findings as fixed, withdrawn, still open, outdated, or newly introduced. Re-read the current diff rather than limiting the pass to the author's responses.
+On a repeated review, account for prior findings as fixed, withdrawn, still open, outdated, or newly introduced. Inspect the fix diff, not only the author's responses. Expand for named contract or behavior risks; perform a whole-change pass when requested, required by repository policy, or when the prior review is unavailable.
 
 If no findings remain, say so directly and identify any validation gap or residual risk. End with validation performed and the final verdict.
 

@@ -7,6 +7,18 @@ description: Diagnose bugs, regressions, flaky failures, and performance problem
 
 Establish evidence before changing behavior. Prefer reproduction, but accept captured evidence or conclusive static proof when local reproduction is impractical.
 
+## 0. Orient
+
+Run one batch before framing the symptom, so the first hypothesis rests on observed state:
+
+```sh
+git rev-parse --show-toplevel || exit 1
+git rev-parse --abbrev-ref HEAD && git status --short && git log --oneline -10
+git stash list
+```
+
+A dirty tree and a forgotten stash are ordinary causes of "it worked yesterday". Inspect relevant staged, unstaged, and untracked changes before attributing a regression to a commit. Inspect a relevant stash without applying it. Get the last known good ref from the tracker or existing evidence, asking the user only if it is missing. `git log --oneline <good>..HEAD` bounds committed changes; it says nothing about local edits or environment changes.
+
 ## 1. Frame the symptom
 
 Establish expected behavior, actual behavior, environment, frequency, and the narrowest affected path. Read only the repository guidance and implementation needed to understand that path.
@@ -34,6 +46,22 @@ If evidence remains insufficient, continue only with clearly labeled hypotheses 
 Minimize the failing path by removing inputs, callers, configuration, and dependencies while preserving the symptom.
 
 Form falsifiable hypotheses. Rank multiple hypotheses only when the evidence is ambiguous. Test one prediction or variable at a time with focused instrumentation, tests, a debugger, profiling, query plans, or bisection as appropriate.
+
+Use bisection when a reproducible regression spans enough commits that repeated checks are cheaper than focused diff inspection. First verify the same predicate passes at the good ref and reproduces the symptom at the bad ref. Use a disposable clean worktree with isolated runtime state; do not switch the user's active checkout through historical commits. Keep the predicate outside the bisected tree so older commits cannot remove it.
+
+The predicate returns `0` for good, `1` for the reported defect, `125` for an untestable revision (such as an unrelated build failure), and `128` or higher to abort on a broken harness. Never classify an unrelated failure as the regression. Run in the disposable worktree:
+
+```sh
+(
+  git bisect start <bad-ref> <good-ref> || exit 1
+  trap 'git bisect reset' EXIT
+  git bisect run /absolute/path/to/predicate
+)
+```
+
+Skipped revisions can leave several possible culprits; report that ambiguity. Confirm the candidate against its parent before calling it the cause.
+
+To locate changes in a symbol's occurrence count, use `git log -S'<symbol>' --oneline`. For edits that keep the count unchanged, use `git log -G'<pattern>' --oneline`. `git log -L :<function>:<file>` traces a function when Git's language detection recognizes it.
 
 Measure performance problems before optimizing. Tag temporary instrumentation so it can be found and removed.
 

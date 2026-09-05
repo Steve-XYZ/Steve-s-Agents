@@ -1,19 +1,12 @@
 ---
 name: unslop
-description: Polish every user-facing response so it is specific, active, and free of LLM filler, including routine conversation, explanations, reviews, and delivery reports. Do not rewrite code, diffs, command output, file lists, or checklists unless the user asks.
+description: Rewrite prose the user supplies. Use only when the user pastes text and asks to tighten, clean up, or unslop it. The rules for your own output load unconditionally from global guidance and need no invocation.
 ---
 
 # Unslop
 
-Read [WRITING.md](../global-guidance/WRITING.md) and apply it while drafting every user-facing response. When the user supplies prose, rewrite it directly.
+The writing rules are already in context, under `## Writing` in the global engineering guidance. Apply them to the text the user supplied — not to your own surrounding response, which already follows them.
 
-Preserve:
+Keep meaning and factual claims, uncertainty and missing evidence, intended tone and audience, and repository vocabulary and required format. Do not add confidence, evidence, conclusions, or scope the source does not contain. Do not touch code, diffs, command output, file lists, or checklists unless the user includes them in the task.
 
-- meaning and factual claims,
-- uncertainty and missing evidence,
-- intended tone and audience,
-- repository vocabulary and required format.
-
-Do not add confidence, evidence, conclusions, or scope that the source does not contain. Do not rewrite code, diffs, command output, file lists, or checklists unless the user explicitly includes them in the prose task.
-
-Return the response without narrating the editing pass unless the user asks for an explanation.
+Return the result without narrating the editing pass.

@@ -1,6 +1,6 @@
 ---
 name: shape-feature
-description: Turn an unclear or partially defined product or engineering idea into an implementable feature and first vertical slice. Use when important product, behavior, or architecture decisions remain unresolved. Do not use when a detailed ticket already exists, for unknown-cause bug diagnosis, or for pure code review.
+description: Turn one of your own ideas into an implementable feature and first vertical slice. Use for solo or greenfield work where you are both author and implementer and the product, behavior, or architecture decisions are still open. Do not use when a tracker ticket or accepted brief already specifies the behavior, for unknown-cause bug diagnosis, or for pure code review.
 ---
 
 # Shape Feature
@@ -29,7 +29,7 @@ Use external, primary-source research only when correctness depends on current f
 
 Use a small prototype or experiment only when it is cheaper and more reliable than reasoning about the uncertainty. Do not turn exploration into production code accidentally.
 
-When the feature brief requires a material decision about ownership, contracts, state, failure behavior, or an implementation boundary, read [engineering-judgment](../engineering-judgment/SKILL.md) before finalizing the first slice. Do not use it to invent implementation detail prematurely.
+When a decision about ownership, contracts, state, failure behavior, or an implementation boundary is still unresolved after the questions above and would be costly to get wrong, name the risk and read [judgment](../deliver-ticket/references/judgment.md) before finalizing the first slice. Do not use it to invent implementation detail prematurely.
 
 ## 4. Establish the brief
 

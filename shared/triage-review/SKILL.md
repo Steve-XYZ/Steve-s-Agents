@@ -19,7 +19,7 @@ Before editing, confirm the local checkout corresponds to the PR head and inspec
 
 Inventory unresolved or current findings from review summaries, inline threads, PR comments, bots, and check annotations. Deduplicate repeated findings and exclude resolved or demonstrably outdated comments. On a later round, include findings raised since the last triaged head plus earlier findings still unresolved.
 
-Maintain a review ledger: fixed, deferred, rejected, still open, outdated, and new. The ledger tracks claims; it does not replace a cold pass over the current diff.
+Maintain a review ledger: fixed, deferred, rejected, still open, outdated, and new. For repeated rounds or a session handoff, read [review evidence](../code-review/references/review-evidence.md). Tie the ledger to the previously reviewed and current head SHAs. Review the fix diff and expand for named risks; the ledger does not replace inspecting code.
 
 ## 2. Validate each finding
 
