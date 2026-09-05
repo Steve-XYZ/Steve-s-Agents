@@ -47,6 +47,33 @@ linked=0
 kept=0
 moved=0
 failed=0
+retired=0
+codex_home_dir=${CODEX_HOME:-$HOME/.codex}
+
+backup() {
+	# Refuse collisions rather than overwriting a backup from an earlier run.
+	backup_target="$backup_dir/$(printf '%s' "${1#"$HOME"/}" | tr '/' '_')"
+	if [ "$dry_run" -eq 1 ]; then
+		echo "would back up $1"
+	else
+		mkdir -p "$backup_dir" || { failed=$((failed + 1)); return 1; }
+		if [ -e "$backup_target" ] || [ -L "$backup_target" ]; then
+			echo "backup already exists: $backup_target" >&2
+			failed=$((failed + 1)); return 1
+		fi
+		mv "$1" "$backup_target" || { failed=$((failed + 1)); return 1; }
+		echo "backed up $1 -> $backup_target"
+	fi
+	moved=$((moved + 1))
+}
+
+retire_link() {
+	# Only migrate the exact links this installer used to create. Real files,
+	# other clones, and links with uncertain ownership remain untouched.
+	[ -L "$1" ] && [ "$(readlink "$1")" = "$2" ] || return 0
+	backup "$1" || return 1
+	retired=$((retired + 1))
+}
 
 link() {
 	source_path=$1
@@ -58,16 +85,7 @@ link() {
 	fi
 
 	if [ -e "$target_path" ] || [ -L "$target_path" ]; then
-		# Flatten the path so two skills of the same name cannot collide.
-		stash="$backup_dir/$(printf '%s' "${target_path#"$HOME"/}" | tr '/' '_')"
-		if [ "$dry_run" -eq 1 ]; then
-			echo "would back up $target_path"
-		else
-			mkdir -p "$backup_dir" || { failed=$((failed + 1)); return 1; }
-			mv "$target_path" "$stash" || { failed=$((failed + 1)); return 1; }
-			echo "backed up $target_path -> $stash"
-		fi
-		moved=$((moved + 1))
+		backup "$target_path" || return 1
 	fi
 
 	if [ "$dry_run" -eq 1 ]; then
@@ -80,12 +98,13 @@ link() {
 }
 
 # Global guidance, once per installed CLI.
-for spec in ".claude/CLAUDE.md" ".codex/AGENTS.md"; do
-	target="$HOME/$spec"
+for target in "$HOME/.claude/CLAUDE.md" "$codex_home_dir/AGENTS.md"; do
 	# Only install for a CLI that is actually present on this machine.
 	[ -d "$(dirname "$target")" ] || continue
 	link "$guidance" "$target"
 done
+
+retire_link "$HOME/.agent-guidance" "$repo_root/shared/global-guidance"
 
 # Skills are symlinked into ~/.claude/skills, so Claude resolves their
 # reference files back to this clone. Grant read access to the clone itself.
@@ -131,18 +150,18 @@ fi
 codex_skills_root=""
 if [ -n "$codex_root_override" ]; then
 	codex_skills_root="$codex_root_override"
-elif [ -d "${CODEX_HOME:-$HOME/.codex}" ]; then
-	codex_skills_root="${CODEX_HOME:-$HOME/.codex}/skills"
+elif [ -d "$codex_home_dir" ]; then
+	codex_skills_root="$codex_home_dir/skills"
 fi
 
-skills_roots=""
-[ -d "$HOME/.claude" ] && skills_roots="$HOME/.claude/skills"
+set --
+[ -d "$HOME/.claude" ] && set -- "$@" "$HOME/.claude/skills"
 if [ -n "$codex_skills_root" ]; then
-	skills_roots="$skills_roots $codex_skills_root"
+	set -- "$@" "$codex_skills_root"
 	echo "codex personal skills root: $codex_skills_root"
 fi
 
-for skills_root in $skills_roots; do
+for skills_root do
 	if [ ! -d "$skills_root" ]; then
 		if [ "$dry_run" -eq 1 ]; then
 			echo "would create $skills_root"
@@ -150,6 +169,7 @@ for skills_root in $skills_roots; do
 			mkdir -p "$skills_root" || { failed=$((failed + 1)); continue; }
 		fi
 	fi
+	retire_link "$skills_root/engineering-judgment" "$repo_root/shared/engineering-judgment"
 
 	for candidate in "$repo_root"/shared/*/ "$repo_root"/dotnet/*/; do
 		skill_dir=${candidate%/}
@@ -158,6 +178,6 @@ for skills_root in $skills_roots; do
 	done
 done
 
-echo "linked=$linked kept=$kept backed-up=$moved claude-settings=$claude_settings_status failed=$failed"
+echo "linked=$linked kept=$kept backed-up=$moved retired=$retired claude-settings=$claude_settings_status failed=$failed"
 [ "$failed" -eq 0 ] || exit 1
 exit 0

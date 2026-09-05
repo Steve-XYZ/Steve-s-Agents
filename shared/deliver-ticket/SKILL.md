@@ -14,6 +14,7 @@ Keep investigation and implementation in one Codex or Claude Code harness. After
 Before reading the ticket, run one batch of commands so the rest of the workflow reasons from observed state rather than assumption:
 
 ```sh
+git rev-parse --show-toplevel || exit 1
 git rev-parse --abbrev-ref HEAD && git status --short && git log --oneline -5
 git remote; git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || echo '<no upstream>'
 ```
@@ -34,11 +35,11 @@ Investigate discoverable facts. Ask only about unresolved decisions that materia
 When the user supplies a repository, base, or branch, resolve it rather than reconciling against the orientation output, which carries only the current branch's own upstream:
 
 ```sh
-git rev-parse --verify <ref>              # exit 128: the ref does not exist here
-git merge-base --is-ancestor <ref> HEAD   # exit 1: the base moved, this branch is stale
+git rev-parse --verify '<ref>^{commit}'   # resolve the supplied ref to a commit
+git merge-base --is-ancestor <base-ref> HEAD
 ```
 
-Do not silently continue from an unexpected branch, a base the branch has diverged from, or a conflicting remote branch.
+An ancestor check returning `1` means the base is not an ancestor of HEAD; it does not explain why. Inspect the divergence before deciding whether an update is needed. These commands inspect local refs only. When remote freshness matters, fetch the intended remote first and report any inability to refresh it. Do not silently continue from an unexpected branch or a conflicting remote branch.
 
 ## 2. Map and brief
 

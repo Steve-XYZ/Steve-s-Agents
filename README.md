@@ -1,7 +1,7 @@
 # Steve-s-Agents
 
 Personal agent guidance shared across development machines. Codex and Claude Code
-read the same files through symlinks; nothing here is harness-specific.
+read the same guidance through symlinks; the installer handles their different paths.
 
 ## Contents
 
@@ -33,8 +33,9 @@ those jobs. `shape-feature` covers solo and greenfield work where you are both
 author and implementer; it is set to `user-invocable-only` in Claude so it never
 competes for selection on a specified ticket.
 
-Writing guidance lives in `ENGINEERING.md`, which both harnesses load
-unconditionally as `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`. It was a
+Writing guidance lives in `ENGINEERING.md`. Each installed harness loads it
+through its global instruction file: `~/.claude/CLAUDE.md` or
+`${CODEX_HOME:-$HOME/.codex}/AGENTS.md`. It was a
 skill for one release and the measurement killed that: an instruction telling
 the model to invoke `unslop` fired in 1 of 16 real sessions, so 15 of 16
 responses were written without the rules. A symlinked file fires in all of
@@ -71,7 +72,7 @@ noise to the clean control.
 The same shape applies on every machine; only the clone path and the reference
 configuration directory differ.
 
-- `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md` are symlinks to `shared/global-guidance/ENGINEERING.md`.
+- `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` and `~/.claude/CLAUDE.md` are symlinks to `shared/global-guidance/ENGINEERING.md`.
 - Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's skills directory.
 - `~/.claude/settings.json` keeps its existing configuration while the installer ensures `permissions.additionalDirectories` includes this clone, so Claude can resolve skill reference files through the symlinks.
 - BOS repository `AGENTS.md` and `CLAUDE.md` files mirror this machine's `configs/<machine>/bos/` copies and stay untracked through `.git/info/exclude`. Each `CLAUDE.md` is a two-line `@AGENTS.md` include, so the guidance has one source.
@@ -82,20 +83,27 @@ scripts/install-agent-links.sh --dry-run   # see what it would do
 scripts/install-agent-links.sh
 ```
 
-The installer is idempotent, links only into CLIs that are installed, discovers
-skills by scanning for `SKILL.md`, and moves anything already occupying a target
+The installer is idempotent, detects installed CLIs by their configuration
+directories, discovers skills by scanning for `SKILL.md`, and moves anything already occupying a target
 path into `~/.agent-links-backup/<timestamp>/` rather than deleting it. When
 Claude is installed it uses Python 3 to merge the one required directory into
 existing user settings, backing that file up first. Invalid or unexpected JSON
-fails without modifying the file.
+fails without modifying the settings file; other links may already have been updated.
+
+Upgrades back up the obsolete `engineering-judgment` links in the selected skill
+roots and the old `~/.agent-guidance` link only when their literal targets match
+this clone. Unrelated links and real files at those retired names stay in place.
+Links in an abandoned skill root or pointing at another clone require inspection;
+the installer does not guess their ownership. Existing settings entries are preserved.
 
 Skills are read at CLI start-up. Restart Claude Code or Codex after linking.
 
 ### Codex skills root
 
 Codex reads personal skills from `$CODEX_HOME/skills`, normally
-`~/.codex/skills`. The bundled skills live in `.system/` inside that same
-directory, so its presence says nothing about where personal skills belong.
+`~/.codex/skills`. The same home supplies `AGENTS.md`; an explicit
+`--codex-skills-root` changes only the skill destination. The bundled skills live
+in `.system/` inside that same directory, so its presence says nothing about where personal skills belong.
 
 Do not predict the root from the Codex version. If a release moves it, confirm
 the live value and pass it explicitly:
@@ -107,7 +115,8 @@ scripts/install-agent-links.sh --codex-skills-root="${CODEX_HOME:-$HOME/.codex}/
 
 A skill left in an abandoned root is never read and Codex reports no error, so
 verify after every Codex upgrade. The authoritative check is the skill-roots
-table Codex emits into its own session rollout under `~/.codex/sessions/`.
+table Codex emits into its own session rollout under `$CODEX_HOME/sessions`
+(normally `~/.codex/sessions/`).
 
 ### Per-machine paths
 
@@ -132,9 +141,24 @@ canonicalized here.
 ### Verifying an installation
 
 ```sh
-scripts/install-agent-links.sh --dry-run   # expect linked=0 backed-up=0 claude-settings=kept failed=0
-readlink ~/.claude/CLAUDE.md ~/.codex/AGENTS.md
-ls -l ~/.claude/skills ~/.codex/skills
+scripts/install-agent-links.sh --dry-run   # expect linked=0 backed-up=0 retired=0 failed=0
+# claude-settings is kept when Claude is installed, otherwise skipped.
+for agent_dir in "$HOME/.claude" "${CODEX_HOME:-$HOME/.codex}"; do
+  [ -d "$agent_dir" ] || continue
+  ls -l "$agent_dir"/skills
+  for guidance_file in "$agent_dir/CLAUDE.md" "$agent_dir/AGENTS.md"; do
+    [ -L "$guidance_file" ] && readlink "$guidance_file"
+  done
+done
+```
+
+Pass the same `--codex-skills-root` override to the dry run if installation used
+one, and inspect that directory instead of the default skills path.
+
+Installer regression checks use disposable homes and do not run either CLI:
+
+```sh
+python3 scripts/test-install-agent-links.py
 ```
 
 ## Worktree guidance

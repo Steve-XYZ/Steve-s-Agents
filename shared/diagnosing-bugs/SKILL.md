@@ -12,11 +12,12 @@ Establish evidence before changing behavior. Prefer reproduction, but accept cap
 Run one batch before framing the symptom, so the first hypothesis rests on observed state:
 
 ```sh
-git rev-parse --abbrev-ref HEAD; git status --short; git log --oneline -10
+git rev-parse --show-toplevel || exit 1
+git rev-parse --abbrev-ref HEAD && git status --short && git log --oneline -10
 git stash list
 ```
 
-A dirty tree and a forgotten stash are ordinary causes of "it worked yesterday". When the symptom is a regression, get the last known good ref from the user or the tracker and run `git log --oneline <good>..HEAD` before reading code; that bounds the search instead of opening it.
+A dirty tree and a forgotten stash are ordinary causes of "it worked yesterday". Inspect relevant staged, unstaged, and untracked changes before attributing a regression to a commit. Inspect a relevant stash without applying it. Get the last known good ref from the tracker or existing evidence, asking the user only if it is missing. `git log --oneline <good>..HEAD` bounds committed changes; it says nothing about local edits or environment changes.
 
 ## 1. Frame the symptom
 
@@ -46,15 +47,21 @@ Minimize the failing path by removing inputs, callers, configuration, and depend
 
 Form falsifiable hypotheses. Rank multiple hypotheses only when the evidence is ambiguous. Test one prediction or variable at a time with focused instrumentation, tests, a debugger, profiling, query plans, or bisection as appropriate.
 
-For a regression with a known good ref, bisect instead of reading forward from the diff. Write a predicate that exits non-zero only on the reported symptom, then let git find the commit:
+Use bisection when a reproducible regression spans enough commits that repeated checks are cheaper than focused diff inspection. First verify the same predicate passes at the good ref and reproduces the symptom at the bad ref. Use a disposable clean worktree with isolated runtime state; do not switch the user's active checkout through historical commits. Keep the predicate outside the bisected tree so older commits cannot remove it.
+
+The predicate returns `0` for good, `1` for the reported defect, `125` for an untestable revision (such as an unrelated build failure), and `128` or higher to abort on a broken harness. Never classify an unrelated failure as the regression. Run in the disposable worktree:
 
 ```sh
-git bisect start HEAD <last-good-ref>
-git bisect run <predicate>
-git bisect reset
+(
+  git bisect start <bad-ref> <good-ref> || exit 1
+  trap 'git bisect reset' EXIT
+  git bisect run /absolute/path/to/predicate
+)
 ```
 
-To locate when one behavior changed, `git log -S'<symbol>' --oneline` reports the commits that added or removed it, and `git log -L :<function>:<file>` reports that function's history alone.
+Skipped revisions can leave several possible culprits; report that ambiguity. Confirm the candidate against its parent before calling it the cause.
+
+To locate changes in a symbol's occurrence count, use `git log -S'<symbol>' --oneline`. For edits that keep the count unchanged, use `git log -G'<pattern>' --oneline`. `git log -L :<function>:<file>` traces a function when Git's language detection recognizes it.
 
 Measure performance problems before optimizing. Tag temporary instrumentation so it can be found and removed.
 
