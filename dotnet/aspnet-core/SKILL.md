@@ -12,20 +12,21 @@ The repository's conventions, architecture, and dependencies outrank all of it.
 
 ## Orient
 
-Run this first, in one batch, so later decisions rest on the repository's real
-target rather than a default:
+Resolve the affected project first and load the repository's SDK setup before
+running .NET commands. From that project's directory, inspect the applicable
+`global.json` in it or its ancestors, then evaluate its imported properties:
 
 ```sh
-cat global.json 2>/dev/null; dotnet --version
-grep -roE '<TargetFramework[s]?>[^<]+' --include='*.csproj' --include='*.props' --include='*.targets' . | sort -u
-grep -rlE '@rendermode|AddInteractiveServerComponents|AddInteractiveWebAssemblyComponents' --include='*.razor' --include='*.cs' . | head
+dotnet --version
+dotnet msbuild <affected-project.csproj> --nologo -getProperty:TargetFramework,TargetFrameworks
+rg -n '@rendermode|AddInteractiveServerComponents|AddInteractiveWebAssemblyComponents' <affected-source-directory> -g '*.razor' -g '*.cs'
 ```
 
-Most of these repositories set the target in `Directory.Build.props` rather
-than the project file, so a `*.csproj`-only search reports nothing. Keep the
-paths in the output: when more than one target appears — a platform head such
-as `net10.0-android` beside plain libraries — the version rules follow the
-project being changed, not the set.
+Use the same configuration and platform properties as the affected build. Repeat
+for each affected project; an SDK pin or a sibling project's framework does not
+establish this project's target. Evaluation includes `Directory.Build.props`
+and other imports. If evaluation fails, inspect those imports and report the
+unresolved target instead of selecting a framework from a repository-wide scan.
 
 Do not restate the output. If the target framework differs from what the task
 assumes, say so before writing code.

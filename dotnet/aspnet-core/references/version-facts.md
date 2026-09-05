@@ -22,7 +22,12 @@ the affected project, or in the `Directory.Build.props` it imports.
 ## Added in .NET 10 / ASP.NET Core 10
 
 - Minimal APIs support built-in validation through `AddValidation()`. Use it
-  instead of building parallel validation infrastructure.
+  for new validation needs; preserve established validation unless replacement
+  is in scope. Its generator discovers types in the calling assembly. For
+  endpoints in separate assemblies, expose an extension calling `AddValidation()`
+  in each assembly and invoke those extensions from the host. Plain class
+  libraries also need `Microsoft.Extensions.Validation`. See
+  [multi-assembly registration](https://learn.microsoft.com/en-us/aspnet/core/validation/overview?view=aspnetcore-10.0#register-validation-in-multi-assembly-apps).
 - Identity exposes metrics for authentication traffic.
 
 ## Breaking changes worth checking before an upgrade
@@ -43,7 +48,11 @@ Moving to ASP.NET Core 9:
 
 Moving to ASP.NET Core 8:
 
-- Minimal API `IFormFile` requires antiforgery;
+- Minimal API `IFormFile` and `IFormFileCollection` binding requires antiforgery
+  by default. Register `AddAntiforgery()` and run `UseAntiforgery()` after
+  authentication and authorization, before endpoint execution. Test an upload
+  with a valid token and rejection without one. See
+  [Minimal API antiforgery](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-8.0#antiforgery-with-minimal-apis);
 - `AddRateLimiter()` and `AddHttpLogging()` are required when the matching
   middleware is used.
 

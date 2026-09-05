@@ -54,7 +54,7 @@ class InstallerTests(unittest.TestCase):
         for cli, filename in ((".codex", "AGENTS.md"), (".claude", "CLAUDE.md")):
             self.assert_link(self.user_dir / cli / filename, self.guidance)
             for skill in list((self.repo / "shared").glob("*/SKILL.md")) + list((self.repo / "dotnet").glob("*/SKILL.md")):
-                self.assert_link(self.user_dir / cli / "skills" / skill.parent.name, skill.parent)
+                self.assert_link((self.user_dir / ".agents/skills" if cli == ".codex" else self.user_dir / cli / "skills") / skill.parent.name, skill.parent)
         before = self.snapshot()
         self.assertIn("linked=0", self.run_install())
         self.assertEqual(before, self.snapshot())
@@ -73,7 +73,8 @@ class InstallerTests(unittest.TestCase):
         (default / "AGENTS.md").write_text("unrelated guidance")
         self.run_install()
         self.assert_link(custom / "AGENTS.md", self.guidance)
-        self.assert_link(custom / "skills/unslop", self.repo / "shared/unslop")
+        self.assert_link(self.user_dir / ".agents/skills/unslop", self.repo / "shared/unslop")
+        self.assertFalse((custom / "skills").exists())
         explicit = self.root / "explicit skills"
         self.run_install(f"--codex-skills-root={explicit}")
         self.assert_link(explicit / "unslop", self.repo / "shared/unslop")
@@ -82,7 +83,8 @@ class InstallerTests(unittest.TestCase):
 
     def test_upgrade_retires_only_owned_links_and_dry_run_writes_nothing(self):
         for cli in (".codex", ".claude"):
-            skills = self.user_dir / cli / "skills"
+            (self.user_dir / cli).mkdir(exist_ok=True)
+            skills = self.user_dir / (".agents/skills" if cli == ".codex" else ".claude/skills")
             skills.mkdir(parents=True)
             (skills / "engineering-judgment").symlink_to(self.repo / "shared/engineering-judgment")
             (skills / "unrelated").symlink_to(self.root / "missing-external-skill")
@@ -94,8 +96,8 @@ class InstallerTests(unittest.TestCase):
         self.assertIn("retired=3", self.run_install())
         self.assertFalse(neutral.is_symlink())
         for cli in (".codex", ".claude"):
-            self.assertFalse((self.user_dir / cli / "skills/engineering-judgment").is_symlink())
-            self.assertTrue((self.user_dir / cli / "skills/unrelated").is_symlink())
+            self.assertFalse((self.user_dir / (".agents/skills" if cli == ".codex" else ".claude/skills") / "engineering-judgment").is_symlink())
+            self.assertTrue((self.user_dir / (".agents/skills" if cli == ".codex" else ".claude/skills") / "unrelated").is_symlink())
         backups = list((self.user_dir / ".agent-links-backup").glob("*/*"))
         self.assertEqual(len(backups), 3)
         self.assertTrue(all(p.is_symlink() for p in backups))
@@ -104,7 +106,8 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(before, self.snapshot())
 
     def test_unknown_retired_names_are_preserved(self):
-        codex = self.user_dir / ".codex/skills"
+        (self.user_dir / ".codex").mkdir()
+        codex = self.user_dir / ".agents/skills"
         claude = self.user_dir / ".claude/skills"
         codex.mkdir(parents=True)
         claude.mkdir(parents=True)
@@ -133,6 +136,19 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(next(backups.glob("*/.claude_CLAUDE.md")).read_text(), "custom guidance")
         self.assertEqual(next(backups.glob("*/.claude_skills_unslop/custom.txt")).read_text(), "custom skill")
         self.assertEqual(json.loads(next(backups.glob("*/.claude_settings.json")).read_text()), original)
+
+    def test_legacy_root_requires_override_and_preserves_other_skills(self):
+        legacy = self.user_dir / ".codex/skills"
+        legacy.mkdir(parents=True)
+        (legacy / ".system").mkdir()
+        (legacy / "personal").mkdir()
+        self.run_install()
+        self.assert_link(self.user_dir / ".agents/skills/unslop", self.repo / "shared/unslop")
+        self.assertFalse((legacy / "unslop").exists())
+        self.run_install(f"--codex-skills-root={legacy}")
+        self.assert_link(legacy / "unslop", self.repo / "shared/unslop")
+        self.assertTrue((legacy / ".system").is_dir())
+        self.assertTrue((legacy / "personal").is_dir())
 
     def test_invalid_settings_are_not_replaced(self):
         cli = self.user_dir / ".claude"

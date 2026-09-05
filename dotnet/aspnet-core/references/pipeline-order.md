@@ -15,7 +15,8 @@ and is wrong. Read this before adding, moving, or reviewing middleware.
 8. `UseAuthentication()`
 9. `UseAuthorization()`
 10. `UseSession()`, when the app uses session state
-11. Endpoint mapping: `MapRazorPages`, `MapControllers`, `MapGet`, `MapHub`, `MapGrpcService`
+11. `UseAntiforgery()`, when endpoints require it; register `AddAntiforgery()` services
+12. Endpoint mapping: `MapRazorPages`, `MapControllers`, `MapGet`, `MapHub`, `MapGrpcService`
 
 Adjust only with a concrete reason, and say what it is.
 

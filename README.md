@@ -30,8 +30,8 @@ through an exhausted delivery context.
 
 `diagnosing-bugs`, `code-review`, and `triage-review` are the entry points for
 those jobs. `shape-feature` covers solo and greenfield work where you are both
-author and implementer; it is set to `user-invocable-only` in Claude so it never
-competes for selection on a specified ticket.
+author and implementer. The WSL audit used a machine-local Claude
+`user-invocable-only` override; the installer preserves local routing settings.
 
 Writing guidance lives in `ENGINEERING.md`. Each installed harness loads it
 through its global instruction file: `~/.claude/CLAUDE.md` or
@@ -133,23 +133,23 @@ Skills are read at CLI start-up. Restart Claude Code or Codex after linking.
 
 ### Codex skills root
 
-Codex reads personal skills from `$CODEX_HOME/skills`, normally
-`~/.codex/skills`. The same home supplies `AGENTS.md`; an explicit
-`--codex-skills-root` changes only the skill destination. The bundled skills live
-in `.system/` inside that same directory, so its presence says nothing about where personal skills belong.
+Current [Codex documentation](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)
+places user skills in `~/.agents/skills`, which is the installer default.
+`CODEX_HOME` selects configuration and `AGENTS.md`; it does not establish the
+user skill root. The presence of `.system/` or an old skills directory does not
+prove discovery.
 
-Do not predict the root from the Codex version. If a release moves it, confirm
-the live value and pass it explicitly:
+The WSL 0.149.1 audit observed `$CODEX_HOME/skills`. For a harness that still uses
+that location, pass an explicit override on installation and every dry run:
 
 ```sh
-codex doctor                       # reports CODEX_HOME
 scripts/install-agent-links.sh --codex-skills-root="${CODEX_HOME:-$HOME/.codex}/skills"
 ```
 
-A skill left in an abandoned root is never read and Codex reports no error, so
-verify after every Codex upgrade. The authoritative check is the skill-roots
-table Codex emits into its own session rollout under `$CODEX_HOME/sessions`
-(normally `~/.codex/sessions/`).
+Verify discovery in the actual harness after installation or an upgrade, using
+its skill listing or the skill-roots table in a fresh session rollout. The
+CLI and desktop app may run different builds. `codex doctor` reports the config
+home; that alone does not verify the skills directory.
 
 ### Per-machine paths
 
@@ -178,7 +178,11 @@ scripts/install-agent-links.sh --dry-run   # expect linked=0 backed-up=0 retired
 # claude-settings is kept when Claude is installed, otherwise skipped.
 for agent_dir in "$HOME/.claude" "${CODEX_HOME:-$HOME/.codex}"; do
   [ -d "$agent_dir" ] || continue
-  ls -l "$agent_dir"/skills
+  if [ "$agent_dir" = "$HOME/.claude" ]; then
+    ls -l "$agent_dir/skills"
+  else
+    ls -l "$HOME/.agents/skills"
+  fi
   for guidance_file in "$agent_dir/CLAUDE.md" "$agent_dir/AGENTS.md"; do
     [ -L "$guidance_file" ] && readlink "$guidance_file"
   done

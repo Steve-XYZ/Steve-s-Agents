@@ -71,6 +71,38 @@ class ReviewPackageTests(unittest.TestCase):
 
 
 class CatalogTests(unittest.TestCase):
+    def test_reference_cannot_escape_by_parent_path_or_symlink(self):
+        with tempfile.TemporaryDirectory(prefix="catalog-fixture-") as tmp:
+            root = Path(tmp) / "catalog"
+            for name in ("shared", "dotnet", "evals"):
+                shutil.copytree(ROOT / name, root / name)
+            outside = Path(tmp) / "outside.md"
+            outside.write_text("Outside the distributable catalog")
+            skill = root / "shared/unslop/SKILL.md"
+            original = skill.read_text()
+            (skill.parent / "escape.md").symlink_to(outside)
+            for target in ("../../../outside.md", "%2E%2E/%2E%2E/%2E%2E/outside.md", "escape.md"):
+                with self.subTest(target=target):
+                    skill.write_text(original + f"\n[escape]({target})\n")
+                    self.assertTrue(any("escapes repository" in x for x in validator.validate(root)))
+            skill.write_text(original + "\n[inside](../global-guidance/ENGINEERING.md)\n")
+            self.assertEqual(validator.validate(root), [])
+
+    def test_routing_fields_require_lists(self):
+        with tempfile.TemporaryDirectory(prefix="catalog-fixture-") as tmp:
+            root = Path(tmp)
+            for name in ("shared", "dotnet", "evals"):
+                shutil.copytree(ROOT / name, root / name)
+            fixture = root / "evals/routing.json"
+            original = fixture.read_text()
+            for field in ("expectations", "load", "avoid"):
+                for value in ("malformed", "", {}, None):
+                    with self.subTest(field=field, value=value):
+                        cases = json.loads(original)
+                        cases[0][field] = value
+                        fixture.write_text(json.dumps(cases))
+                        self.assertTrue(any("must be lists" in x for x in validator.validate(root)))
+
     def test_current_catalog_and_seeded_regressions(self):
         self.assertEqual(validator.validate(ROOT), [])
         with tempfile.TemporaryDirectory(prefix="catalog-fixture-") as tmp:

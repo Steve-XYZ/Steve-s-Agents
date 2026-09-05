@@ -141,17 +141,15 @@ if [ -d "$HOME/.claude" ]; then
 	fi
 fi
 
-# Codex reads personal skills from $CODEX_HOME/skills, which is ~/.codex/skills
-# unless CODEX_HOME is set. Verified against 0.149.1: a live session reports
-# `/home/stive/.codex/skills` as a skill root alongside its `.system`
-# subdirectory, so the presence of `.system` does not mean the personal root
-# moved. Do not predict the root from the Codex version; pass --codex-skills-root
-# when a future release changes it and confirm with `codex doctor`.
+# Current Codex documents ~/.agents/skills for user skills. CODEX_HOME selects
+# configuration and global guidance, not necessarily the personal skill root.
+# Older installations observed using CODEX_HOME/skills can pass an explicit
+# override. Confirm discovery in the target harness, not from directory presence.
 codex_skills_root=""
 if [ -n "$codex_root_override" ]; then
 	codex_skills_root="$codex_root_override"
 elif [ -d "$codex_home_dir" ]; then
-	codex_skills_root="$codex_home_dir/skills"
+	codex_skills_root="$HOME/.agents/skills"
 fi
 
 set --

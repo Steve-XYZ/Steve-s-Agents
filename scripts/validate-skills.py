@@ -12,7 +12,7 @@ from urllib.parse import unquote, urlsplit
 
 
 def validate(root):
-    root = Path(root)
+    root = Path(root).resolve()
     errors = []
     names = set()
     skills = sorted(path for area in ("shared", "dotnet") for path in (root / area).glob("*/SKILL.md"))
@@ -44,7 +44,10 @@ def validate(root):
                 url = urlsplit(target)
                 if url.scheme or not url.path or target.startswith(("/", "~")):
                     continue
-                if not (path.parent / unquote(url.path)).exists():
+                candidate = (path.parent / unquote(url.path)).resolve()
+                if not candidate.is_relative_to(root):
+                    errors.append(f"{path}: reference escapes repository {target}")
+                elif not candidate.exists():
                     errors.append(f"{path}: missing reference {target}")
     try:
         cases = json.loads((root / "evals/routing.json").read_text())
@@ -53,6 +56,9 @@ def validate(root):
             if not case["id"] or case["id"] in seen:
                 errors.append("Routing cases require unique nonempty ids")
             seen.add(case["id"])
+            if any(not isinstance(case[key], list) for key in ("expectations", "load", "avoid")):
+                errors.append(f"{case['id']}: expectations, load, and avoid must be lists")
+                continue
             if not case["prompt"].strip() or not case["expectations"] or not all(isinstance(x, str) and x.strip() for x in case["expectations"]):
                 errors.append(f"{case['id']}: missing prompt or behavioral expectations")
             for name in case["load"] + case["avoid"]:
