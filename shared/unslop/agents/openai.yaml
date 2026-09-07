@@ -1,6 +1,6 @@
 interface:
   display_name: "Unslop"
-  short_description: "Write prose worth reading"
+  short_description: "Clear prose for reports and rewrites"
   default_prompt: "Use $unslop to write this so it is specific, active, and worth reading."
 
 policy:

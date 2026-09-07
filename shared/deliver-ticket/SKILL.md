@@ -1,13 +1,11 @@
 ---
 name: deliver-ticket
-description: Deliver well-defined engineering work end to end. Use when the user asks to implement, fix, complete, or deliver behavior already defined in a tracker, an accepted feature brief, or the user request itself. Do not use for unclear product requirements, unknown-cause diagnosis, planning-only requests, or pure code review.
+description: Use when the user asks to implement, fix, complete, or deliver behavior already defined in a tracker, an accepted feature brief, or the user request itself. Do not use for unclear product requirements, unknown-cause diagnosis, planning-only requests, or pure code review.
 ---
 
 # Deliver Ticket
 
 Use the ticket, accepted feature brief, or explicit user requirements as the source of truth for intended behavior. User corrections, repository instructions, and verified repository facts still apply. Do not rewrite clear requirements into another specification.
-
-Keep investigation and implementation in one Codex or Claude Code harness. After external review arrives, use `triage-review` in a fresh session of that same harness so the review is not evaluated through an exhausted delivery context. Do not switch harnesses mid-ticket.
 
 ## 0. Orient
 
@@ -96,13 +94,13 @@ Mark material claims without executable evidence as `UNPROVEN`. Do not create a 
 
 ## 6. Finish
 
-Apply the writing rules from global guidance during the original draft, not as a polishing pass over a finished one.
-
 Report:
 
 - what changed,
 - validation actually executed,
 - remaining risks or unresolved items.
+
+When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.
 
 Do not create extra documentation, commit, push, open a PR, publish comments, or send external messages unless explicitly requested or required by an established repository workflow.
 

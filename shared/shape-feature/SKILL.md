@@ -1,6 +1,6 @@
 ---
 name: shape-feature
-description: Turn one of your own ideas into an implementable feature and first vertical slice. Use for solo or greenfield work where you are both author and implementer and the product, behavior, or architecture decisions are still open. Do not use when a tracker ticket or accepted brief already specifies the behavior, for unknown-cause bug diagnosis, or for pure code review.
+description: Use for solo or greenfield work where you are both author and implementer and the product, behavior, or architecture decisions are still open. Do not use when a tracker ticket or accepted brief already specifies the behavior, for unknown-cause bug diagnosis, or for pure code review.
 ---
 
 # Shape Feature
@@ -52,3 +52,5 @@ Prefer independently verifiable vertical behavior. The first slice should be sma
 If uncertainty still prevents a first slice, record only the destination, known decisions, blocking unknowns, and next experiment or research action. Resolve that blocker before planning the wider initiative.
 
 Do not invoke `deliver-ticket` automatically. When shaping is complete, report the brief and the next executable slice.
+
+When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.

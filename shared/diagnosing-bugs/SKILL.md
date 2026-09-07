@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: Diagnose bugs, regressions, flaky failures, and performance problems using reproducible or captured evidence. Use when the cause is unknown or the user asks to diagnose, debug, investigate, or fix something broken, failing, throwing, flaky, or slow. Continue to implementation only when a fix is requested. Do not use for a ticket with an established cause or for pure code review.
+description: Use when the cause is unknown or the user asks to diagnose, debug, investigate, or fix something broken, failing, throwing, flaky, or slow. Continue to implementation only when a fix is requested. Do not use for a ticket with an established cause or for pure code review.
 ---
 
 # Diagnosing Bugs
@@ -67,6 +67,8 @@ Measure performance problems before optimizing. Tag temporary instrumentation so
 
 ## 4. Respect the requested outcome
 
+When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.
+
 For a diagnosis-only request, stop after reporting the demonstrated cause, evidence, confidence, and remaining uncertainty. Do not modify code.
 
 When the user requested a fix, implement the smallest change supported by the evidence. Preserve existing contracts, retry and transaction behavior, idempotency, and ownership boundaries unless the confirmed cause requires changing them.
@@ -81,4 +83,6 @@ When a reliable seam exists:
 
 If no honest regression seam exists, explain the limitation instead of adding artificial coverage.
 
-Remove temporary instrumentation and disposable artifacts created for the diagnosis. Report the cause, change if authorized, validation actually executed, and unresolved risks. Do not commit, push, update tickets, or publish external findings unless explicitly requested.
+Remove temporary instrumentation and disposable artifacts created for the diagnosis. Report the cause, change if authorized, validation actually executed, and unresolved risks.
+
+Do not commit, push, update tickets, or publish external findings unless explicitly requested.

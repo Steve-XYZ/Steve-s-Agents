@@ -1,20 +1,15 @@
 ---
 name: aspnet-core
-description: Correct version-gated, pipeline-order, and Blazor render-mode decisions in ASP.NET Core work. Use when changing Program.cs or middleware order, choosing or changing a Blazor render mode, introducing a platform API that may not exist in the target framework, or upgrading across major versions. Do not use for ordinary feature work inside an established app model, where the repository's own conventions govern.
+description: Use when changing Program.cs or middleware order, choosing or changing a Blazor render mode, introducing a platform API that may not exist in the target framework, or upgrading across major versions. Do not use for ordinary feature work inside an established app model, where the repository's own conventions govern.
 ---
 
 # ASP.NET Core
 
-This skill holds the facts a model gets wrong from memory: what exists in which
-framework version, what order the pipeline must run in, and which Blazor render
-mode a component needs. Everything else about ASP.NET Core it already knows.
-The repository's conventions, architecture, and dependencies outrank all of it.
+This skill holds the facts a model gets wrong from memory: what exists in which framework version, what order the pipeline must run in, and which Blazor render mode a component needs. Everything else about ASP.NET Core it already knows. The repository's conventions, architecture, and dependencies outrank all of it.
 
 ## Orient
 
-Resolve the affected project first and load the repository's SDK setup before
-running .NET commands. From that project's directory, inspect the applicable
-`global.json` in it or its ancestors, then evaluate its imported properties:
+Resolve the affected project first and load the repository's SDK setup before running .NET commands. From that project's directory, inspect the applicable `global.json` in it or its ancestors, then evaluate its imported properties:
 
 ```sh
 dotnet --version
@@ -22,14 +17,9 @@ dotnet msbuild <affected-project.csproj> --nologo -getProperty:TargetFramework,T
 rg -n '@rendermode|AddInteractiveServerComponents|AddInteractiveWebAssemblyComponents' <affected-source-directory> -g '*.razor' -g '*.cs'
 ```
 
-Use the same configuration and platform properties as the affected build. Repeat
-for each affected project; an SDK pin or a sibling project's framework does not
-establish this project's target. Evaluation includes `Directory.Build.props`
-and other imports. If evaluation fails, inspect those imports and report the
-unresolved target instead of selecting a framework from a repository-wide scan.
+Use the same configuration and platform properties as the affected build. Repeat for each affected project; an SDK pin or a sibling project's framework does not establish this project's target. Evaluation includes `Directory.Build.props` and other imports. If evaluation fails, inspect those imports and report the unresolved target instead of selecting a framework from a repository-wide scan.
 
-Do not restate the output. If the target framework differs from what the task
-assumes, say so before writing code.
+Do not restate the output. If the target framework differs from what the task assumes, say so before writing code.
 
 ## References
 
@@ -39,9 +29,7 @@ Open only what the change touches:
 - [pipeline-order.md](references/pipeline-order.md) — middleware order and the ordering mistakes that compile, start, and fail in production. Read before adding, moving, or reviewing middleware.
 - [blazor.md](references/blazor.md) — render-mode choice, `IDbContextFactory` in components, and the trust boundary.
 
-For anything else — globalization, hosting details, a narrow API page — go
-straight to Microsoft Learn. A summary of it here would only restate what the
-model has.
+For anything else — globalization, hosting details, a narrow API page — go straight to Microsoft Learn. A summary of it here would only restate what the model has.
 
 ## Defaults
 

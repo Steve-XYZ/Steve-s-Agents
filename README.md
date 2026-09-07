@@ -1,7 +1,6 @@
 # Steve-s-Agents
 
-Personal agent guidance shared across development machines. Codex and Claude Code
-read the same guidance through symlinks; the installer handles their different paths.
+Personal agent guidance shared across development machines and agents, including Codex, Claude Code, OpenCode, Antigravity, Cursor, and Grok Build. They use the same AGENTS.md and skills standards; symlinks keep a single source of guidance. The installer maintains the Codex and Claude paths used on this machine.
 
 ## Contents
 
@@ -14,10 +13,7 @@ read the same guidance through symlinks; the installer handles their different p
 
 ## Delivery loop
 
-One harness runs investigation and implementation for a ticket. Do not split a
-ticket across Codex and Claude Code. After external review, start
-`triage-review` in a fresh session of the same harness so the review is not read
-through an exhausted delivery context.
+Start with one harness running the investigation and implementation for a ticket. Do not split a ticket across harnesses. After external review, start `triage-review` in a fresh session of the same harness so the review is not read through an exhausted delivery context.
 
 `deliver-ticket` is the entry:
 
@@ -28,25 +24,13 @@ through an exhausted delivery context.
 5. prove the target behavior and any material behavior that must remain unchanged;
 6. perform a cold self-review, compare the final diff with the original map, and keep the change draft while required evidence is materially `UNPROVEN`.
 
-`diagnosing-bugs`, `code-review`, and `triage-review` are the entry points for
-those jobs. `shape-feature` covers solo and greenfield work where you are both
-author and implementer. The WSL audit used a machine-local Claude
-`user-invocable-only` override; the installer preserves local routing settings.
+`diagnosing-bugs`, `code-review`, and `triage-review` are the entry points for those jobs. `shape-feature` covers solo and greenfield work where you are both author and implementer. The WSL audit used a machine-local Claude `user-invocable-only` override; the installer preserves local routing settings.
 
-Writing guidance lives in `ENGINEERING.md`. Each installed harness loads it
-through its global instruction file: `~/.claude/CLAUDE.md` or
-`${CODEX_HOME:-$HOME/.codex}/AGENTS.md`. It was a
-skill for one release and the measurement killed that: an instruction telling
-the model to invoke `unslop` fired in 1 of 16 real sessions, so 15 of 16
-responses were written without the rules. A symlinked file fires in all of
-them. The `unslop` skill is now only a shim for rewriting prose the user
-pastes. Nothing re-reads a guidance file per response.
+Writing guidance lives in `unslop`, separate from the engineering defaults. Workflow skills load it when preparing a PR body, findings, or final report; requested prose writing and rewriting can also invoke it directly. Reuse it while it remains in context. Routine progress updates do not trigger a new load, and no startup hook or per-response reread is needed.
 
 ## When a reference earns its place
 
-Progressive disclosure only pays when the deeper file holds facts the model
-cannot derive and would otherwise get wrong. Measure before adding one, and
-measure again before keeping it.
+Progressive disclosure only pays when the deeper file holds facts the model cannot derive and would otherwise get wrong. Measure before adding one, and measure again before keeping it.
 
 - A reference must carry version-gated behavior, an exact command, a repository
   invariant, or a procedure with a failure mode. Well-organized restatements of
@@ -60,12 +44,7 @@ measure again before keeping it.
 
 ## Workflow change evaluation
 
-Before adopting a material workflow rule broadly, replay a fixed set of
-historical cases through the same model and harness: a clean control, a known
-escape, an oversized or multi-cluster change, and a representative pre-change
-control. Score known-defect recall, invalid findings, elapsed time, and output
-size. Prefer the smallest rule that improves the target cases without adding
-noise to the clean control.
+Before adopting a material workflow rule broadly, replay a fixed set of historical cases through the same model and harness: a clean control, a known escape, an oversized or multi-cluster change, and a representative pre-change control. Score known-defect recall, invalid findings, elapsed time, and output size. Prefer the smallest rule that improves the target cases without adding noise to the clean control.
 
 Run repository checks before spending model tokens:
 
@@ -75,13 +54,9 @@ python3 scripts/test-install-agent-links.py
 python3 scripts/test-workflow-helpers.py
 ```
 
-The [evaluation cases](evals/README.md) distinguish structural checks from live
-routing and behavior. Passing the local validator does not prove skill selection.
+The [evaluation cases](evals/README.md) distinguish structural checks from live routing and behavior. Passing the local validator does not prove skill selection.
 
-For repeated reviews, `scripts/review-package.py --repo <project> --base <sha>`
-captures an exact committed diff in a new temporary directory without changing
-the project. The [review procedure](shared/code-review/references/review-evidence.md)
-defines evidence reuse, fix-round scope, and the remaining approval requirements.
+For repeated reviews, `scripts/review-package.py --repo <project> --base <sha>` captures an exact committed diff in a new temporary directory without changing the project. The [review procedure](shared/code-review/references/review-evidence.md) defines evidence reuse, fix-round scope, and the remaining approval requirements.
 
 ### Practices adapted for this workflow
 
@@ -95,15 +70,11 @@ These are focused adaptations, not installed frameworks:
 - [T3 Code](https://github.com/pingdotgg/t3code/blob/main/AGENTS.md): targeted checks and project-owned operational traps.
 - [Armin Ronacher](https://github.com/mitsuhiko/agent-stuff/blob/main/skills/librarian/SKILL.md): reuse local reference checkouts and record their revisions. No cache manager is installed here.
 
-For personal learning after a difficult ticket, explain the invariant owner,
-partial-failure outcome, and falsifying test before asking the agent for feedback.
-Keep a lesson only if it changes a future decision. This is optional reflection,
-not a new delivery gate or automatic teaching pass.
+For personal learning after a difficult ticket, explain the invariant owner, partial-failure outcome, and falsifying test before asking the agent for feedback. Keep a lesson only if it changes a future decision. This is optional reflection, not a new delivery gate or automatic teaching pass.
 
 ## Canonical installation
 
-The same shape applies on every machine; only the clone path and the reference
-configuration directory differ.
+The same shape applies on every machine; only the clone path and the reference configuration directory differ.
 
 - `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` and `~/.claude/CLAUDE.md` are symlinks to `shared/global-guidance/ENGINEERING.md`.
 - Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's skills directory.
@@ -116,40 +87,23 @@ scripts/install-agent-links.sh --dry-run   # see what it would do
 scripts/install-agent-links.sh
 ```
 
-The installer is idempotent, detects installed CLIs by their configuration
-directories, discovers skills by scanning for `SKILL.md`, and moves anything already occupying a target
-path into `~/.agent-links-backup/<timestamp>/` rather than deleting it. When
-Claude is installed it uses Python 3 to merge the one required directory into
-existing user settings, backing that file up first. Invalid or unexpected JSON
-fails without modifying the settings file; other links may already have been updated.
+The installer is idempotent, detects installed CLIs by their configuration directories, discovers skills by scanning for `SKILL.md`, and moves anything already occupying a target path into `~/.agent-links-backup/<timestamp>/` rather than deleting it. When Claude is installed it uses Python 3 to merge the one required directory into existing user settings, backing that file up first. Invalid or unexpected JSON fails without modifying the settings file; other links may already have been updated.
 
-Upgrades back up the obsolete `engineering-judgment` links in the selected skill
-roots and the old `~/.agent-guidance` link only when their literal targets match
-this clone. Unrelated links and real files at those retired names stay in place.
-Links in an abandoned skill root or pointing at another clone require inspection;
-the installer does not guess their ownership. Existing settings entries are preserved.
-
-Skills are read at CLI start-up. Restart Claude Code or Codex after linking.
+Restart the harness after linking so it refreshes skill discovery. Skill bodies load when invoked.
 
 ### Codex skills root
 
 Current [Codex documentation](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)
 places user skills in `~/.agents/skills`, which is the installer default.
-`CODEX_HOME` selects configuration and `AGENTS.md`; it does not establish the
-user skill root. The presence of `.system/` or an old skills directory does not
-prove discovery.
+`CODEX_HOME` selects configuration and `AGENTS.md`; it does not establish the user skill root. The presence of `.system/` or an old skills directory does not prove discovery.
 
-The WSL 0.149.1 audit observed `$CODEX_HOME/skills`. For a harness that still uses
-that location, pass an explicit override on installation and every dry run:
+For a harness that still uses the `$CODEX_HOME/skills` location, pass an explicit override on installation and every dry run:
 
 ```sh
 scripts/install-agent-links.sh --codex-skills-root="${CODEX_HOME:-$HOME/.codex}/skills"
 ```
 
-Verify discovery in the actual harness after installation or an upgrade, using
-its skill listing or the skill-roots table in a fresh session rollout. The
-CLI and desktop app may run different builds. `codex doctor` reports the config
-home; that alone does not verify the skills directory.
+Verify discovery in the actual harness after installation or an upgrade, using its skill listing or the skill-roots table in a fresh session rollout. The CLI and desktop app may run different builds. `codex doctor` reports the config home; that alone does not verify the skills directory.
 
 ### Per-machine paths
 
@@ -159,8 +113,7 @@ home; that alone does not verify the skills directory.
 | Reference configs | `configs/macos/` | `configs/wsl/` |
 | BOS workspace | `/Users/stive/Documents/Code/BOS` | `/home/stive/src/BOS` |
 
-T3 Code has no skills directory of its own. It launches the Claude Code and
-Codex CLIs, so linking the directories above is what makes skills reachable
+T3 Code has no skills directory of its own. It launches the harness CLIs, so linking the directories above is what makes skills reachable
 from T3.
 
 macOS additionally mirrors `configs/macos/bos/dotnetrc.zsh` to

@@ -1,6 +1,6 @@
 ---
 name: triage-review
-description: Validate and address incoming review findings, bot findings, or reviewer threads on a change you own. Use when your pull request has been reviewed and you must classify each current finding, implement owned fixes, validate them, and optionally push or respond when explicitly authorized. Do not use to review another author's change or to deliver a ticket with no incoming review.
+description: Use when your pull request has been reviewed and you must classify each current finding, implement owned fixes, validate them, and optionally push or respond when explicitly authorized. Do not use to review another author's change or to deliver a ticket with no incoming review.
 ---
 
 # Triage Review
@@ -62,5 +62,7 @@ Do not resolve threads, request re-review, approve, merge, or publish unrelated 
 Do not describe the pull request as ready while a current `CHANGES_REQUESTED` review or unresolved material thread remains, or before an independent reviewer has approved the current head when repository policy requires it. Author fixes, comments, and validation do not count as independent reapproval.
 
 ## 6. Finish
+
+When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.
 
 Report per finding: classification, evidence, change if any, and validation executed. State the resulting local and remote head when publication occurred, then list unresolved evidence, deferred follow-ups, and validation not run.

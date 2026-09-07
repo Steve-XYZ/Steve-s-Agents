@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Review a pull request, diff, commit, review thread, or ticket implementation against its stated requirements and repository evidence. Use when the user asks for a PR review, code review, regression review, or confirmation that a change satisfies a ticket. Do not use as an automatic delivery self-review, to implement changes, or to diagnose an unknown failure.
+description: Use when the user asks for a PR review, code review, regression review, or confirmation that a change satisfies a ticket. Do not use as an automatic delivery self-review, to implement changes, or to diagnose an unknown failure.
 ---
 
 # Code Review
@@ -51,6 +51,8 @@ Run the narrowest reliable build, test, lint, format, migration, or runtime chec
 Never present unexecuted validation as completed evidence.
 
 ## 5. Report findings
+
+When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.
 
 Start with a one-line verdict: approve, comment, or request changes. Request changes when a blocker remains, comment when only should-fix findings remain, and approve when only nits or no findings remain unless repository rules require another disposition. List findings first, ordered by severity:
 

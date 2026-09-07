@@ -2,15 +2,9 @@
 
 Run the cheapest check that can go red on the behavior the ticket requires. Prove the requested change and the material behavior that must remain unchanged.
 
-Test observable behavior through the existing public or integration boundary.
-Derive expected values from the requirement, a worked example, or an independent
-oracle, not the implementation's own calculation. Ask whether the assertion would
-fail if the original defect returned. Work one behavior and its proof at a time;
-do not bulk-write tests against an imagined implementation.
+Test observable behavior through the existing public or integration boundary. Derive expected values from the requirement, a worked example, or an independent oracle, not the implementation's own calculation. Ask whether the assertion would fail if the original defect returned. Work one behavior and its proof at a time; do not bulk-write tests against an imagined implementation.
 
-When repeated setup or fixture discovery blocks proof and tooling work is in
-scope, read [project verification](project-verification.md). Put executable
-knowledge in that project rather than expanding global framework guidance.
+When repeated setup or fixture discovery blocks proof and tooling work is in scope, read [project verification](project-verification.md). Put executable knowledge in that project rather than expanding global framework guidance.
 
 Use repository-native complexity rules when the normal affected build or lint command already enforces them. Read [local-complexity](local-complexity.md) and consider its fallback only when the final diff adds or reshapes material branching, nesting, state selection, retry, or failure coordination, or when a native diagnostic or reviewer has identified a concrete complexity risk. Routine changed functions do not justify a separate whole-project complexity pass.
 
