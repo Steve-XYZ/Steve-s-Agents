@@ -9,6 +9,7 @@
 - Investigate discoverable facts; ask only about unresolved product or architectural decisions.
 - Distinguish a missing CLI from sandboxed network or authentication failures. When `gh --version` succeeds but a GitHub check fails in a restricted sandbox, retry with approved network access before reporting `gh` unavailable or unauthenticated.
 - Stay within scope, prefer the smallest coherent vertical change, and follow established repository patterns.
+- Write minimal code comments. Do not add what-comments that restate the code. No docblocks on private or internal code unless they record a non-obvious invariant, contract, or failure mode. Never change comment wording alone. If touched code has an outdated comment, delete it when the code is clear and fix it only when it records a why the code cannot show. Prefer a clearer name, type, or test over a comment.
 - Do not add dependencies, abstractions, plans, docs, subagents, or artifacts unless they add clear value.
 - Run targeted checks before broader suites; never claim completion without concrete evidence.
 - Ask before external writes, releases, deployments, destructive operations, production dependencies, Git history changes, or material scope expansion.

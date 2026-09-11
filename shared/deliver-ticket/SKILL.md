@@ -89,6 +89,7 @@ Confirm only what applies:
 4. Primary and ancillary effects have defined outcomes for permanent failure, transient failure, retry, concurrency, and partial success when relevant.
 5. Tests can fail for the target behavior and at least one material preserved or negative case.
 6. The diff contains no dead fields, speculative compatibility, or unrequested cleanup.
+7. The diff contains no comment-only hunks, no new what-comments, and no rewritten comment wording without a behavior change.
 
 Mark material claims without executable evidence as `UNPROVEN`. Do not create a critic or invoke `code-review` automatically. Recommend independent review when risk remains material.
 
