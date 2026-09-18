@@ -8,11 +8,11 @@ Do not use this file to search for improvements, generate review findings, or pr
 
 Trace one real path from caller or trigger to observable result. Identify the behavior the ticket requires, the invariants that protect it, the component that owns each invariant, and every durable or externally visible side effect. Distinguish intended behavior from behavior that merely exists today.
 
-Keep volatile knowledge with the owner that can enforce it. The design comparison and the abstraction test live in `deliver-ticket`; apply them here rather than restating them.
+Compare candidate designs by what callers must know, where policy is duplicated, which invalid states they permit, how many coordinated edits a future change would need, and how failures surface. Keep volatile knowledge with the owner that can enforce it. Introduce an abstraction only when it removes current coordination or makes a required invariant enforceable; hypothetical reuse is not enough.
 
 Name which component is authoritative for each fact and which copies are derived or cached. For shared contracts, schemas, or messages, inspect the actual producers and consumers, compatibility expectations, deployment order, rollback behavior, and generated artifacts. Preserve existing contracts unless the requirement changes them.
 
-For a shared flag, status, enum, or eligibility predicate, work from the provenance map `change-impact` already built. A new write-side rule does not repair stored rows or a reader that independently reconstructs the old rule.
+For a shared flag, status, enum, or eligibility predicate, inspect every writer and reader plus initial, null/default, legacy, migration, backfill, and test-fixture states, then compare the predicates used at each action surface. Reuse the provenance map when `change-impact` has already built one. A new write-side rule does not repair stored rows or a reader that independently reconstructs the old rule.
 
 ## Create an honest feedback path
 

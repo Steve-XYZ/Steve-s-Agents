@@ -53,7 +53,7 @@ Keep one compact brief in the conversation containing only what applies:
 
 - goal and acceptance criteria,
 - existing pattern,
-- the chosen design, and what makes it simpler than the alternative considered: fewer concepts a caller must know, less duplicated policy, fewer invalid states, fewer coordinated edits,
+- the chosen design and why it is the simplest supported route, when that choice is non-obvious or materially differs from the ticket's suggested path,
 - locations that change and behavior that must remain unchanged,
 - invariant, owner, states, writers, or partial-failure boundary,
 - scope decision when more than one behavioral cluster was inspected,
@@ -94,7 +94,7 @@ Confirm only what applies:
 4. Primary and ancillary effects have the failure, retry, concurrency, and partial-success outcomes `grill` settled.
 5. Tests can fail for the target behavior and at least one material preserved or negative case.
 6. The diff contains no dead fields, speculative compatibility, or unrequested cleanup.
-7. Every new comment block past two lines names the invariant, external constraint, or failure semantic it carries that the code and tests cannot. None restates ticket history, a ticket ID, or the PR description. The diff contains no comment-only hunks and no rewritten comment wording without a behavior change.
+7. Every new comment block past two lines names the invariant, external constraint, or failure semantic it carries that the code and tests cannot. None restates ticket history, a ticket ID, or the PR description. The diff contains no comment-only hunks beyond correcting materially false guidance, and no other rewritten comment wording.
 
 Mark material claims without executable evidence as `UNPROVEN`. Do not create a critic or invoke `code-review` automatically. Recommend independent review when risk remains material.
 
