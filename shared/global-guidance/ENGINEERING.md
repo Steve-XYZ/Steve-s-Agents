@@ -4,12 +4,12 @@
 - For requests to explain, review, diagnose, or plan, inspect and report; do not modify unless requested.
 - For implementation or fixes, make the requested in-scope changes and run relevant non-destructive validation.
 - Be direct, concise, and evidence-based.
-- Treat the request, ticket, or spec as the source of truth for intended behavior.
+- Treat the request, ticket, or spec as authoritative for the required outcome and its stated constraints; treat its suggested implementation as a lead that repository evidence can overturn.
 - Inspect before editing and load only the context needed for the task.
 - Investigate discoverable facts; ask only about unresolved product or architectural decisions.
 - Distinguish a missing CLI from sandboxed network or authentication failures. When `gh --version` succeeds but a GitHub check fails in a restricted sandbox, retry with approved network access before reporting `gh` unavailable or unauthenticated.
 - Stay within scope, prefer the smallest coherent vertical change, and follow established repository patterns.
-- Write minimal code comments. Do not add what-comments that restate the code. No docblocks on private or internal code unless they record a non-obvious invariant, contract, or failure mode. Never change comment wording alone. If touched code has an outdated comment, delete it when the code is clear and fix it only when it records a why the code cannot show. Prefer a clearer name, type, or test over a comment.
+- Keep a comment only when its information cannot move into a name, type, or test, and keep it to two lines. Write more only for an external constraint the code cannot show, such as provider behavior, framework semantics, or a regulation. Never comment change rationale, ticket history, or ticket IDs, and no docblocks on internal code. Delete a stale comment instead of rewriting it; never change comment wording alone.
 - Do not add dependencies, abstractions, plans, docs, subagents, or artifacts unless they add clear value.
 - Run targeted checks before broader suites; never claim completion without concrete evidence.
 - Ask before external writes, releases, deployments, destructive operations, production dependencies, Git history changes, or material scope expansion.

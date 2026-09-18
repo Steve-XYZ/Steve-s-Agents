@@ -22,9 +22,9 @@ Trace the real path, callers, observable behavior, ownership, side effects, and 
 
 Use repository evidence to answer these. Do not ask the user for discoverable facts or present an exhaustive interview.
 
-## Go deeper only on an unresolved risk
+## Settle these before implementing
 
-Read [judgment](judgment.md) when the cost of being wrong is material and one of these remains unresolved after the questions above:
+When the cost of being wrong is material, each of these needs an answer in the brief:
 
 - no honest validation seam reaches the affected behavior;
 - failure can leave durable or external state partially updated;
@@ -32,9 +32,9 @@ Read [judgment](judgment.md) when the cost of being wrong is material and one of
 - several callers coordinate the same knowledge or invariant;
 - the implementation must distinguish states or failures that the current representation obscures.
 
-Touching legacy code, a database, an API, or complex-looking code does not qualify by itself. When none of these remains open, continue without it.
+Touching legacy code, a database, an API, or complex-looking code does not qualify by itself.
 
-Do not add abstractions, tests, error handling, or generality merely to satisfy this pass. Requirements, evidence, and local patterns outrank these heuristics, and a principle alone is never a code-review finding.
+Do not add abstractions, tests, error handling, or generality merely to satisfy this list. Do not introduce queues, outboxes, distributed transactions, event sourcing, or a new store unless a demonstrated invariant requires it and the repository lacks an established mechanism. Requirements, evidence, and local patterns outrank these heuristics, and a principle alone is never a code-review finding.
 
 ## Ask only what evidence cannot settle
 

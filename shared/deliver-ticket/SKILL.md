@@ -5,7 +5,9 @@ description: Use when the user asks to implement, fix, complete, or deliver beha
 
 # Deliver Ticket
 
-Use the ticket, accepted feature brief, or explicit user requirements as the source of truth for intended behavior. User corrections, repository instructions, and verified repository facts still apply. Do not rewrite clear requirements into another specification.
+The ticket, accepted feature brief, or explicit user request is authoritative for the required outcome, its acceptance criteria, and any constraint it states. Do not rewrite those into another specification.
+
+Its cause analysis, named files, and suggested approach are leads, written before anyone read the current code. Where repository evidence contradicts a lead, implement what the evidence supports and record the contradiction in the brief. User corrections, repository instructions, and verified repository facts still apply.
 
 ## 0. Orient
 
@@ -51,6 +53,7 @@ Keep one compact brief in the conversation containing only what applies:
 
 - goal and acceptance criteria,
 - existing pattern,
+- the chosen design, and what makes it simpler than the alternative considered: fewer concepts a caller must know, less duplicated policy, fewer invalid states, fewer coordinated edits,
 - locations that change and behavior that must remain unchanged,
 - invariant, owner, states, writers, or partial-failure boundary,
 - scope decision when more than one behavioral cluster was inspected,
@@ -61,11 +64,13 @@ Do not create a separate planning artifact. A trivial, local, low-risk change ma
 
 ## 3. Implement
 
-Implement the smallest coherent vertical change that satisfies the ticket. Follow repository patterns and preserve existing contracts unless the ticket explicitly changes them.
+Implement the smallest coherent vertical change that satisfies the ticket. Prefer the design with the fewest concepts a caller must know, the least duplicated policy, the fewest invalid states it permits, and the fewest coordinated edits the next change would need. Follow repository patterns and preserve existing contracts unless the ticket explicitly changes them.
+
+Evidence found while implementing can invalidate the chosen approach. When it does, change the approach and say so in the brief instead of working around what the map got wrong.
 
 When the brief names an invariant or expensive failure, write or extend the test that can go red on that behavior before or with the production change. Cover the relevant failure class, not only the intended path.
 
-Do not expand scope or perform unrelated cleanup. Do not add fields, settings, abstractions, or compatibility paths without a demonstrated caller or contract.
+Do not expand scope or perform unrelated cleanup. Do not add fields, settings, or compatibility paths without a demonstrated caller or contract. Add an abstraction only when it removes coordination that exists today or makes a required invariant enforceable; hypothetical reuse is not enough.
 
 ## 4. Prove
 
@@ -85,11 +90,11 @@ Confirm only what applies:
 
 1. Every acceptance criterion has an observable implementation and proof.
 2. The owning component enforces each invariant; callers do not duplicate or bypass it.
-3. Every writer and reader of a changed shared fact uses compatible states and predicates, including stored data, defaults, legacy rows, migrations, backfills, deploy configuration, and downstream consumers.
-4. Primary and ancillary effects have defined outcomes for permanent failure, transient failure, retry, concurrency, and partial success when relevant.
+3. Every writer and reader of a changed shared fact still satisfies the provenance map from `change-impact`.
+4. Primary and ancillary effects have the failure, retry, concurrency, and partial-success outcomes `grill` settled.
 5. Tests can fail for the target behavior and at least one material preserved or negative case.
 6. The diff contains no dead fields, speculative compatibility, or unrequested cleanup.
-7. The diff contains no comment-only hunks, no new what-comments, and no rewritten comment wording without a behavior change.
+7. Every new comment block is two lines or fewer, or names the external constraint it records. None restates ticket history, a ticket ID, or the PR description. The diff contains no comment-only hunks and no rewritten comment wording without a behavior change.
 
 Mark material claims without executable evidence as `UNPROVEN`. Do not create a critic or invoke `code-review` automatically. Recommend independent review when risk remains material.
 
