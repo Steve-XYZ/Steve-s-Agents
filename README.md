@@ -18,9 +18,9 @@ Start with one harness running the investigation and implementation for a ticket
 `deliver-ticket` is the entry:
 
 1. run the orientation commands, so later steps reason from observed branch, worktree, and upstream state;
-2. map concrete callers, data paths, configuration, consumers, and independent behavioral clusters before choosing a design;
+2. treat the ticket's outcome and constraints as binding and its suggested path as a lead, then map concrete callers, data paths, configuration, consumers, and independent behavioral clusters before choosing a design;
 3. split independently deliverable state machines or side-effect clusters, then grill shared-state provenance, invariants, failure classes, and unresolved decisions;
-4. implement the smallest vertical change, with a test of the invariant when one exists;
+4. implement the smallest vertical change, choosing the design with the fewest concepts, least duplicated policy, and fewest invalid states, with a test of the invariant when one exists;
 5. prove the target behavior and any material behavior that must remain unchanged;
 6. perform a cold self-review, compare the final diff with the original map, and keep the change draft while required evidence is materially `UNPROVEN`.
 
@@ -41,6 +41,10 @@ Progressive disclosure only pays when the deeper file holds facts the model cann
 - Check reads against real sessions, not intent. Grep the harness rollouts for
   the filename inside actual tool calls and exclude sessions spent editing this
   repository, or every file looks used.
+
+- Count opens against the sessions that met the reference's own trigger, not
+  against every transcript. A conditional reference looks unused when the
+  denominator includes the sessions it was never meant to open in.
 
 ## Workflow change evaluation
 
@@ -66,7 +70,6 @@ These are focused adaptations, not installed frameworks:
 - [Matt Pocock](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md): observable test seams and independent expected results.
 - [Addy Osmani](https://github.com/addyosmani/agent-skills/blob/main/evals/README.md): separate structural, routing, and behavioral checks.
 - [Superpowers](https://github.com/obra/superpowers/blob/main/skills/subagent-driven-development/re-review-prompt.md): scoped fix rounds and traceable evidence reuse.
-- [pstack](https://github.com/cursor/plugins/blob/main/pstack/skills/create-verification-skill/SKILL.md): runnable project verification and structural prevention of recurring mistakes.
 - [T3 Code](https://github.com/pingdotgg/t3code/blob/main/AGENTS.md): targeted checks and project-owned operational traps.
 - [Armin Ronacher](https://github.com/mitsuhiko/agent-stuff/blob/main/skills/librarian/SKILL.md): reuse local reference checkouts and record their revisions. No cache manager is installed here.
 
