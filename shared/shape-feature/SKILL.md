@@ -29,7 +29,7 @@ Use external, primary-source research only when correctness depends on current f
 
 Use a small prototype or experiment only when it is cheaper and more reliable than reasoning about the uncertainty. Do not turn exploration into production code accidentally.
 
-When a decision about ownership, contracts, state, failure behavior, or an implementation boundary is still unresolved after the questions above and would be costly to get wrong, name the risk and settle it before finalizing the first slice. Do not invent implementation detail prematurely to close it.
+When a decision about ownership, contracts, state, failure behavior, or an implementation boundary is still unresolved after the questions above and would be costly to get wrong, name the risk and read [judgment](../deliver-ticket/references/judgment.md) before finalizing the first slice. Do not use it to invent implementation detail prematurely.
 
 ## 4. Establish the brief
 

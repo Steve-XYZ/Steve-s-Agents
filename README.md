@@ -42,12 +42,9 @@ Progressive disclosure only pays when the deeper file holds facts the model cann
   the filename inside actual tool calls and exclude sessions spent editing this
   repository, or every file looks used.
 
-Measured over 95 transcripts in the 35 days to 2026-09-18, by sessions that
-opened the file through a tool call: `change-impact` 14, `grill` 13,
-`prove-it-works` 12, `review-evidence` 8, `adversarial-review` 7,
-`local-complexity` 6, `judgment` 3, `project-verification` 1. The last two were
-retired on that evidence, and the design comparison that made `judgment` worth
-keeping moved into `deliver-ticket` itself. Watch `local-complexity` next.
+- Count opens against the sessions that met the reference's own trigger, not
+  against every transcript. A conditional reference looks unused when the
+  denominator includes the sessions it was never meant to open in.
 
 ## Workflow change evaluation
 

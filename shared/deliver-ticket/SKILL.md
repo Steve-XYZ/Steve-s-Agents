@@ -94,7 +94,7 @@ Confirm only what applies:
 4. Primary and ancillary effects have the failure, retry, concurrency, and partial-success outcomes `grill` settled.
 5. Tests can fail for the target behavior and at least one material preserved or negative case.
 6. The diff contains no dead fields, speculative compatibility, or unrequested cleanup.
-7. Every new comment block is two lines or fewer, or names the external constraint it records. None restates ticket history, a ticket ID, or the PR description. The diff contains no comment-only hunks and no rewritten comment wording without a behavior change.
+7. Every new comment block past two lines names the invariant, external constraint, or failure semantic it carries that the code and tests cannot. None restates ticket history, a ticket ID, or the PR description. The diff contains no comment-only hunks and no rewritten comment wording without a behavior change.
 
 Mark material claims without executable evidence as `UNPROVEN`. Do not create a critic or invoke `code-review` automatically. Recommend independent review when risk remains material.
 

@@ -9,7 +9,7 @@
 - Investigate discoverable facts; ask only about unresolved product or architectural decisions.
 - Distinguish a missing CLI from sandboxed network or authentication failures. When `gh --version` succeeds but a GitHub check fails in a restricted sandbox, retry with approved network access before reporting `gh` unavailable or unauthenticated.
 - Stay within scope, prefer the smallest coherent vertical change, and follow established repository patterns.
-- Keep a comment only when its information cannot move into a name, type, or test, and keep it to two lines. Write more only for an external constraint the code cannot show, such as provider behavior, framework semantics, or a regulation. Never comment change rationale, ticket history, or ticket IDs, and no docblocks on internal code. Delete a stale comment instead of rewriting it; never change comment wording alone.
+- Keep a comment only when its information cannot move into a name, type, or test. Default to two lines; going longer is a cost you must be able to name, such as an invariant, external constraint, or failure semantic that the code and tests cannot carry. Never comment change rationale, ticket history, or ticket IDs, and no docblocks on internal code. Delete a stale comment instead of rewriting it; never change comment wording alone.
 - Do not add dependencies, abstractions, plans, docs, subagents, or artifacts unless they add clear value.
 - Run targeted checks before broader suites; never claim completion without concrete evidence.
 - Ask before external writes, releases, deployments, destructive operations, production dependencies, Git history changes, or material scope expansion.
