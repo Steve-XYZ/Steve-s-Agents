@@ -60,6 +60,7 @@
       "triage-review"
     ],
     "expectations": [
+      "States the review baseline in one line before working through the diff, because no ticket is supplied.",
       "Reports evidence-backed findings without implementing changes.",
       "Loads unslop when preparing findings or the final report, not during initial investigation or clarification; reuses it if already in context."
     ]

@@ -17,7 +17,7 @@ If the user supplied an expected head SHA and the live head differs, stop and re
 
 ## 2. Map the change
 
-Before reading the diff, state in one line the observable outcome this change has to produce, taken from the ticket or specification. Do not take it from the diff's structure or the PR description. Then use repository evidence for actual behavior, constraints, ownership, and affected boundaries. The implementation is evidence about the route taken, not part of the requirement.
+Before reading the diff, state in one line the observable outcome this change has to produce. Take it from the ticket or specification when one exists, otherwise from the review baseline you named in step 1. Do not take it from the diff's structure or the PR description. Then use repository evidence for actual behavior, constraints, ownership, and affected boundaries. The implementation is evidence about the route taken, not part of the requirement.
 
 Start with:
 
