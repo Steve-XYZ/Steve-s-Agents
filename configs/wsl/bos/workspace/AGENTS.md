@@ -8,7 +8,7 @@ The BOS workspace is `/home/stive/src/BOS` on the WSL Linux filesystem and conta
 - `lotto-propagator`: draw propagation, schedules, API/Admin, workers, and EF Core/MySQL.
 - `lotto-app-v2`: player-facing Next.js frontend consuming PlayerManager and Lotto APIs.
 
-Linear is the source of truth for BOS ticket intent. Confirm the target repository, current branch, and expected base before editing. When working from this workspace root, read the target repository's `AGENTS.md`; its instructions govern that repository.
+Linear defines BOS outcomes and stated constraints. Treat suggested causes, files, and implementation paths as leads to verify. Confirm the target repository, current branch, and expected base before editing. When working from this workspace root, read the target repository's `AGENTS.md`; its instructions govern that repository.
 
 ## Ubuntu/WSL Setup
 
@@ -46,3 +46,9 @@ Use the WSL `docker` CLI and configured Docker context for local containers; do 
 - Changes to shared settings or defaults must prove the target behavior and preserve non-target tenants and alternate callers.
 - PR descriptions should link the Linear ticket when a PR is requested.
 - When explicitly asked to publish BOS review feedback, write concise English comments ordered by severity.
+
+## Project knowledge and proof
+
+Read the target repository's root and applicable nested instructions before editing. Keep subsystem contracts beside their owner. Root guidance should identify commands, relevant test hosts, diagnostics, generated-code ownership, and links to specialized knowledge. Do not assume every harness loads nested files automatically.
+
+Treat this machine configuration as a reference capture. Verify commands, dependency versions, and branch assumptions against the current checkout. Record the source/version when retaining dependency guidance. Improve repeated setup in the owning repository with the smallest executable helper; do not invent missing commands or copy project recipes into global skills.

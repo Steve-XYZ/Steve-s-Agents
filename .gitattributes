@@ -1,0 +1,2 @@
+# Unified-diff context lines preserve a leading space, including blank lines.
+evals/results/**/*.patch -whitespace

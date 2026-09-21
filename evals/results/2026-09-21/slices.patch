@@ -1,0 +1,103 @@
+diff --git a/exporter.py b/exporter.py
+index ad2ef55aba82d009b12b1a1d6c97b32fba52304a..3d4404746330427f135332c4526f1ec7729a748c 100644
+--- a/exporter.py
++++ b/exporter.py
+@@ -1,4 +1,4 @@
+-from legacy_export import serialize
++from csv_writer import write_items
+ 
+ def export_items(items):
+-    return serialize(items)
++    return write_items(items, sort_by="display_name")
+diff --git a/items.py b/items.py
+index 5fed5e4f88508a9f9b30e1e81007db5a57924b19..d490d9a0f2dcf5c5114e8ca06db00fcab0b0c504 100644
+--- a/items.py
++++ b/items.py
+@@ -1,3 +1,6 @@
+ def set_quantity(item, value):
+-    item["quantity"] = int(value)
++    quantity = int(value)
++    if quantity < 0:
++        raise ValueError("quantity must be non-negative")
++    item["quantity"] = quantity
+     return item
+diff --git a/legacy_export.py b/legacy_export.py
+deleted file mode 100644
+index 1e5d9125d5448bb3d21f77d86a4d756ac86b0483..0000000000000000000000000000000000000000
+--- a/legacy_export.py
++++ /dev/null
+@@ -1,2 +0,0 @@
+-def serialize(items):
+-    return "display_name,quantity\n" + "".join(f'{i["display_name"]},{i["quantity"]}\n' for i in items)
+diff --git a/test_items.py b/test_items.py
+index 4c890ec4db49411efefdcb905bf625bf2b7cb220..b5377266b71f322fc2aef7e85b53e71c909e544d 100644
+--- a/test_items.py
++++ b/test_items.py
+@@ -1,9 +1,67 @@
+ import unittest
+ from items import set_quantity
+ from exporter import export_items
++from other_report import report
+ 
+ class ExistingTests(unittest.TestCase):
+     def test_quantity(self):
+         self.assertEqual(set_quantity({"display_name":"x", "quantity":2}, 3)["quantity"], 3)
+     def test_export(self):
+         self.assertEqual(export_items([{"display_name":"x", "quantity":2}]), "display_name,quantity\nx,2\n")
++
++    def test_negative_quantity_does_not_mutate_item(self):
++        for value in (-1, "-2"):
++            with self.subTest(value=value):
++                item = {"display_name": "x", "quantity": 2}
++                with self.assertRaises(ValueError):
++                    set_quantity(item, value)
++                self.assertEqual(item, {"display_name": "x", "quantity": 2})
++
++    def test_zero_and_integer_conversion_remain_valid(self):
++        for value, expected in ((0, 0), ("0", 0), ("3", 3)):
++            with self.subTest(value=value):
++                item = {"display_name": "x", "quantity": 2}
++                self.assertIs(set_quantity(item, value), item)
++                self.assertEqual(item["quantity"], expected)
++
++    def test_invalid_quantity_does_not_mutate_item(self):
++        item = {"display_name": "x", "quantity": 2}
++        with self.assertRaises(ValueError):
++            set_quantity(item, "invalid")
++        self.assertEqual(item, {"display_name": "x", "quantity": 2})
++
++    def test_export_sorts_and_escapes_without_reordering_input(self):
++        rows = [
++            {"display_name": "Zebra", "quantity": 3, "internal": "ignored"},
++            {"display_name": 'Alpha, "quoted"\nname', "quantity": 1},
++            {"display_name": "Beta", "quantity": 2},
++        ]
++        before = [row.copy() for row in rows]
++        self.assertEqual(
++            export_items(rows),
++            'display_name,quantity\n"Alpha, ""quoted""\nname",1\nBeta,2\nZebra,3\n',
++        )
++        self.assertEqual(rows, before)
++
++    def test_report_preserves_input_order_and_csv_escaping(self):
++        rows = [
++            {"display_name": "Zebra", "quantity": 3},
++            {"display_name": "Alpha, Beta", "quantity": 1},
++        ]
++        self.assertEqual(
++            report(rows), 'display_name,quantity\nZebra,3\n"Alpha, Beta",1\n'
++        )
++
++    def test_export_empty_iterable_keeps_columns(self):
++        self.assertEqual(export_items(iter([])), "display_name,quantity\n")
++
++    def test_export_sorts_generator_and_preserves_tie_order(self):
++        rows = [
++            {"display_name": "Zebra", "quantity": 3},
++            {"display_name": "Alpha", "quantity": 2},
++            {"display_name": "Alpha", "quantity": 1},
++        ]
++        self.assertEqual(
++            export_items(iter(rows)),
++            "display_name,quantity\nAlpha,2\nAlpha,1\nZebra,3\n",
++        )

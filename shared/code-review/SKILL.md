@@ -1,11 +1,13 @@
 ---
 name: code-review
-description: Use when the user asks for a PR review, code review, regression review, or confirmation that a change satisfies a ticket. Do not use as an automatic delivery self-review, to implement changes, or to diagnose an unknown failure.
+description: Use for requested PR/code reviews or an independent review required by delivery risk or repository policy. Run independent delivery review in a fresh context. Do not use to implement changes or diagnose an unknown failure.
 ---
 
 # Code Review
 
 Review the exact change the user placed in scope. Inspect and report; do not modify code, publish comments, approve, or request changes externally unless explicitly requested.
+
+For independent delivery review, start in a fresh context with the requirement, exact diff, applicable contracts, evidence, and gaps. Do not import the author's reasoning history. Use read-only tools where enforceable; a role prompt alone does not restrict permissions. If fresh context is unavailable, label the result self-review and report the unmet requirement.
 
 ## 1. Establish authority
 
@@ -19,6 +21,8 @@ If the user supplied an expected head SHA and the live head differs, stop and re
 
 Before reading the diff, state in one line the observable outcome this change has to produce. Take it from the ticket or specification when one exists, otherwise from the review baseline you named in step 1. Do not take it from the diff's structure or the PR description. Then use repository evidence for actual behavior, constraints, ownership, and affected boundaries. The implementation is evidence about the route taken, not part of the requirement.
 
+Treat the author's rationale as a claim after establishing expected behavior. Seek concrete counterexamples, not a target number of findings.
+
 Start with:
 
 1. ticket or specification,
@@ -26,7 +30,7 @@ Start with:
 3. changed tests,
 4. surrounding implementation as far as the changed behavior reaches.
 
-Read every changed line. Partition the diff into behavioral clusters, then check whether the scope matches the requirement without missing behavior or unrelated expansion. Follow call paths and end-to-end wiring when the changed behavior depends on code outside the diff. If independent clusters make the review too broad to cover with confidence, identify the uncovered cluster and recommend a split rather than implying complete coverage.
+Read every changed line. Partition the diff into behavioral clusters, then check whether the scope matches the requirement without missing behavior or unrelated expansion. Follow call paths and end-to-end wiring when the changed behavior depends on code outside the diff. Cover independent clusters in focused passes. If coverage remains incomplete, name the uncovered behavior and withhold a complete verdict; recommend a split when it would make review reliable.
 
 ## 3. Review in passes
 

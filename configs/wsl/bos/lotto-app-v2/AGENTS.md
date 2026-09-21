@@ -4,7 +4,7 @@
 
 Lotto App v2 is the player-facing Next.js frontend consuming PlayerManager and Lotto APIs. Preserve existing routing, component, service, state, styling, and test boundaries.
 
-Linear is the source of truth for ticket intent. For Winning Palace work, use `wp/develop` and `wp/feature/BOS-XXXX` unless the ticket or PR specifies otherwise; verify the remote base before branching.
+Linear defines the requested outcome and stated constraints. Treat suggested causes, files, and implementation paths as leads to verify. For Winning Palace work, use `wp/develop` and `wp/feature/BOS-XXXX` unless the ticket or PR specifies otherwise; verify the remote base before branching.
 
 ## Build and Test
 
@@ -36,3 +36,7 @@ export NVM_DIR="$HOME/.nvm"
 
 - Check cross-repo impact for shared payloads, reports, payment/deposit flows, and deploy configuration.
 - When explicitly asked to publish review feedback, use concise English comments ordered by severity.
+
+## Runtime evidence
+
+Confirm the running frontend build and backend configuration. Exercise the requested flow through its observable result using isolated test identities. Wait for specific UI/network state; do not retry state-changing actions merely to make a test pass. Keep traces or screenshots when they add evidence a lower test cannot provide.

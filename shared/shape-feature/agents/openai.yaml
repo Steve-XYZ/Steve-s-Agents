@@ -1,4 +1,4 @@
 interface:
-  display_name: "Shape Feature"
-  short_description: "Turn an unclear idea into a focused slice"
-  default_prompt: "Use $shape-feature to turn this idea into an implementable first slice."
+  display_name: "Shape a Change"
+  short_description: "Resolve uncertainty in new or existing systems"
+  default_prompt: "Use $shape-feature to resolve this change's open decisions and choose its first verifiable slice."

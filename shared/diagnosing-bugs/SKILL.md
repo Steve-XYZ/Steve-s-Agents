@@ -5,7 +5,7 @@ description: Use when the cause is unknown or the user asks to diagnose, debug, 
 
 # Diagnosing Bugs
 
-Establish evidence before changing behavior. Prefer reproduction, but accept captured evidence or conclusive static proof when local reproduction is impractical.
+Establish evidence before changing behavior. Prefer reproduction, but accept captured evidence or conclusive static proof when local reproduction is impractical. For an active incident, authorized rollback or containment may precede root-cause repair; distinguish restored service from a proven cause.
 
 ## 0. Orient
 
@@ -77,11 +77,13 @@ When the user requested a fix, implement the smallest change supported by the ev
 
 When a reliable seam exists:
 
-1. convert the minimized symptom into regression coverage and observe it fail when practical,
+1. convert a material, reproducible symptom into regression coverage and observe its relevant assertion fail before the fix,
 2. apply the fix and observe it pass,
 3. rerun the original evidence loop.
 
 If no honest regression seam exists, explain the limitation instead of adding artificial coverage.
+
+For a material money, authorization, durable concurrency, irreversible migration, or hard-to-undo external-effect fix, apply the independent review requirement in [delivery](../deliver-ticket/SKILL.md). Lack of a reviewer is a reported gap, not independent approval.
 
 Remove temporary instrumentation and disposable artifacts created for the diagnosis. Report the cause, change if authorized, validation actually executed, and unresolved risks.
 

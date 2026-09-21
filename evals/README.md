@@ -18,3 +18,25 @@ When behavior changes, add a focused pressure case for the changed rule: e.g. an
 
 Method adapted from [Addy's layered evaluations](https://github.com/addyosmani/agent-skills/blob/main/evals/README.md)
 and [Superpowers' skill testing](https://github.com/obra/superpowers/blob/main/skills/writing-skills/SKILL.md).
+
+## Outcome and cost comparisons
+
+Before adopting a material rule broadly, compare the old and new guidance on the same task fixtures with the same model, host, tools, and budget. Use repeated runs where variability could reverse the decision and holdout cases that were not used to write the rule. Blind subjective patch assessment to the workflow version when possible.
+
+Record actual behavior, invariant preservation, invalid findings, escaped defects, human intervention/rework, elapsed time, and attributable model/tool cost. Keep blocked or unobservable cases separate from failures and passes. Do not infer improvement from loads, checklist completion, test counts, or one successful run.
+
+For each proposed rule, include the failure it targets and a negative case where it should stay out of the way. Retain or revert based on those results. Keep the failure, proposed prevention, comparison, cost, and decision in the evaluation record; retire superseded rules instead of appending permanent global instructions.
+
+The added routing cases cover simple delivery, ambiguous existing systems, shaping-to-delivery continuation, authorized independent slices, invalidated plans, risky review, stale runtime evidence, and false review findings. Some require a dedicated runtime or PR fixture; until that fixture is available and run, they remain unassessed.
+
+## Reproduce an explicit-invocation task
+
+Create an isolated task outside this repository:
+
+```sh
+python3 evals/make-task-fixture.py slices --output /tmp/workflow-slices-trial
+```
+
+The destination must not exist. The command prints `prompt.txt`; supply its contents to a fresh agent. Available tasks are `simple`, `slices`, `shape`, and `feedback`. The feedback task preserves the first slices trial's escaped edge case and supplies review claims to adjudicate. Only the raw task, fixture files, and guidance catalog are copied. Expected outcomes and prior results stay here, outside the task context.
+
+The [September 21 trial record](results/2026-09-21/README.md) includes resulting patches, rerun output, and limits. Explicit invocation proves neither automatic selection nor comparative effectiveness.
