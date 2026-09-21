@@ -1,0 +1,46 @@
+diff --git a/items.py b/items.py
+index d490d9a0f2dcf5c5114e8ca06db00fcab0b0c504..e97ddd2fcefde8f0fbec14dbc72295467dc82f1a 100644
+--- a/items.py
++++ b/items.py
+@@ -1,4 +1,9 @@
++from numbers import Number
++
++
+ def set_quantity(item, value):
++    if isinstance(value, Number) and value < 0:
++        raise ValueError("quantity must be non-negative")
+     quantity = int(value)
+     if quantity < 0:
+         raise ValueError("quantity must be non-negative")
+diff --git a/test_items.py b/test_items.py
+index b5377266b71f322fc2aef7e85b53e71c909e544d..94270d5d71a8b6cb6f770205e5cca56f86b1f48e 100644
+--- a/test_items.py
++++ b/test_items.py
+@@ -1,4 +1,6 @@
+ import unittest
++from decimal import Decimal
++from fractions import Fraction
+ from items import set_quantity
+ from exporter import export_items
+ from other_report import report
+@@ -10,7 +12,7 @@ class ExistingTests(unittest.TestCase):
+         self.assertEqual(export_items([{"display_name":"x", "quantity":2}]), "display_name,quantity\nx,2\n")
+ 
+     def test_negative_quantity_does_not_mutate_item(self):
+-        for value in (-1, "-2"):
++        for value in (-1, "-2", -0.5, -1e-300, Decimal("-0.5"), Fraction(-1, 2)):
+             with self.subTest(value=value):
+                 item = {"display_name": "x", "quantity": 2}
+                 with self.assertRaises(ValueError):
+@@ -18,7 +20,10 @@ class ExistingTests(unittest.TestCase):
+                 self.assertEqual(item, {"display_name": "x", "quantity": 2})
+ 
+     def test_zero_and_integer_conversion_remain_valid(self):
+-        for value, expected in ((0, 0), ("0", 0), ("3", 3)):
++        for value, expected in (
++            (0, 0), ("0", 0), ("3", 3), (-0.0, 0),
++            (0.5, 0), (Decimal("0.5"), 0), (Fraction(1, 2), 0),
++        ):
+             with self.subTest(value=value):
+                 item = {"display_name": "x", "quantity": 2}
+                 self.assertIs(set_quantity(item, value), item)

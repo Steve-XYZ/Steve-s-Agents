@@ -15,3 +15,19 @@ The parent reran final checks and independently checked negative-quantity reject
 No agent committed or published fixture changes. The generated Python bytecode was disposable runtime output, not a deliverable. The fixture builder was also run separately and its baseline tests passed.
 
 These are single trials, not an old-versus-new comparison or a productivity benchmark. Harness/model version and attributable token cost were not captured, so no cross-model or cost conclusion is supported. Actual automatic routing, production .NET/provider behavior, the high-risk fresh-review path, and the remaining pressure cases are unassessed here.
+
+## Feedback and fix continuation
+
+A fourth task supplied the original slices result, its accepted requirement, the concrete negative-fraction finding, and an incorrect claim that report order had changed. The first session was interrupted after adding regression cases. A fresh context inspected and preserved those edits, then completed triage.
+
+The agent fixed negativity before integer conversion and rejected the report-order claim using code and the existing test. It reported four relevant failing subtests before the fix. The parent reran all nine tests and independently checked no-mutation rejection of negative float, tiny float, Decimal, and Fraction values, including a Decimal too small to survive conversion to float. These checks passed. The reported disposition for the report claim was "outdated"; the supplied fixture supports the more precise classification "incorrect", since it never changed report order.
+
+[Feedback patch](feedback.patch) and [rerun log](feedback.log) record the result. The earlier slices patch remains unchanged and remains a failed edge-case result. This continuation tests feedback handling and recovery from interrupted work; it is not an independent first-attempt implementation pass.
+
+## Implementation checks and independent review
+
+Catalog validation, eight installer tests, and fifteen helper tests passed. The review-package command was exercised with evidence for published commit `194141c01bfbe8a3b80841e8f397723610afe000`; it matched the exact tree and preserved output bytes.
+
+Fresh review caught a helper defect where `head_sha` accepted a Git tree object. The regression failed before the fix; validation now requires the exact commit object and checks its tree. Fresh review verified the fix. Its remaining finding concerned the original slices success claim, which this record now qualifies.
+
+Live `pr-state.py` collection returned `UNAVAILABLE` because `gh` is absent in this environment. Its classification and CLI response handling were exercised with fixtures; no live end-to-end CLI result is claimed.
