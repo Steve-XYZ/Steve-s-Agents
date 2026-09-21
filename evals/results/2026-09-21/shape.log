@@ -1,0 +1,7 @@
+test_empty_results_keep_json_array_contract (test_cli.ExistingTests.test_empty_results_keep_json_array_contract) ... ok
+test_nonempty (test_cli.ExistingTests.test_nonempty) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK

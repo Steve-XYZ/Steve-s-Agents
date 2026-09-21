@@ -1,11 +1,13 @@
 ---
 name: code-review
-description: Use when the user asks for a PR review, code review, regression review, or confirmation that a change satisfies a ticket. Do not use as an automatic delivery self-review, to implement changes, or to diagnose an unknown failure.
+description: Use for requested PR/code reviews or an independent review required by delivery risk or repository policy. Run independent delivery review in a fresh context. Do not use to implement changes or diagnose an unknown failure.
 ---
 
 # Code Review
 
 Review the exact change the user placed in scope. Inspect and report; do not modify code, publish comments, approve, or request changes externally unless explicitly requested.
+
+For independent delivery review, start in a fresh context with the requirement, exact diff, applicable contracts, evidence, and gaps. Do not import the author's reasoning history. Use read-only tools where enforceable; a role prompt alone does not restrict permissions. If fresh context is unavailable, label the result self-review and report the unmet requirement.
 
 ## 1. Establish authority
 
@@ -17,14 +19,18 @@ If the user supplied an expected head SHA and the live head differs, stop and re
 
 ## 2. Map the change
 
+Before reading the diff, state in one line the observable outcome this change has to produce. Take it from the ticket or specification when one exists, otherwise from the review baseline you named in step 1. Do not take it from the diff's structure or the PR description. Then use repository evidence for actual behavior, constraints, ownership, and affected boundaries. The implementation is evidence about the route taken, not part of the requirement.
+
+Treat the author's rationale as a claim after establishing expected behavior. Seek concrete counterexamples, not a target number of findings.
+
 Start with:
 
 1. ticket or specification,
 2. diff and commits,
 3. changed tests,
-4. surrounding implementation only as needed.
+4. surrounding implementation as far as the changed behavior reaches.
 
-Partition the diff into behavioral clusters, then check whether the scope matches the requirement without missing behavior or unrelated expansion. Follow call paths and end-to-end wiring when the changed behavior depends on code outside the diff. If independent clusters make the review too broad to cover with confidence, identify the uncovered cluster and recommend a split rather than implying complete coverage.
+Read every changed line. Partition the diff into behavioral clusters, then check whether the scope matches the requirement without missing behavior or unrelated expansion. Follow call paths and end-to-end wiring when the changed behavior depends on code outside the diff. Cover independent clusters in focused passes. If coverage remains incomplete, name the uncovered behavior and withhold a complete verdict; recommend a split when it would make review reliable.
 
 ## 3. Review in passes
 
@@ -34,7 +40,9 @@ Check acceptance criteria, partial or incorrect behavior, scope creep, and edge 
 
 ### Engineering correctness
 
-Check functional correctness, failure behavior, repository architecture, contracts, test quality, and unnecessary complexity.
+Check functional correctness, failure behavior, repository architecture, contracts, and test quality.
+
+Then ask whether this is the simplest diff that satisfies the requirement, rather than whether the chosen structure is correctly implemented. Name what the change makes removable or leaves stale: code, paths, branches, flags, fields, helpers, abstractions, compatibility shims, duplicated policy, comments, tests, and state. The local comment rule counts here; report a comment that restates the code, narrates the ticket, or has gone stale.
 
 ### Conditional risk
 
@@ -54,10 +62,10 @@ Never present unexecuted validation as completed evidence.
 
 When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.
 
-Start with a one-line verdict: approve, comment, or request changes. Request changes when a blocker remains, comment when only should-fix findings remain, and approve when only nits or no findings remain unless repository rules require another disposition. List findings first, ordered by severity:
+Start with a one-line verdict: approve, comment, or request changes. Request changes when a blocker remains, comment when only should-fix findings remain, and approve when only nits or no findings remain unless repository rules require another disposition. A correct change that leaves avoidable complexity behind is a should-fix, not an approve. List findings first, ordered by severity:
 
 - Blocker: cannot merge because of a demonstrated build failure, required-behavior defect, security exposure, or data risk.
-- Should fix: likely defect, incomplete behavior, unsafe assumption, or material missing validation.
+- Should fix: likely defect, incomplete behavior, unsafe assumption, material missing validation, or avoidable complexity the change leaves behind.
 - Nit/follow-up: optional cleanup or non-blocking improvement.
 
 Write each finding compactly as `[category] file:line — mechanism; reachable trigger and wrong observable outcome; impact. Fix: correction or validation path.` Keep blocker and should-fix findings visible. Collapse optional nits in a disclosure block when the review surface supports it.

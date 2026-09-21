@@ -1,108 +1,64 @@
 ---
 name: deliver-ticket
-description: Use when the user asks to implement, fix, complete, or deliver behavior already defined in a tracker, an accepted feature brief, or the user request itself. Do not use for unclear product requirements, unknown-cause diagnosis, planning-only requests, or pure code review.
+description: Use when the user asks to implement, fix, complete, or deliver a defined outcome from a ticket, accepted brief, or request. Shape unresolved decisions when needed and resume delivery once settled. Use diagnosing-bugs first for an unknown cause. Do not use for planning-only requests or pure code review.
 ---
 
-# Deliver Ticket
+# Deliver ticket
 
-Use the ticket, accepted feature brief, or explicit user requirements as the source of truth for intended behavior. User corrections, repository instructions, and verified repository facts still apply. Do not rewrite clear requirements into another specification.
+Treat the requested outcome, acceptance criteria, and stated constraints as authoritative. Treat cause analysis, named files, and suggested designs as leads that repository evidence can overturn. Record consequential contradictions; do not silently change the required behavior.
 
-## 0. Orient
+## Orient and establish scope
 
-Before reading the ticket, run one batch of commands so the rest of the workflow reasons from observed state rather than assumption:
+Inspect the checkout before editing:
 
 ```sh
 git rev-parse --show-toplevel || exit 1
 git rev-parse --abbrev-ref HEAD && git status --short && git log --oneline -5
-git remote; git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || echo '<no upstream>'
+git remote
+git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || echo '<no upstream>'
 ```
 
-Use `git remote` and not `git remote -v`: a remote URL can carry an embedded token, and the name is all this step needs. Add the repository's own version and toolchain check when its `AGENTS.md` names one. Do not restate the output; use it. If the branch, base, or working tree does not match what the request assumes, stop and say so before editing.
+Use remote names, not URLs that may contain credentials. Read root and applicable nested repository instructions, then locate the affected owner, analogous behavior, and executable checks. Do not assume the host loaded nested instructions.
 
-## 1. Understand
+Resolve a supplied base with `git rev-parse --verify '<ref>^{commit}'`; inspect divergence with `git merge-base --is-ancestor <base-ref> HEAD`. Exit 1 establishes non-ancestry, not its cause. Fetch when freshness matters. Resolve an unexpected branch safely before editing; preserve unrelated work and report any unresolved mismatch.
 
-Read the ticket and relevant linked context. Inspect enough of the repository to identify:
+Investigate discoverable facts. Use `diagnosing-bugs` for an unexplained failure. Use `shape-feature` when an unresolved outcome or costly design choice prevents selecting a useful next slice. Continue after those decisions are settled when implementation is already authorized.
 
-- acceptance criteria and affected behavior,
-- the existing analogous implementation,
-- relevant tests and validation seams,
-- public, shared, data, deploy, or cross-system contracts involved.
+## Map the outcome and choose the next slice
 
-Investigate discoverable facts. Ask only about unresolved decisions that materially change the implementation. If a reported bug has no established cause, use `diagnosing-bugs` as the primary workflow.
+For a demonstrably local, low-risk change, identify the owner, expected behavior, and focused check in a short brief. For shared state, contracts, configuration, persistence, downstream consumers, or uncertain impact, read [change-impact](references/change-impact.md). Read [grill](references/grill.md) when invariants, ownership, or failure behavior need investigation. Read [judgment](references/judgment.md) only if a specific material risk remains unresolved.
 
-When the user supplies a repository, base, or branch, resolve it rather than reconciling against the orientation output, which carries only the current branch's own upstream:
+Keep the brief proportional: outcome and constraints, concrete affected and preserved behavior, non-obvious design decision, next slice and proof, and material unknowns. Use one conversation brief for small work. When continuity or handoff requires a durable record, read [work context](references/work-context.md).
 
-```sh
-git rev-parse --verify '<ref>^{commit}'   # resolve the supplied ref to a commit
-git merge-base --is-ancestor <base-ref> HEAD
-```
+Several independent behavioral clusters call for a safe sequence, not an automatic stop. Continue through the authorized outcome. A slice may cross several layers; a PR or deployment may need a different boundary for migrations, mixed-version consumers, or rollout safety. Ask only when scope, business policy, authority, or a costly unresolved choice needs the user's decision.
 
-An ancestor check returning `1` means the base is not an ancestor of HEAD; it does not explain why. Inspect the divergence before deciding whether an update is needed. These commands inspect local refs only. When remote freshness matters, fetch the intended remote first and report any inability to refresh it. Do not silently continue from an unexpected branch or a conflicting remote branch.
+## Implement through verified slices
 
-## 2. Map and brief
+Repeat until the authorized outcome is complete:
 
-Before choosing an implementation, read [change-impact](references/change-impact.md) and perform its pre-change pass. Build the brief from concrete locations and evidence, not from repository categories or an assumed design.
+1. Choose the next observable behavior or uncertainty to resolve. Inspect its owner, callers, and material effects before choosing files.
+2. Choose proof before the production edit. Use [prove-it-works](references/prove-it-works.md) for evidence selection. For a feasible material regression or invariant, observe a relevant failing assertion first. Import failures or a broken harness are not RED evidence. For exploration or impractical reproduction, use characterization, traces, or a bounded experiment and state what they cannot prove.
+3. Implement only that behavior through the necessary layers. Prefer fewer concepts, less duplicated policy, fewer invalid states, and less coordination for the next change. Preserve contracts unless the requirement changes them.
+4. Run the selected proof at the affected boundary and check material preserved behavior. Derive expected results independently of the implementation.
+5. Remove code, flags, branches, tests, comments, or compatibility paths this slice has made obsolete. Keep a path only for a demonstrated caller or contract. Do not force an extraction or unrelated cleanup.
+6. Reassess the next slice. Revise the impact map and brief when evidence changes the design. Delete invalid planned work instead of completing it for consistency. Continue within scope; ask when the new direction changes a consequential requirement or authority boundary.
 
-Then read [grill](references/grill.md) and pressure-test the behavior found in the map. If a product or architectural decision remains unresolved, stop and ask with a recommendation when evidence supports one. Do not implement around the gap.
+Keep related implementation in one context. Use [work context](references/work-context.md) only when context isolation, interruption, handoff, or parallel work adds value. Do not create a new plan, agent, or checklist report for every iteration.
 
-If the map contains multiple independently deliverable state machines or durable or external side-effect clusters, stop before editing and recommend a split. Keep them together only when one acceptance criterion or invariant requires the combined change to be atomic; record that reason in the brief.
+## Verify the integrated change and review it
 
-Keep one compact brief in the conversation containing only what applies:
+Inspect the complete diff against the outcome and impact map. Confirm changed shared facts, primary and ancillary effects, and tests still agree after integration. Reopen any newly affected behavior. Passing slices do not prove their composition.
 
-- goal and acceptance criteria,
-- existing pattern,
-- locations that change and behavior that must remain unchanged,
-- invariant, owner, states, writers, or partial-failure boundary,
-- scope decision when more than one behavioral cluster was inspected,
-- validation approach,
-- material risks or blockers.
+Check for obsolete code and duplicated policy. Apply the repository's comment rule; preserve useful invariant or external-contract information and remove stale rationale. Do not rewrite unrelated comments.
 
-Do not create a separate planning artifact. A trivial, local, low-risk change may use the short form defined by `change-impact`.
+Self-review prepares the change; it is not independent review. Require `code-review` in a fresh context for material changes to money movement, authorization boundaries, durable concurrent state, irreversible migrations, or external effects that are difficult to undo. For other changes, use independent review when requested, required locally, or needed to resolve a concrete risk. Start with one reviewer. Inspect a risky invariant early if a wrong decision would be expensive, then review the integrated result.
 
-## 3. Implement
+Provide the requirement, exact diff, contracts, evidence, and gaps without the author's reasoning history. Use [review evidence](../code-review/references/review-evidence.md) for a pinned handoff. If a fresh reviewer is unavailable, report that gap; do not relabel self-review as independent. Use `triage-review` to validate findings and fix accepted ones.
 
-Implement the smallest coherent vertical change that satisfies the ticket. Follow repository patterns and preserve existing contracts unless the ticket explicitly changes them.
+## Report and publish within authorization
 
-When the brief names an invariant or expensive failure, write or extend the test that can go red on that behavior before or with the production change. Cover the relevant failure class, not only the intended path.
+Report changed behavior, checks actually executed, and remaining risk. Mark material missing proof `UNPROVEN`. Do not claim readiness while required evidence or review is missing. A diagnostic draft or request for help can expose a gap when publication is authorized; it does not imply readiness. Never waive required repository gates.
 
-Do not expand scope or perform unrelated cleanup. Do not add fields, settings, abstractions, or compatibility paths without a demonstrated caller or contract.
+When preparing the final report or PR body, reuse `unslop`, loading it only if absent.
 
-## 4. Prove
-
-Read [prove-it-works](references/prove-it-works.md) and follow it. Prove both the requested behavior and any nearby behavior the brief says must remain unchanged.
-
-Never claim success from inspection alone. A green build is not proof. State exactly what ran and what remains unverified.
-
-If a required acceptance criterion remains materially `UNPROVEN`, do not describe the change as ready, publish it as non-draft, or request review. Obtain the missing evidence, keep the change draft, or ask the user to accept the named risk explicitly. An unavailable optional metric is not material evidence by itself.
-
-## 5. Cold self-review
-
-Re-read the ticket, final diff, and test results without using the implementation rationale as proof. Derive what changed from the diff itself.
-
-Run the post-change pass in [change-impact](references/change-impact.md). If the diff reveals a location or behavior absent from the original map, update the map and inspect that impact before continuing.
-
-Confirm only what applies:
-
-1. Every acceptance criterion has an observable implementation and proof.
-2. The owning component enforces each invariant; callers do not duplicate or bypass it.
-3. Every writer and reader of a changed shared fact uses compatible states and predicates, including stored data, defaults, legacy rows, migrations, backfills, deploy configuration, and downstream consumers.
-4. Primary and ancillary effects have defined outcomes for permanent failure, transient failure, retry, concurrency, and partial success when relevant.
-5. Tests can fail for the target behavior and at least one material preserved or negative case.
-6. The diff contains no dead fields, speculative compatibility, or unrequested cleanup.
-7. The diff contains no comment-only hunks, no new what-comments, and no rewritten comment wording without a behavior change.
-
-Mark material claims without executable evidence as `UNPROVEN`. Do not create a critic or invoke `code-review` automatically. Recommend independent review when risk remains material.
-
-## 6. Finish
-
-Report:
-
-- what changed,
-- validation actually executed,
-- remaining risks or unresolved items.
-
-When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.
-
-Do not create extra documentation, commit, push, open a PR, publish comments, or send external messages unless explicitly requested or required by an established repository workflow.
-
-When publication is authorized, review the final diff and validation first. Confirm the intended repository, remote branch state, and PR base immediately before publishing, then verify the resulting remote head and PR base/head.
+Commit, push, or update a PR when already authorized; do not ask again merely because a phase changed. Otherwise keep external writes within the user's authorization. Immediately before publishing, confirm the remote head and intended base, then verify the resulting remote state. Never overwrite someone else's concurrent changes.

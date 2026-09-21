@@ -12,7 +12,7 @@ Compare candidate designs by what callers must know, where policy is duplicated,
 
 Name which component is authoritative for each fact and which copies are derived or cached. For shared contracts, schemas, or messages, inspect the actual producers and consumers, compatibility expectations, deployment order, rollback behavior, and generated artifacts. Preserve existing contracts unless the requirement changes them.
 
-For a shared flag, status, enum, or eligibility predicate, inspect every writer and reader plus initial, null/default, legacy, migration, backfill, and test-fixture states, then compare the predicates used at each action surface. A new write-side rule does not repair stored rows or a reader that independently reconstructs the old rule.
+For a shared flag, status, enum, or eligibility predicate, inspect every writer and reader plus initial, null/default, legacy, migration, backfill, and test-fixture states, then compare the predicates used at each action surface. Reuse the provenance map when `change-impact` has already built one. A new write-side rule does not repair stored rows or a reader that independently reconstructs the old rule.
 
 ## Create an honest feedback path
 
@@ -26,17 +26,13 @@ Characterization records current behavior; it does not prove that behavior is co
 
 State the guarantee the requirement actually needs — atomic visibility, eventual convergence, ordering, uniqueness, durability, or freshness — and implement no stronger mechanism than that invariant requires.
 
-List durable and external side effects in execution order. For each, ask what remains visible if execution stops before or after it, and what happens when the operation is retried, duplicated, delayed, reordered, or replayed. Use the platform's actual guarantees; assume at-least-once delivery and retried external calls unless a contract proves otherwise.
-
-Separate the primary effect from ancillary effects such as bonuses, notifications, audit enrichment, provider callbacks, or projections. Classify each reachable ancillary failure as transient, permanent, idempotent conflict, or unknown, and record retryability separately. Decide explicitly whether the primary effect commits, rolls back, retries, or remains visibly partial for each class. Do not retry a permanent ancillary failure forever by rolling back successful primary work.
+List durable and external side effects in execution order. For each, ask what remains visible if execution stops before or after it, and what happens when the operation is retried, duplicated, delayed, reordered, or replayed. Use the platform's actual guarantees; assume at-least-once delivery and retried external calls unless a contract proves otherwise. Separate primary from ancillary effects and decide, per failure class, whether the primary effect commits, rolls back, retries, or remains visibly partial. Do not retry a permanent ancillary failure forever by rolling back successful primary work.
 
 Identify the stable identity that makes repeated work recognizable, and enforce uniqueness and idempotency at the durable owner rather than in process memory. Keep updates in one transaction when they protect one invariant owned by one durable boundary; across boundaries, define only the retry, compensation, or reconciliation behavior that reachable failures require. Bound retries and timeouts, expose stalled or poisoned work, and make degraded outcomes visible instead of presenting them as complete success.
 
 ## Shape and verify
 
-Represent meaningful states and transitions explicitly enough that invalid combinations are hard to create and failure semantics stay inspectable. Validate untrusted input at the boundary, preserve diagnostic context, keep the normal path visible, and order side effects deliberately. Prefer ordinary repository idioms over theoretically purer structures.
-
-Verify representative normal, boundary, and failure cases, then review the final diff against the ticket, callers, contracts, invariants, and unrelated changes. State what remains unverified.
+Represent meaningful states and transitions explicitly enough that invalid combinations are hard to create and failure semantics stay inspectable. Prefer ordinary repository idioms over theoretically purer structures. State what remains unverified.
 
 ## Do not overapply
 

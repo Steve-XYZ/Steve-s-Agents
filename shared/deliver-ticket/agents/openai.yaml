@@ -1,4 +1,4 @@
 interface:
   display_name: "Deliver Ticket"
-  short_description: "Implement a clear ticket end to end"
+  short_description: "Deliver an outcome through verified slices"
   default_prompt: "Use $deliver-ticket to implement this well-defined ticket end to end."

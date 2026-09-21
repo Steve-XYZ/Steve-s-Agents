@@ -1,0 +1,14 @@
+test_export (test_items.ExistingTests.test_export) ... ok
+test_export_empty_iterable_keeps_columns (test_items.ExistingTests.test_export_empty_iterable_keeps_columns) ... ok
+test_export_sorts_and_escapes_without_reordering_input (test_items.ExistingTests.test_export_sorts_and_escapes_without_reordering_input) ... ok
+test_export_sorts_generator_and_preserves_tie_order (test_items.ExistingTests.test_export_sorts_generator_and_preserves_tie_order) ... ok
+test_invalid_quantity_does_not_mutate_item (test_items.ExistingTests.test_invalid_quantity_does_not_mutate_item) ... ok
+test_negative_quantity_does_not_mutate_item (test_items.ExistingTests.test_negative_quantity_does_not_mutate_item) ... ok
+test_quantity (test_items.ExistingTests.test_quantity) ... ok
+test_report_preserves_input_order_and_csv_escaping (test_items.ExistingTests.test_report_preserves_input_order_and_csv_escaping) ... ok
+test_zero_and_integer_conversion_remain_valid (test_items.ExistingTests.test_zero_and_integer_conversion_remain_valid) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.000s
+
+OK

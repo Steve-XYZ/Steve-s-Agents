@@ -1,0 +1,49 @@
+{
+  "simple": {
+    "skill": "deliver-ticket",
+    "prompt": "Change the CLI help typo from \"recieve\" to \"receive\". Keep existing behavior. Do not commit or publish.",
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Run python3 -m unittest discover -v for affected tests. Keep changes in this repository. No external services or publication.\n",
+      "cli.py": "import sys\nif \"--help\" in sys.argv:\n    print(\"Use this command to recieve local events.\")\n"
+    }
+  },
+  "slices": {
+    "skill": "deliver-ticket",
+    "prompt": "Implement both accepted changes in TASK.md. Start from the supplied tentative plan, satisfy the documented outcome and preserved behavior, and complete both changes. Do not commit or publish.",
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Run python3 -m unittest discover -v for affected tests. Keep changes in this repository. No external services or publication.\n",
+      "TASK.md": "Accepted outcome: reject negative quantities with ValueError before mutating the item; zero remains valid. Exports sort by display_name and preserve CSV columns display_name,quantity and normal CSV escaping. Both changes are authorized.\nTentative implementation plan: build a new sorted_export_adapter.py and route exporter through it. Keep existing report output order unchanged. Investigate this approach against the repository before implementing.\n",
+      "csv_writer.py": "import csv\nimport io\n\nFIELDS = [\"display_name\", \"quantity\"]\n\ndef write_items(items, *, sort_by=None):\n    output = io.StringIO(newline=\"\")\n    writer = csv.DictWriter(output, fieldnames=FIELDS, lineterminator=\"\\n\")\n    writer.writeheader()\n    rows = sorted(items, key=lambda item: item[sort_by]) if sort_by else items\n    writer.writerows({field: row[field] for field in FIELDS} for row in rows)\n    return output.getvalue()\n",
+      "exporter.py": "from legacy_export import serialize\n\ndef export_items(items):\n    return serialize(items)\n",
+      "items.py": "def set_quantity(item, value):\n    item[\"quantity\"] = int(value)\n    return item\n",
+      "legacy_export.py": "def serialize(items):\n    return \"display_name,quantity\\n\" + \"\".join(f'{i[\"display_name\"]},{i[\"quantity\"]}\\n' for i in items)\n",
+      "other_report.py": "from csv_writer import write_items\n\ndef report(items):\n    return write_items(items)\n",
+      "test_items.py": "import unittest\nfrom items import set_quantity\nfrom exporter import export_items\n\nclass ExistingTests(unittest.TestCase):\n    def test_quantity(self):\n        self.assertEqual(set_quantity({\"display_name\":\"x\", \"quantity\":2}, 3)[\"quantity\"], 3)\n    def test_export(self):\n        self.assertEqual(export_items([{\"display_name\":\"x\", \"quantity\":2}]), \"display_name,quantity\\nx,2\\n\")\n"
+    }
+  },
+  "shape": {
+    "skill": "shape-feature",
+    "prompt": "Resolve how cli.format_results should format empty results using this application's current conventions, then implement it. Preserve the documented output contract. Do not commit or publish.",
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Run python3 -m unittest discover -v for affected tests. Keep changes in this repository. No external services or publication.\n",
+      "CONTRACT.md": "Command output consumed by automation is a JSON array. Empty results retain the same schema. Human-readable status messages use stderr.\n",
+      "cli.py": "import json\n\ndef format_results(rows):\n    return json.dumps(rows) if rows else \"No results\"\n",
+      "search.py": "import json\n\ndef format_results(rows):\n    return json.dumps(rows)\n",
+      "test_cli.py": "import unittest\nfrom cli import format_results\n\nclass ExistingTests(unittest.TestCase):\n    def test_nonempty(self):\n        self.assertEqual(format_results([\"one\"]), '[\"one\"]')\n"
+    }
+  },
+  "feedback": {
+    "skill": "triage-review",
+    "prompt": "Check the findings in REVIEW.md against TASK.md and the current local change. Fix valid findings and report dispositions with evidence. Do not commit or publish.",
+    "files": {
+      "test_items.py": "import unittest\nfrom items import set_quantity\nfrom exporter import export_items\nfrom other_report import report\n\nclass ExistingTests(unittest.TestCase):\n    def test_quantity(self):\n        self.assertEqual(set_quantity({\"display_name\":\"x\", \"quantity\":2}, 3)[\"quantity\"], 3)\n    def test_export(self):\n        self.assertEqual(export_items([{\"display_name\":\"x\", \"quantity\":2}]), \"display_name,quantity\\nx,2\\n\")\n\n    def test_negative_quantity_does_not_mutate_item(self):\n        for value in (-1, \"-2\"):\n            with self.subTest(value=value):\n                item = {\"display_name\": \"x\", \"quantity\": 2}\n                with self.assertRaises(ValueError):\n                    set_quantity(item, value)\n                self.assertEqual(item, {\"display_name\": \"x\", \"quantity\": 2})\n\n    def test_zero_and_integer_conversion_remain_valid(self):\n        for value, expected in ((0, 0), (\"0\", 0), (\"3\", 3)):\n            with self.subTest(value=value):\n                item = {\"display_name\": \"x\", \"quantity\": 2}\n                self.assertIs(set_quantity(item, value), item)\n                self.assertEqual(item[\"quantity\"], expected)\n\n    def test_invalid_quantity_does_not_mutate_item(self):\n        item = {\"display_name\": \"x\", \"quantity\": 2}\n        with self.assertRaises(ValueError):\n            set_quantity(item, \"invalid\")\n        self.assertEqual(item, {\"display_name\": \"x\", \"quantity\": 2})\n\n    def test_export_sorts_and_escapes_without_reordering_input(self):\n        rows = [\n            {\"display_name\": \"Zebra\", \"quantity\": 3, \"internal\": \"ignored\"},\n            {\"display_name\": 'Alpha, \"quoted\"\\nname', \"quantity\": 1},\n            {\"display_name\": \"Beta\", \"quantity\": 2},\n        ]\n        before = [row.copy() for row in rows]\n        self.assertEqual(\n            export_items(rows),\n            'display_name,quantity\\n\"Alpha, \"\"quoted\"\"\\nname\",1\\nBeta,2\\nZebra,3\\n',\n        )\n        self.assertEqual(rows, before)\n\n    def test_report_preserves_input_order_and_csv_escaping(self):\n        rows = [\n            {\"display_name\": \"Zebra\", \"quantity\": 3},\n            {\"display_name\": \"Alpha, Beta\", \"quantity\": 1},\n        ]\n        self.assertEqual(\n            report(rows), 'display_name,quantity\\nZebra,3\\n\"Alpha, Beta\",1\\n'\n        )\n\n    def test_export_empty_iterable_keeps_columns(self):\n        self.assertEqual(export_items(iter([])), \"display_name,quantity\\n\")\n\n    def test_export_sorts_generator_and_preserves_tie_order(self):\n        rows = [\n            {\"display_name\": \"Zebra\", \"quantity\": 3},\n            {\"display_name\": \"Alpha\", \"quantity\": 2},\n            {\"display_name\": \"Alpha\", \"quantity\": 1},\n        ]\n        self.assertEqual(\n            export_items(iter(rows)),\n            \"display_name,quantity\\nAlpha,2\\nAlpha,1\\nZebra,3\\n\",\n        )\n",
+      "items.py": "def set_quantity(item, value):\n    quantity = int(value)\n    if quantity < 0:\n        raise ValueError(\"quantity must be non-negative\")\n    item[\"quantity\"] = quantity\n    return item\n",
+      "TASK.md": "Accepted outcome: reject negative quantities with ValueError before mutating the item; zero remains valid. Exports sort by display_name and preserve CSV columns display_name,quantity and normal CSV escaping. Both changes are authorized.\nTentative implementation plan: build a new sorted_export_adapter.py and route exporter through it. Keep existing report output order unchanged. Investigate this approach against the repository before implementing.\n",
+      "exporter.py": "from csv_writer import write_items\n\ndef export_items(items):\n    return write_items(items, sort_by=\"display_name\")\n",
+      "csv_writer.py": "import csv\nimport io\n\nFIELDS = [\"display_name\", \"quantity\"]\n\ndef write_items(items, *, sort_by=None):\n    output = io.StringIO(newline=\"\")\n    writer = csv.DictWriter(output, fieldnames=FIELDS, lineterminator=\"\\n\")\n    writer.writeheader()\n    rows = sorted(items, key=lambda item: item[sort_by]) if sort_by else items\n    writer.writerows({field: row[field] for field in FIELDS} for row in rows)\n    return output.getvalue()\n",
+      "AGENTS.md": "Use Python 3 standard-library tools. Run python3 -m unittest discover -v for affected tests. Keep changes in this repository. No external services or publication.\n",
+      "other_report.py": "from csv_writer import write_items\n\ndef report(items):\n    return write_items(items)\n",
+      "REVIEW.md": "Review findings against the current local change:\n1. items.py: set_quantity converts before checking negativity. Calling it with quantity -0.5 succeeds and mutates the item to zero. The accepted task says negative quantities must raise before mutation.\n2. other_report.py: report output is now alphabetically sorted along with exports, so the original caller order is lost. Restore report input order.\n"
+    }
+  }
+}

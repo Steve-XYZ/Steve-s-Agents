@@ -13,18 +13,15 @@ Personal agent guidance shared across development machines and agents, including
 
 ## Delivery loop
 
-Start with one harness running the investigation and implementation for a ticket. Do not split a ticket across harnesses. After external review, start `triage-review` in a fresh session of the same harness so the review is not read through an exhausted delivery context.
+Keep five entry points: `deliver-ticket`, `shape-feature`, `diagnosing-bugs`, `code-review`, and `triage-review`. They select a reasoning mode, not a mandatory sequence of ceremonies.
 
-`deliver-ticket` is the entry:
+Delivery follows one observable behavior and its proof at a time. Inspect its owner and affected paths, choose evidence before the production edit, implement, verify, remove code made obsolete, and reassess the next slice. Later planned work remains provisional. Several authorized behavioral clusters call for a safe sequence, not an automatic stop.
 
-1. run the orientation commands, so later steps reason from observed branch, worktree, and upstream state;
-2. map concrete callers, data paths, configuration, consumers, and independent behavioral clusters before choosing a design;
-3. split independently deliverable state machines or side-effect clusters, then grill shared-state provenance, invariants, failure classes, and unresolved decisions;
-4. implement the smallest vertical change, with a test of the invariant when one exists;
-5. prove the target behavior and any material behavior that must remain unchanged;
-6. perform a cold self-review, compare the final diff with the original map, and keep the change draft while required evidence is materially `UNPROVEN`.
+Use shaping for unresolved decisions in existing systems as well as new projects. Keep a short durable work note only when continuity or handoff needs it. Retain one implementer across coupled slices. Separate planning contexts, workers, or worktrees only when isolation or handoff earns their cost.
 
-`diagnosing-bugs`, `code-review`, and `triage-review` are the entry points for those jobs. `shape-feature` covers solo and greenfield work where you are both author and implementer. The WSL audit used a machine-local Claude `user-invocable-only` override; the installer preserves local routing settings.
+Self-review checks the integrated change. Fresh independent review is required for material money, authorization, durable concurrency, irreversible migration, or hard-to-undo external-effect changes. Use one reviewer first. Triage tests findings against evidence before fixing them. A missing reviewer or material proof blocks a readiness claim, not an authorized diagnostic draft.
+
+See [the foundation decisions](docs/workflow-foundation.md) for evidence, rejected defaults, and the boundary between this repository and project-owned tools. The WSL audit used a machine-local Claude `user-invocable-only` override; the installer preserves local routing settings.
 
 Writing guidance lives in `unslop`, separate from the engineering defaults. Workflow skills load it when preparing a PR body, findings, or final report; requested prose writing and rewriting can also invoke it directly. Reuse it while it remains in context. Routine progress updates do not trigger a new load, and no startup hook or per-response reread is needed.
 
@@ -42,9 +39,13 @@ Progressive disclosure only pays when the deeper file holds facts the model cann
   the filename inside actual tool calls and exclude sessions spent editing this
   repository, or every file looks used.
 
+- Count opens against the sessions that met the reference's own trigger, not
+  against every transcript. A conditional reference looks unused when the
+  denominator includes the sessions it was never meant to open in.
+
 ## Workflow change evaluation
 
-Before adopting a material workflow rule broadly, replay a fixed set of historical cases through the same model and harness: a clean control, a known escape, an oversized or multi-cluster change, and a representative pre-change control. Score known-defect recall, invalid findings, elapsed time, and output size. Prefer the smallest rule that improves the target cases without adding noise to the clean control.
+Before adopting a material workflow rule broadly, replay a fixed set of historical cases through the same model and harness: a clean control, a known escape, an oversized or multi-cluster change, and a representative pre-change control. Score required behavior, invariant preservation, invalid findings, escaped defects, human intervention/rework, elapsed time, and model/tool cost. Skill loads and checklist completion are diagnostic signals, not success metrics. Keep outcome expectations independent of the implementation and use holdout cases. Prefer the smallest rule that improves the target cases without adding noise to the clean control.
 
 Run repository checks before spending model tokens:
 
@@ -56,21 +57,13 @@ python3 scripts/test-workflow-helpers.py
 
 The [evaluation cases](evals/README.md) distinguish structural checks from live routing and behavior. Passing the local validator does not prove skill selection.
 
-For repeated reviews, `scripts/review-package.py --repo <project> --base <sha>` captures an exact committed diff in a new temporary directory without changing the project. The [review procedure](shared/code-review/references/review-evidence.md) defines evidence reuse, fix-round scope, and the remaining approval requirements.
+For repeated reviews, `scripts/review-package.py --repo <project> --base <sha>` captures an exact committed diff in a new temporary directory without changing the project. The [review procedure](shared/code-review/references/review-evidence.md) defines evidence reuse, optional output import with `--evidence`, fix-round scope, and approval requirements. `scripts/pr-state.py` reads a head-bound PR/check snapshot without waiting, posting, or deciding merge readiness.
 
-### Practices adapted for this workflow
+### Maintain the foundation
 
-These are focused adaptations, not installed frameworks:
+The [foundation decisions](docs/workflow-foundation.md) link the mechanisms to inspected practitioner sources. Keep versioned project facts beside their owner; use tests, types, and deterministic tools for enforceable rules. Do not accumulate global prose after every correction.
 
-- [Peter Steinberger](https://github.com/steipete/agent-scripts): managed skill links, portable helpers, and fixture validation.
-- [Matt Pocock](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md): observable test seams and independent expected results.
-- [Addy Osmani](https://github.com/addyosmani/agent-skills/blob/main/evals/README.md): separate structural, routing, and behavioral checks.
-- [Superpowers](https://github.com/obra/superpowers/blob/main/skills/subagent-driven-development/re-review-prompt.md): scoped fix rounds and traceable evidence reuse.
-- [pstack](https://github.com/cursor/plugins/blob/main/pstack/skills/create-verification-skill/SKILL.md): runnable project verification and structural prevention of recurring mistakes.
-- [T3 Code](https://github.com/pingdotgg/t3code/blob/main/AGENTS.md): targeted checks and project-owned operational traps.
-- [Armin Ronacher](https://github.com/mitsuhiko/agent-stuff/blob/main/skills/librarian/SKILL.md): reuse local reference checkouts and record their revisions. No cache manager is installed here.
-
-For personal learning after a difficult ticket, explain the invariant owner, partial-failure outcome, and falsifying test before asking the agent for feedback. Keep a lesson only if it changes a future decision. This is optional reflection, not a new delivery gate or automatic teaching pass.
+For a recurring or expensive failure, record the failure, smallest proposed prevention, evidence from a relevant task and a clean control, cost, and retain/revert decision. Prefer code or tests, then local knowledge, then a helper, and only then a workflow rule when judgment is the missing part. One-off corrections may need no durable change. Retire superseded rules.
 
 ## Canonical installation
 

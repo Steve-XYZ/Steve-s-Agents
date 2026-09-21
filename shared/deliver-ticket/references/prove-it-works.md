@@ -1,31 +1,38 @@
-# Prove It Works
+# Prove it works
 
-Run the cheapest check that can go red on the behavior the ticket requires. Prove the requested change and the material behavior that must remain unchanged.
+Choose the observation that distinguishes required behavior from a plausible wrong implementation. Start before the production edit, then verify the integrated result.
 
-Test observable behavior through the existing public or integration boundary. Derive expected values from the requirement, a worked example, or an independent oracle, not the implementation's own calculation. Ask whether the assertion would fail if the original defect returned. Work one behavior and its proof at a time; do not bulk-write tests against an imagined implementation.
+For a feasible material regression or invariant, observe the relevant assertion fail before the fix and pass afterward. An import error, unrelated build failure, or test that cannot exercise the changed branch is not RED evidence. Characterization, captured traces, and disposable experiments are alternatives when they answer the question; state their limits instead of adding artificial coverage.
 
-When repeated setup or fixture discovery blocks proof and tooling work is in scope, read [project verification](project-verification.md). Put executable knowledge in that project rather than expanding global framework guidance.
+Derive expected values from requirements, a worked example, or an independent oracle. A test that repeats the implementation's calculation can repeat its mistake. Characterization records existing behavior; it does not establish correctness.
 
-Use repository-native complexity rules when the normal affected build or lint command already enforces them. Read [local-complexity](local-complexity.md) and consider its fallback only when the final diff adds or reshapes material branching, nesting, state selection, retry, or failure coordination, or when a native diagnostic or reviewer has identified a concrete complexity risk. Routine changed functions do not justify a separate whole-project complexity pass.
+## Choose the affected boundary
 
-Prefer, in order:
+Use the smallest reliable check, then broaden for a concrete remaining risk or a required gate:
 
-1. focused tests that exercise the invariant, target case, and relevant negative or preserved case;
-2. affected project or module tests;
-3. a throwaway local host and real request when tests cannot reach an API, money path, provider boundary, or contract;
-4. the relevant build;
-5. broader suites only when risk or repository CI justifies them.
+- focused tests for pure behavior and preserved/negative cases;
+- affected integration tests for wiring and contracts;
+- a local host, request, browser interaction, or replay when lower seams cannot establish the outcome;
+- build, lint, migration, or broader suites when relevant to the change.
 
-Do not disturb a stack the user already has running. Use a throwaway port, database, or container. Do not hit shared, staging, production, or paid systems without explicit authorization.
+Use real database semantics for transaction, query, locking, or migration claims. For money, retries, concurrency, or partial failure, select reachable failure schedules: competing requests, duplicate delivery, provider success followed by a lost response, or interruption between durable and external effects. A controlled provider substitute can exercise failure schedules; it cannot certify an undocumented provider contract.
 
-For money, durable state, retries, migrations, concurrency, or partial failure, test the applicable failure class. For configuration or tenant-specific behavior, prove both the intended target and a non-target/default path. For an API or external contract, observe the response or serialized artifact rather than inferring it from source code.
+For tenant configuration, prove the intended target and a non-target/default path. For APIs, observe the response or serialized artifact. Inspect other test projects and fixtures that seed changed shared state; a green unit project does not validate those assumptions.
 
-For a changed shared state or predicate, confirm that at least one test executes the changed branch and would fail if the old behavior returned. Inspect every test project and fixture that seeds the affected state; a green changed-test project does not cover stale integration fixtures elsewhere.
+## Make runtime evidence trustworthy
 
-Assertions must distinguish expected from actual state. A successful restore, green build, clean diff, or test that cannot fail for the changed behavior is not proof of the ticket. A relevant failure blocks completion unless the same command fails on the verified base for the same reason. Record the head/base delta; do not turn recurring baseline failures into a permanent exemption. Fix or explicitly quarantine them with an owner and follow-up outside the ticket when necessary.
+Verify the running build, configuration, and test identity. Startup alone does not prove an interaction succeeds. Observe the requested operation through completion. Wait for a specific state rather than fixed sleeps, and do not retry a state-changing operation merely to make the check pass.
 
-Report the exact command, filter or request, observed result, and any path that remains unverified. Mark missing material evidence `UNPROVEN`.
+Use isolated ports, databases, queues, and containers when necessary. Do not disturb the user's running stack or use shared, production, or paid systems outside existing authorization. Record unavailable environments as gaps.
 
-Tie results to the tested commit or explicit working-tree state and retain output
-needed by the next reviewer. Reuse valid evidence for unchanged behavior; a new
-edit requires rechecking affected behavior, not automatically every suite.
+When repeated setup blocks proof, improve the smallest project-owned command or test seam that resolves it within scope. Record its owner, setup, outputs/logs, limitations, and relevant version in project instructions. Do not put project-specific recipes in global skills or build a new MCP server without a demonstrated need.
+
+Use repository-native complexity checks when already enforced. Read [local-complexity](local-complexity.md) only for a concrete risk in changed branching, nesting, state selection, retries, or failure coordination. Routine functions do not need a separate complexity pass.
+
+## Retain honest evidence
+
+Tie material results to the claim, exact tested commit or working-tree state, environment, command/filter/request, observed assertion, and output pointer. Retain evidence useful to the next step or reviewer. A newer edit invalidates affected evidence; recheck that behavior, not automatically every suite.
+
+A successful restore, build, clean diff, or unrelated green test is insufficient for a behavioral claim. An observed failure is not waived because it may predate the change. Compare the same command at exact base and head if that distinction matters; record the delta and a specific owner/follow-up for a baseline failure.
+
+Mark missing material proof `UNPROVEN`. Distinguish inspection and static reasoning from executed behavior. Do not claim a workflow improvement from catalog validation or a single happy-path run.

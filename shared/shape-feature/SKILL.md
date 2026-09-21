@@ -1,56 +1,36 @@
 ---
 name: shape-feature
-description: Use for solo or greenfield work where you are both author and implementer and the product, behavior, or architecture decisions are still open. Do not use when a tracker ticket or accepted brief already specifies the behavior, for unknown-cause bug diagnosis, or for pure code review.
+description: Use to resolve unclear product behavior, scope, or a costly architectural choice before implementation, in existing systems or new projects. Use even when a ticket exists if its decisions remain open. Do not use for a fully specified change with an established route, unknown-cause diagnosis, or pure code review.
 ---
 
-# Shape Feature
+# Shape a change
 
-Reduce uncertainty with the least process necessary. Stop at an implementation-ready brief unless the user also requested implementation and no material decisions remain.
+Resolve what prevents selecting a useful first slice. Preserve the requested outcome and constraints; investigate suggested causes and designs as leads.
 
-## 1. Inspect
+## Inspect before asking
 
-Understand the existing product and relevant implementation before asking questions. Load only the context needed to discover existing behavior, constraints, analogous features, and likely validation seams.
+Read relevant repository instructions, existing behavior, analogous implementations, and validation seams. Separate unknown facts from decisions the user must make. Investigate facts available in code, documentation, tickets, or approved sources.
 
-Do not ask the user for facts available in the repository, documentation, ticket history, or approved sources.
+Ask only about choices that materially change behavior, contracts, data, architecture, scope, or authority. Give a recommendation when evidence supports it. Do not turn ordinary implementation choices into a product interview.
 
-## 2. Resolve uncertainty
+## Resolve the uncertainty
 
-Separate uncertainty into:
+Use current primary sources when a framework, protocol, or provider fact determines correctness. Run a small authorized experiment when it is cheaper than continued speculation. Keep exploratory changes separate from production behavior and remove discarded experiments.
 
-- facts to investigate,
-- product or architecture decisions to ask,
-- non-blocking details to defer.
+When a material question about ownership, contracts, state, failure behavior, or validation remains unresolved, read [judgment](../deliver-ticket/references/judgment.md). Stop the investigation once the next useful decision is supported.
 
-Ask only questions whose answers materially change behavior, contracts, data, architecture, or scope. Prefer a small grouped set of high-impact questions over exhaustive interviewing.
+## Establish a proportional brief
 
-## 3. Research selectively
+Record the outcome and constraints, acceptance criteria, decisions and evidence, scope exclusions, first behavior and proof, and material unknowns. Detail only the next slice. Keep later work provisional, including safe deployment order when one behavior spans several releases.
 
-Use external, primary-source research only when correctness depends on current framework, protocol, regulatory, provider, or platform behavior. Retrieve only what is needed to resolve the decision.
+A slice may cross application layers. Prefer an observable behavior or a resolved uncertainty over completing a whole architectural layer.
 
-Use a small prototype or experiment only when it is cheaper and more reliable than reasoning about the uncertainty. Do not turn exploration into production code accidentally.
+Use a conversation brief for small work. For long exploration, interruptions, handoff, or a context reset, use [work context](../deliver-ticket/references/work-context.md). A separate planning session is conditional, not a prerequisite.
 
-When a decision about ownership, contracts, state, failure behavior, or an implementation boundary is still unresolved after the questions above and would be costly to get wrong, name the risk and read [judgment](../deliver-ticket/references/judgment.md) before finalizing the first slice. Do not use it to invent implementation detail prematurely.
+## Continue within the request
 
-## 4. Establish the brief
+For planning-only requests, stop with the brief and next executable step. If implementation is already requested and no material decision blocks the first slice, continue through `deliver-ticket`. Do not stop just to ask permission to enter another workflow.
 
-Once sufficiently clear, establish:
+If no implementation slice can yet be chosen, identify the blocking unknown and the next evidence-producing experiment. Do not write a detailed plan around the gap.
 
-- problem and desired outcome,
-- acceptance criteria,
-- decisions made,
-- out of scope,
-- validation seam,
-- first vertical slice,
-- remaining risks or blockers.
-
-Keep the brief proportional. Do not create a persistent document unless requested or the work must survive across sessions, agents, or future decisions.
-
-## 5. Slice
-
-Prefer independently verifiable vertical behavior. The first slice should be small enough to investigate, implement, validate, and review in one focused context.
-
-If uncertainty still prevents a first slice, record only the destination, known decisions, blocking unknowns, and next experiment or research action. Resolve that blocker before planning the wider initiative.
-
-Do not invoke `deliver-ticket` automatically. When shaping is complete, report the brief and the next executable slice.
-
-When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.
+When preparing a final brief or report, reuse `unslop`, loading it only if absent.

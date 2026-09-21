@@ -4,7 +4,7 @@ Use only the lanes implicated by the change. Stop when the named risks are resol
 
 ## Establish coverage
 
-Partition the diff into behavioral clusters with their own invariant owner, state machine, or durable or external side-effect boundary. Name any cluster that was not covered deeply enough for the verdict. Recommend separate changes when independent clusters can be delivered and proved independently.
+Partition the diff into behavioral clusters with their own invariant owner, state machine, or durable or external side-effect boundary. Name any cluster that was not covered deeply enough for the verdict. Review independent clusters in focused passes; recommend separate changes when deployment safety or reliable coverage requires it. Do not demand a split merely because the change contains several clusters.
 
 ## Trace shared facts
 

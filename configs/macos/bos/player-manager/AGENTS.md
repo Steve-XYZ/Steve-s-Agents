@@ -4,7 +4,7 @@
 
 Player Manager contains the Admin UI, PlayerManager API, Core domain/services, Worker jobs, EF Core/MySQL migrations, lotto integrations, and report/export flows. Preserve Admin/API/Core/Worker ownership boundaries.
 
-Linear is the source of truth for ticket intent. For Winning Palace work, use `wp/develop` and `wp/feature/BOS-XXXX` unless the ticket or PR specifies otherwise; verify the remote base before branching.
+Linear defines the requested outcome and stated constraints. Treat suggested causes, files, and implementation paths as leads to verify. For Winning Palace work, use `wp/develop` and `wp/feature/BOS-XXXX` unless the ticket or PR specifies otherwise; verify the remote base before branching.
 
 ## Build and Test
 
@@ -57,3 +57,9 @@ After changing branches in a non-interactive or compound shell command, source t
 
 - Check cross-repo consumers for shared lotto flows, payloads, reports, jobs, or deploy configuration.
 - When explicitly asked to publish review feedback, use concise English comments ordered by severity.
+
+## Runtime evidence
+
+For transaction, locking, retry, or migration claims, use the real database provider in an isolated local fixture. Select reachable failure schedules and independently specified outcomes. A mocked repository or a green build does not prove these semantics.
+
+For local host verification, confirm the build/configuration, use isolated test identities and runtime resources, and retain relevant request results and correlated logs. Locate existing test hosts and diagnostics before adding a tool. Do not claim a provider interaction succeeded from startup or a substitute alone.
