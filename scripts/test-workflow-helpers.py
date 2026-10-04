@@ -121,6 +121,20 @@ class SetWorkspaceTests(SiblingRepos, unittest.TestCase):
         self.assertEqual(list((self.workspace / "sets").iterdir()), [])
         self.assertEqual(self.git("alpha", "worktree", "list").count("\n"), 0)
 
+    def test_remove_keeps_detached_commits_reachable(self):
+        destination, _ = set_workspace.create(self.workspace, self.sets, "set-1", "line")
+        alpha = destination / "alpha"
+        (alpha / "Formatter.cs").write_text("committed in the set\n")
+        review.git(alpha, "commit", "-qam", "detached work")
+        work = review.git(alpha, "rev-parse", "HEAD")
+        with self.assertRaisesRegex(ValueError, "on no branch or tag"):
+            set_workspace.remove(self.workspace, self.sets, "set-1")
+        self.assertTrue(alpha.is_dir())
+        self.assertTrue((destination / "beta").is_dir())
+        review.git(alpha, "branch", "keep/set-work")
+        self.assertEqual(set_workspace.remove(self.workspace, self.sets, "set-1"), [])
+        self.assertEqual(self.git("alpha", "rev-parse", "keep/set-work"), work)
+
     def test_remove_rejects_a_folder_that_is_not_a_worktree(self):
         stray = self.sets / "set-1" / "alpha"
         stray.mkdir(parents=True)
@@ -179,6 +193,18 @@ class RelatedWorkTests(SiblingRepos, unittest.TestCase):
         (other / "Unrelated.cs").write_text("nothing here\n")
         result = self.scan("alpha", patterns=[], regexes=["FormatDrawName"])
         self.assertEqual(result["worktrees"][0]["files"], ["New.cs", "Other.cs"])
+
+    def test_quoted_paths_and_posix_classes_match_like_git(self):
+        other = self.root / "thread-4"
+        self.git("alpha", "worktree", "add", "-q", "-b", "feature/BOS-7", str(other), "origin/line")
+        (other / "Other.cs").write_text("Format DrawName()\n")
+        (other / "New File.cs").write_text("Format DrawName()\n")
+        (other / "Quote\"d.cs").write_text("Format\tDrawName()\n")
+        (other / "Plain.cs").write_text("FormatDrawName()\n")
+        result = self.scan("alpha", patterns=[], regexes=["Format[[:space:]]+DrawName"])
+        self.assertEqual(result["worktrees"][0]["files"], ["New File.cs", "Other.cs", "Quote\"d.cs"])
+        result = self.scan("alpha", patterns=["New File.cs"], regexes=[])
+        self.assertEqual(result["worktrees"][0]["files"], ["New File.cs"])
 
     def test_reports_recent_changes_on_the_line(self):
         commit = self.commit("beta", "Formatter.cs", "merged label\n", "BOS-5 merged")

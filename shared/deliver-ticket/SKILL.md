@@ -9,7 +9,7 @@ Treat the requested outcome, acceptance criteria, and stated constraints as auth
 
 ## Orient and establish scope
 
-Inspect the checkout before editing:
+Inspect each checkout the work touches before editing. From a workspace or set folder that is not itself a Git checkout, run these checks in every repository the work selects, for example with `git -C <repo>`:
 
 ```sh
 git rev-parse --show-toplevel || exit 1

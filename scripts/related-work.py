@@ -10,7 +10,6 @@ only in a ticket. A squash-merged branch still looks unmerged until it is delete
 import argparse
 from fnmatch import fnmatch
 import json
-import re
 from pathlib import Path
 import subprocess
 import time
@@ -23,6 +22,10 @@ def git(repo, *args, raw=False):
 
 def lines(text):
     return [line for line in text.splitlines() if line]
+
+
+def paths(text):
+    return [path for path in text.split("\0") if path]
 
 
 def checkouts(workspace):
@@ -45,9 +48,9 @@ def matches(path, patterns):
 def touched(repo, base, tip, patterns, regexes):
     files = set()
     if patterns:
-        files |= {path for path in lines(git(repo, "diff", "--name-only", f"{base}...{tip}", "--")) if matches(path, patterns)}
+        files |= {path for path in paths(git(repo, "diff", "--name-only", "-z", f"{base}...{tip}", "--", raw=True)) if matches(path, patterns)}
     for regex in regexes:
-        files |= set(lines(git(repo, "log", "--format=", "--name-only", "-G", regex, f"{base}..{tip}", "--")))
+        files |= set(paths(git(repo, "log", "--format=", "--name-only", "-z", "-G", regex, f"{base}..{tip}", "--", raw=True)))
     return sorted(files)
 
 
@@ -68,11 +71,29 @@ def branches(repo, since_days):
     return list(seen.values())
 
 
-def untracked_matches(path, regex):
-    try:
-        return re.search(regex, path.read_text(errors="ignore")) is not None
-    except OSError:
-        return False
+def status_paths(worktree):
+    entries = paths(git(worktree, "status", "--porcelain", "-z", "--untracked-files=all", raw=True))
+    changed, untracked, skip = [], [], False
+    for entry in entries:
+        if skip:
+            skip = False
+            continue
+        code, path = entry[:2], entry[3:]
+        changed.append(path)
+        if code == "??":
+            untracked.append(path)
+        skip = "R" in code or "C" in code
+    return changed, untracked
+
+
+def untracked_matches(worktree, regex, untracked):
+    if not untracked:
+        return set()
+    result = subprocess.run(["git", "-C", str(worktree), "grep", "-l", "-z", "-E", "--untracked", "-e", regex, "--",
+                             *(f":(literal){path}" for path in untracked)], capture_output=True, text=True)
+    if result.returncode not in (0, 1):
+        raise subprocess.CalledProcessError(result.returncode, result.args, result.stdout, result.stderr)
+    return set(paths(result.stdout))
 
 
 def dirty_worktrees(repo, patterns, regexes):
@@ -82,12 +103,11 @@ def dirty_worktrees(repo, patterns, regexes):
         path = fields.get("worktree")
         if not path or not Path(path).is_dir() or Path(path).resolve() == repo.resolve():
             continue
-        status = lines(git(path, "status", "--porcelain", "--untracked-files=all", raw=True))
-        hits = {line[3:].split(" -> ")[-1] for line in status if matches(line[3:].split(" -> ")[-1], patterns)}
-        untracked = [line[3:] for line in status if line.startswith("??")]
+        changed, untracked = status_paths(path)
+        hits = {name for name in changed if matches(name, patterns)}
         for regex in regexes:
-            hits |= set(lines(git(path, "diff", "HEAD", "--name-only", "-G", regex, "--")))
-            hits |= {name for name in untracked if untracked_matches(Path(path) / name, regex)}
+            hits |= set(paths(git(path, "diff", "HEAD", "--name-only", "-z", "-G", regex, "--", raw=True)))
+            hits |= untracked_matches(path, regex, untracked)
         hits = sorted(hits)
         if hits:
             found.append({"worktree": path, "branch": fields.get("branch", "detached").removeprefix("refs/heads/"), "files": hits})
@@ -139,7 +159,7 @@ def main():
     parser.add_argument("--workspace", type=Path, default=Path.cwd(), help="Folder holding the sibling checkouts or set worktrees.")
     parser.add_argument("--base", help="Line to compare against, such as develop.")
     parser.add_argument("--path", action="append", default=[], help="Glob for a changed path or file name; repeatable.")
-    parser.add_argument("--grep", action="append", default=[], help="Regex for added or removed lines, as git log -G; repeatable.")
+    parser.add_argument("--grep", action="append", default=[], help="POSIX extended regex for changed lines, as git log -G and git grep -E; repeatable.")
     parser.add_argument("--since-days", type=int, default=30, help="Ignore branches and base commits older than this.")
     parser.add_argument("--exclude", action="append", default=[], help="Branch glob to skip, such as '*TICKET-12*'.")
     parser.add_argument("--json", action="store_true")

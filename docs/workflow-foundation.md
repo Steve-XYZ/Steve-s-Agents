@@ -30,7 +30,7 @@ These sources show implementations and reported failures. They do not prove a pr
 
 ## Deliberate exclusions
 
-No full framework import, mandatory detailed plan, per-slice fresh implementer, default reviewer panel, test-for-every-function rule, forced refactoring, or universal worktree setup. Set folders are for work across repositories or parallel sessions only. Do not add a hook until a recurring deterministic failure justifies it.
+No full framework import, mandatory detailed plan, per-slice fresh implementer, default reviewer panel, test-for-every-function rule, forced refactoring, or universal worktree setup. Parallel sessions use the host's own worktrees; scripted set folders are optional, for a session that must see several repositories together or for replay. Do not add a hook until a recurring deterministic failure justifies it.
 
 One behavioral slice can span several safe PRs or deployments. Keep rollout constraints explicit instead of treating a vertical slice as an atomic release.
 

@@ -46,6 +46,14 @@ def linked(source_dir, target_dir, names):
             if (target_dir / name).is_symlink() and Path(os.readlink(target_dir / name)) == source_dir / name]
 
 
+def unreferenced(path):
+    if subprocess.run(["git", "-C", str(path), "symbolic-ref", "--quiet", "HEAD"], capture_output=True).returncode == 0:
+        return
+    head = git(path, "rev-parse", "HEAD")
+    if not git(path, "for-each-ref", "--count=1", "--contains", head, "refs/heads", "refs/remotes", "refs/tags"):
+        raise ValueError(f"{path}: commit {head[:12]} is on no branch or tag; run git -C {path} branch <name> first")
+
+
 def plan(workspace, base, selections):
     available = {path.name: path for path in checkouts(workspace)}
     chosen = {}
@@ -109,8 +117,10 @@ def remove(workspace, sets_dir, name):
             raise ValueError(f"{path}: not a worktree of {workspace / repo_name}")
     for repo_name, path in worktrees.items():
         links = {f"?? {name}" for name in linked(workspace / repo_name, path, GUIDANCE)}
-        if set(git(path, "status", "--porcelain", "--untracked-files=normal", raw=True).splitlines()) - links:
+        status = {entry for entry in git(path, "status", "--porcelain", "-z", "--untracked-files=normal", raw=True).split("\0") if entry}
+        if status - links:
             raise ValueError(f"{path}: commit, stash, or discard its changes first")
+        unreferenced(path)
     for repo_name, path in worktrees.items():
         for name in linked(workspace / repo_name, path, GUIDANCE):
             (path / name).unlink()

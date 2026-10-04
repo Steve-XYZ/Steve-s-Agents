@@ -150,7 +150,7 @@ python3 scripts/test-install-agent-links.py
 
 A ticket set or a change whose readers sit in another repository starts at the BOS workspace root, so the agent sees every repository and the workspace guidance. `configs/<machine>/bos/workspace/` holds that guidance; copy it to the workspace root by hand like the other BOS files, since the installer does not manage it. The workspace root also holds `CONTRACTS.md`, the map of events, HTTP calls, settings, and facts computed in more than one repository. It describes private systems, so it is kept only on each machine and never committed here.
 
-For parallel sessions or an isolated set, create a set folder beside the workspace:
+Parallel sessions get their own worktrees through T3 Code, which binds each thread to its worktree. Shell-created worktrees lack that binding. When one session must see several repositories' worktrees together, or to replay a historical set, `scripts/set-workspace.py` groups detached worktrees in a folder beside the workspace:
 
 ```sh
 scripts/set-workspace.py --workspace /home/stive/src/BOS --base <line> --fetch <set-name>
@@ -158,7 +158,7 @@ scripts/set-workspace.py --workspace /home/stive/src/BOS <set-name> player-manag
 scripts/set-workspace.py --workspace /home/stive/src/BOS --remove <set-name>
 ```
 
-Worktrees start detached at each line; the agent creates the ticket branches. Open the set folder in T3 Code as its own project. Removal refuses uncommitted work and keeps a set note at the folder root.
+Worktrees start detached at each line; the agent creates the ticket branches. T3 does not list detached worktrees, so open the set folder as its own project. Removal refuses uncommitted work and commits that no branch or tag holds, and keeps a set note at the folder root.
 
 The `deliver-ticket` ticket-scope reference treats a ticket's repositories and blast radius as leads, maps each changed fact across the workspace, and looks for related tickets and in-flight work with `scripts/related-work.py`. Ticket relatedness needs a tracker tool in the harness; without one the agent reports it as unassessed.
 

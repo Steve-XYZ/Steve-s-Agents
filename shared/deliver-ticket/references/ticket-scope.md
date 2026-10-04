@@ -37,15 +37,15 @@ Classify each related item as independent, sharing a fact, or conflicting. Share
 
 ## Plan a set
 
-When several tickets share a fact, land the fact's shape once, in the repository that owns it, before the tickets that consume it. Keep one implementer across tickets that share a fact. Run tickets in parallel only when they share no fact and no file. When the same rule must live in two repositories, make both implementations pass the same cases. Do not copy one and adapt it silently.
+When several tickets share a fact, land the fact's shape once, in the repository that owns it, before the tickets that consume it. Keep one implementer across tickets that share a fact; delegate only bounded investigation or fresh review. Run tickets in parallel only when they share no fact and no file. When the same rule must live in two repositories, make both implementations pass the same cases. Do not copy one and adapt it silently.
 
-Keep the set note at the set folder root, or the workspace root without a set folder, outside every repository, as [work context](work-context.md) describes. It holds:
+Keep the set note at the workspace root, or the set folder root when one exists, outside every repository, as [work context](work-context.md) describes. It holds:
 
 - ticket by repository by surface, with the ticket's scope words beside the evidence;
 - each shared fact with its owner and every copy;
-- the line per repository, deploy order, and companion PRs;
+- per repository: the line, checkout path, branch, and latest commit, plus deploy order and companion PRs;
 - related tickets and branches with their classification;
-- the order of slices and the decisions still open.
+- the order of slices, validation run per repository, and the decisions still open.
 
 ## Before publishing
 
