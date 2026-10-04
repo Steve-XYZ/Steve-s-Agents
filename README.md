@@ -163,7 +163,7 @@ Worktrees start detached at each line; the agent creates the ticket branches. T3
 
 The `deliver-ticket` ticket-scope reference treats a ticket's repositories and blast radius as leads, maps each changed fact across the workspace, and looks for related tickets and in-flight work with `scripts/related-work.py`. Ticket relatedness needs a tracker tool in the harness; without one the agent reports it as unassessed.
 
-For required edits in several repositories, `deliver-ticket`'s orchestration reference is an opt-in mode: one orchestrator at the workspace root writes shared contracts and cases, then launches one persistent worker per repository in dependency order. Models come from a local profile; copy `configs/<machine>/agents/model-profiles.toml.example` to `~/.config/agents/model-profiles.toml` and fill in the exact IDs your providers report. The mode stays provisional until a ticket-set replay supports it.
+Required edits in two or more repositories follow `deliver-ticket`'s orchestration reference: one orchestrator at the workspace root writes shared contracts and cases, then launches one persistent worker per repository in dependency order. Edits in one repository stay in the current thread. Models come from a local profile; copy `configs/<machine>/agents/model-profiles.toml.example` to `~/.config/agents/model-profiles.toml` and fill in the exact IDs and thinking options your providers report. Without a valid profile or a host that can bind threads to worktrees, the agent reports the gap and asks before working in one thread. The mode's effect stays unassessed until a ticket-set replay.
 
 ## Worktree guidance
 

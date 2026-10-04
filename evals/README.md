@@ -33,7 +33,7 @@ The added routing cases cover simple delivery, ambiguous existing systems, shapi
 
 The ticket-scope reference has a replay record for a real multi-repository ticket set: base commits, what happened without the reference, and how to score a rerun. It names private repositories, so it stays with the project's workspace guidance rather than here, and remains unassessed until run on a machine that has them.
 
-Orchestrated delivery is provisional. Run the same replay with and without it, plus a single-repository control, and compare missed surfaces, worker count, repeated investigation, total usage, and elapsed time before making it a default.
+Orchestrated delivery is the rule for required edits in several repositories, and its effect is unassessed. Run the same replay with orchestration and with one thread, plus a single-repository control, and compare missed surfaces, worker count, repeated investigation, total usage, and elapsed time. Revise the rule from the result.
 
 ## Reproduce an explicit-invocation task
 

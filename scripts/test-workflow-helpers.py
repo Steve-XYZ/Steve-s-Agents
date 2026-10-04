@@ -411,6 +411,22 @@ class CatalogTests(unittest.TestCase):
             skill.write_text(original + "\n[inside](../global-guidance/ENGINEERING.md)\n")
             self.assertEqual(validator.validate(root), [])
 
+    def test_model_profile_examples_are_complete(self):
+        import tomllib
+        examples = [ROOT / f"configs/{machine}/agents/model-profiles.toml.example" for machine in ("wsl", "macos")]
+        self.assertEqual(examples[0].read_text(), examples[1].read_text())
+        profile = tomllib.loads(examples[0].read_text())
+        self.assertGreater(profile["limits"]["max_concurrent_workers"], 0)
+        entries = {"orchestrator": profile["orchestrator"], **{f"tiers.{k}": v for k, v in profile["tiers"].items()},
+                   **{f"fallback.{k}": v for k, v in profile["fallback"].items()}}
+        self.assertEqual(set(profile["tiers"]), {"low", "medium", "high"})
+        self.assertEqual(set(profile["fallback"]), {"orchestrator", "medium", "high"})
+        for name, entry in entries.items():
+            with self.subTest(entry=name):
+                self.assertTrue({"provider", "model", "thinking"} <= set(entry))
+        for name in ("orchestrator", "fallback.orchestrator"):
+            self.assertIn("thinking_hard_contracts", entries[name])
+
     def test_routing_fields_require_lists(self):
         with tempfile.TemporaryDirectory(prefix="catalog-fixture-") as tmp:
             root = Path(tmp)

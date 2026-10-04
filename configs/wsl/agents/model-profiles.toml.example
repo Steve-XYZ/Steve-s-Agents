@@ -1,20 +1,21 @@
 # Reference copy. Install at ~/.config/agents/model-profiles.toml and fill in the
 # exact provider instance IDs, model IDs and thinking options that the installed
 # providers report. Display names in comments are the intended models only.
-# The orchestration reference reads this file; it never chooses models itself.
+# The orchestration reference validates this file before any launch and stops on
+# a missing entry, a <placeholder>, or an unsupported model or option.
 
 [limits]
 max_concurrent_workers = 2
 
 [orchestrator]
-# Opus 5.5 or GPT 6.1 Sol; the other goes in [fallback.strong].
+# Preferred strong model: Opus 5.5 or GPT 6.1 Sol.
 provider = "<provider-instance-id>"
 model = "<exact-model-id>"
 thinking = "<option for medium>"
 thinking_hard_contracts = "<option for high>"
 
 [tiers.low]
-# Muse Spark 1.3 through OpenCode.
+# Muse Spark 1.3 through OpenCode. No fallback: unavailable low work moves to [tiers.medium].
 provider = "<opencode-instance-id>"
 model = "<exact-model-id>"
 thinking = "<option for xhigh>"
@@ -29,7 +30,22 @@ provider = "<provider-instance-id>"
 model = "<exact-model-id>"
 thinking = "<option for high>"
 
-[fallback.strong]
-# Used only when the preferred strong model is unavailable; report the switch.
+# Fallbacks: the other strong model, each a complete entry with its own
+# provider-specific thinking options. Used only when the preferred model is
+# unavailable; the switch is reported.
+
+[fallback.orchestrator]
 provider = "<provider-instance-id>"
 model = "<exact-model-id>"
+thinking = "<option for medium>"
+thinking_hard_contracts = "<option for high>"
+
+[fallback.medium]
+provider = "<provider-instance-id>"
+model = "<exact-model-id>"
+thinking = "<option for medium>"
+
+[fallback.high]
+provider = "<provider-instance-id>"
+model = "<exact-model-id>"
+thinking = "<option for high>"

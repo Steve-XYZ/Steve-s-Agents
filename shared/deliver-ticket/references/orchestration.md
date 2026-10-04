@@ -1,8 +1,16 @@
 # Orchestrated delivery across repositories
 
-An opt-in mode for work that needs edits in two or more repositories and is too large for one context. One thread doing all the work stays the default. Use this mode when the user asks for it, or when the scope map shows the set will not fit one context. A repository that only needs inspection gets no worker.
+Use this mode whenever the scope map shows required edits in two or more repositories. A repository that only needs inspection gets no worker. Edits in one repository stay in the current thread.
 
-This mode is provisional. Make it the default only after a replay of a real ticket set and a single-repository control show it misses fewer surfaces without more rework or usage. Record that comparison as the [evaluation guidance](../../../evals/README.md) describes.
+Stay in one thread instead only when:
+
+- the user asks for one thread;
+- the host cannot launch a thread bound to a specific repository worktree; or
+- the model profile below is missing, fails validation, or names a model or option the installed provider does not support.
+
+For the last two, report exactly what is missing and ask before continuing in one thread. Never launch workers with guessed models or default settings.
+
+Its effect is unassessed. Record a replay of a real ticket set and a single-repository control as the [evaluation guidance](../../../evals/README.md) describes, and revise this rule from what it shows.
 
 ## Roles
 
@@ -18,13 +26,24 @@ Write each shared fact's contract into the set note: owner, inputs, outputs, edg
 
 Also record per repository the acceptance criteria, the dependencies on other repositories, and the deploy order. Set the order from compatibility with what is already deployed. A producer can ship first only when the deployed consumer can read its new payload. For an incompatible change, ship a consumer that accepts both shapes first, or version the payload. Separate repositories do not prove that work can run independently.
 
+## Load and validate the model profile
+
+Read `~/.config/agents/model-profiles.toml`. This guidance repository's `configs/<machine>/agents/model-profiles.toml.example` shows its shape:
+
+- `[orchestrator]`: the orchestrator's provider and model, `thinking` by default and `thinking_hard_contracts` for difficult shared contracts or dependencies.
+- `[tiers.low]`, `[tiers.medium]`, `[tiers.high]`: one worker entry per tier, each with `provider`, `model`, and `thinking`.
+- `[fallback.orchestrator]`, `[fallback.medium]`, `[fallback.high]`: complete replacements with their own `thinking` values, used only when the preferred entry's model is unavailable. Low tier has no fallback; when its model is unavailable, the work goes to `[tiers.medium]`.
+- `[limits] max_concurrent_workers`.
+
+Before the first launch, check that every entry the set needs exists, has no `<placeholder>` value, and names a model and thinking option the installed provider reports as supported. Read option names and values from the provider; effort levels differ between providers. If a needed entry is incomplete or unsupported, stop and report it. Check a fallback the same way before switching to it.
+
 ## Launch workers
 
 - Bind each worker to its repository's worktree with the host's explicit workspace binding, such as T3 Code's thread launch with a project and worktree. A delegation call without a workspace selector does not guarantee a separate checkout.
 - Hand over the requirements, the scope-map rows for that repository, the repository path, base commit and branch, the shared contracts and cases, acceptance criteria, required validation, and the worker's tier and model. Do not hand over the orchestrator's history.
 - Launch in dependency order, with no more workers at once than the model profile's `max_concurrent_workers`. A subscription session limit stops every running worker at once and loses their work.
-- Before each launch, record in the set note and report the repository, exact provider and model, thinking option, tier, and reason. Pass those settings explicitly in the launch. Read supported option names and values from the installed provider instead of assuming every provider supports the same effort levels. This is for visibility, not an approval step.
-- Take models only from the local model profile. When a profile's model is unavailable, report it and use the profile's named fallback. Never substitute another model silently.
+- Before each launch, record in the set note and report the repository, exact provider and model, thinking option, tier, and reason. Pass all of them explicitly in the launch; a host may only inherit omitted options from the parent's own provider and model. This is for visibility, not an approval step.
+- Take models only from the validated profile. When an entry's model is unavailable, report it and switch to that entry's complete fallback, thinking option included. When no complete fallback exists, stop and report. Never substitute another model silently.
 
 ## Classify each repository's work
 
@@ -46,6 +65,6 @@ Each worker reports its branch and commit SHAs, the validation commands it ran w
 
 The orchestrator inspects the combined diffs against the set note, confirms the shared cases ran in every repository that computes the fact, and checks that what one repository produces is what the next one reads. Worker summaries are not proof. Then send the combined package to one fresh reviewer.
 
-## When to stay in one thread
+## Cost
 
-Stay in one thread for single-repository work, for a cross-repository change one context can hold, and when usage limits are tight. Every worker investigates its own repository again, so the mode costs more than one thread on small sets.
+Every worker investigates its own repository again, so this mode costs more than one thread on small sets. Keep `max_concurrent_workers` low enough that a subscription session limit does not stop every worker at once, and record usage per set so the replay can compare it.
