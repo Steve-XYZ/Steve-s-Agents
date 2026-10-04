@@ -111,6 +111,16 @@ class SetWorkspaceTests(SiblingRepos, unittest.TestCase):
         self.assertEqual(set_workspace.remove(self.workspace, self.sets, "set-2"), [])
         self.assertFalse((self.sets / "set-2").exists())
 
+    def test_set_names_cannot_leave_the_sets_folder(self):
+        (self.workspace / "sets").mkdir()
+        for name in ("../BOS/sets", "nested/set", "..", ".", ""):
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "one folder name"):
+                set_workspace.create(self.workspace, self.sets, name, "line")
+        with self.assertRaisesRegex(ValueError, "one folder name"):
+            set_workspace.remove(self.workspace, self.sets, "../BOS/alpha")
+        self.assertEqual(list((self.workspace / "sets").iterdir()), [])
+        self.assertEqual(self.git("alpha", "worktree", "list").count("\n"), 0)
+
     def test_remove_rejects_a_folder_that_is_not_a_worktree(self):
         stray = self.sets / "set-1" / "alpha"
         stray.mkdir(parents=True)
@@ -160,6 +170,15 @@ class RelatedWorkTests(SiblingRepos, unittest.TestCase):
         (self.workspace / "alpha/Formatter.cs").write_text("own edit\n")
         result = self.scan("alpha")
         self.assertEqual(result["worktrees"], [{"worktree": str(other.resolve()), "branch": "feature/BOS-4", "files": ["Formatter.cs"]}])
+
+    def test_regex_alone_checks_uncommitted_work_in_other_worktrees(self):
+        other = self.root / "thread-3"
+        self.git("alpha", "worktree", "add", "-q", "-b", "feature/BOS-6", str(other), "origin/line")
+        (other / "Other.cs").write_text("FormatDrawName()\n")
+        (other / "New.cs").write_text("calls FormatDrawName\n")
+        (other / "Unrelated.cs").write_text("nothing here\n")
+        result = self.scan("alpha", patterns=[], regexes=["FormatDrawName"])
+        self.assertEqual(result["worktrees"][0]["files"], ["New.cs", "Other.cs"])
 
     def test_reports_recent_changes_on_the_line(self):
         commit = self.commit("beta", "Formatter.cs", "merged label\n", "BOS-5 merged")

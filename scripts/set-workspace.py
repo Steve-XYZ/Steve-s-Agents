@@ -61,11 +61,18 @@ def plan(workspace, base, selections):
     return chosen
 
 
-def create(workspace, sets_dir, name, base=None, selections=(), fetch=False):
-    workspace = Path(workspace).resolve()
-    destination = Path(sets_dir).resolve() / name
+def set_folder(workspace, sets_dir, name):
+    if name in ("", ".", "..") or Path(name).name != name or "\\" in name:
+        raise ValueError(f"{name!r}: a set name is one folder name, without path separators")
+    destination = (Path(sets_dir) / name).resolve()
     if destination == workspace or workspace in destination.parents:
         raise ValueError("Keep set workspaces outside the workspace root.")
+    return destination
+
+
+def create(workspace, sets_dir, name, base=None, selections=(), fetch=False):
+    workspace = Path(workspace).resolve()
+    destination = set_folder(workspace, sets_dir, name)
     chosen = plan(workspace, base, selections)
     if fetch:
         for repo, ref in chosen.values():
@@ -92,7 +99,7 @@ def create(workspace, sets_dir, name, base=None, selections=(), fetch=False):
 
 def remove(workspace, sets_dir, name):
     workspace = Path(workspace).resolve()
-    destination = Path(sets_dir).resolve() / name
+    destination = set_folder(workspace, sets_dir, name)
     if not destination.is_dir():
         raise ValueError(f"{destination} does not exist")
     worktrees = {path.name: path for path in destination.iterdir() if path.is_dir() and not path.is_symlink()}

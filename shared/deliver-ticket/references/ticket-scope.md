@@ -2,7 +2,7 @@
 
 A ticket's named repositories, surfaces, and blast radius are leads, like its suggested cause. Authors miss a repository, underestimate who reads a changed fact, or file related work as separate tickets that never mention each other. Establish scope from evidence before choosing the first slice.
 
-Use this when the work runs from a multi-repository workspace, names several tickets, or changes a fact that another repository, process, or customer line reads. When the contract map and a search show no reader outside the owning repository, record `scope: single repository; no outside reader` and return to delivery.
+Use this when the work runs from a multi-repository workspace, names several tickets, or changes a fact that another repository, process, or customer line reads. When the contract map and a search show no reader outside the owning repository, record `scope: single repository; no outside reader`. With several tickets in scope, still find related work and plan the set's shared facts below. With one ticket, return to delivery.
 
 ## Read every ticket in scope
 
@@ -23,7 +23,7 @@ Compare the evidence with the ticket and record three lists: surfaces the ticket
 Look for other work on the same facts before editing:
 
 - **Tickets.** With a tracker tool, search open and in-progress tickets in the same team, project, and cycle for the fact names, surfaces, and visible text. Read the matches. Without one, state that ticket relatedness is unassessed and ask for the list when the set is large or touches a shared fact.
-- **In-flight code.** Run this guidance repository's `scripts/related-work.py` from the workspace or set folder with the changed paths or symbols, such as `python3 /path/to/Steve-s-Agents/scripts/related-work.py --base <line> --path '*Formatter*' --grep '<symbol>'`. It lists unmerged local and origin branches, uncommitted changes in other worktrees, and recent commits on the line that touch them. It cannot see work that exists only in a ticket. Another thread editing the same file is related work even when its ticket looks unrelated.
+- **In-flight code.** Run this guidance repository's `scripts/related-work.py` from the workspace or set folder with the changed paths or symbols, such as `python3 /path/to/Steve-s-Agents/scripts/related-work.py --base <line> --path '*Formatter*' --grep '<symbol>'`. It lists unmerged local and origin branches, uncommitted changes in other worktrees, and recent commits on the line that touch them. It cannot see work that exists only in a ticket, and a squash-merged branch looks unmerged until it is deleted. Another thread editing the same file is related work even when its ticket looks unrelated.
 - **Recent merges.** Treat recent commits on the line that touch the same fact as the current shape to build on, not to redo.
 
 Classify each related item as independent, sharing a fact, or conflicting. Shared facts need one shape and an order. Conflicting requirements need the user.

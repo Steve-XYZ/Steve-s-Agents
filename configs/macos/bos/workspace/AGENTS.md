@@ -15,7 +15,7 @@ Linear defines BOS outcomes and stated constraints. Treat suggested causes, file
 
 Start a session at this workspace root, or in a set folder from `~/agent-skills/scripts/set-workspace.py`, when work names several tickets or changes a fact another repository reads. Start inside one repository only for work whose facts have no reader outside it. Parallel sessions need separate set folders; two sessions in the same checkout overwrite each other's branch and files.
 
-The repositories and blast radius a ticket names are leads. Before the first slice, map each changed fact across every repository in this workspace with the workspace `CONTRACTS.md` and a search, and look for related tickets and in-flight branches. The `deliver-ticket` skill's ticket-scope reference has the procedure. Keep the set note at the set folder root, or at this workspace root, never inside a repository.
+The repositories and blast radius a ticket names are leads. For that work, before the first slice, map each changed fact across every repository in this workspace with the workspace `CONTRACTS.md` and a search, and look for related tickets and in-flight branches. The `deliver-ticket` skill's ticket-scope reference has the procedure. Keep the set note at the set folder root, or at this workspace root, never inside a repository.
 
 ## Shared Setup
 

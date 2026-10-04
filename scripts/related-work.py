@@ -4,12 +4,13 @@
 Reads unmerged local and origin branches, uncommitted changes in every worktree, and
 recent commits on the base line of each sibling repository. It reports overlap only.
 It does not decide whether two changes conflict, and it cannot see work that exists
-only in a ticket.
+only in a ticket. A squash-merged branch still looks unmerged until it is deleted.
 """
 
 import argparse
 from fnmatch import fnmatch
 import json
+import re
 from pathlib import Path
 import subprocess
 import time
@@ -67,15 +68,27 @@ def branches(repo, since_days):
     return list(seen.values())
 
 
-def dirty_worktrees(repo, patterns):
+def untracked_matches(path, regex):
+    try:
+        return re.search(regex, path.read_text(errors="ignore")) is not None
+    except OSError:
+        return False
+
+
+def dirty_worktrees(repo, patterns, regexes):
     found = []
     for entry in git(repo, "worktree", "list", "--porcelain").split("\n\n"):
         fields = dict(line.split(" ", 1) for line in entry.splitlines() if " " in line)
         path = fields.get("worktree")
         if not path or not Path(path).is_dir() or Path(path).resolve() == repo.resolve():
             continue
-        changed = [line[3:].split(" -> ")[-1] for line in lines(git(path, "status", "--porcelain", "--untracked-files=normal", raw=True))]
-        hits = sorted(p for p in changed if matches(p, patterns)) if patterns else []
+        status = lines(git(path, "status", "--porcelain", "--untracked-files=all", raw=True))
+        hits = {line[3:].split(" -> ")[-1] for line in status if matches(line[3:].split(" -> ")[-1], patterns)}
+        untracked = [line[3:] for line in status if line.startswith("??")]
+        for regex in regexes:
+            hits |= set(lines(git(path, "diff", "HEAD", "--name-only", "-G", regex, "--")))
+            hits |= {name for name in untracked if untracked_matches(Path(path) / name, regex)}
+        hits = sorted(hits)
         if hits:
             found.append({"worktree": path, "branch": fields.get("branch", "detached").removeprefix("refs/heads/"), "files": hits})
     return found
@@ -94,7 +107,7 @@ def scan(repo, ref, patterns, regexes, since_days, exclude):
         files = touched(repo, base, branch["commit"], patterns, regexes)
         if files:
             report["branches"].append({**branch, "files": files})
-    report["worktrees"] = dirty_worktrees(repo, patterns)
+    report["worktrees"] = dirty_worktrees(repo, patterns, regexes)
     since = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(time.time() - since_days * 86400)) + "Z"
     for line in lines(git(repo, "log", f"--since={since}", "--format=%H\t%s", base)):
         commit, subject = line.split("\t", 1)
