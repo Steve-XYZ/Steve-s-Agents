@@ -45,7 +45,7 @@ Repeat until the authorized outcome is complete:
 5. Remove code, flags, branches, tests, comments, or compatibility paths this slice has made obsolete. Keep a path only for a demonstrated caller or contract. Do not force an extraction or unrelated cleanup.
 6. Reassess the next slice. Revise the impact map and brief when evidence changes the design. Delete invalid planned work instead of completing it for consistency. Continue within scope; ask when the new direction changes a consequential requirement or authority boundary.
 
-Keep related implementation in one context. Use [work context](references/work-context.md) only when context isolation, interruption, handoff, or parallel work adds value. Do not create a new plan, agent, or checklist report for every iteration.
+Keep related implementation in one context. For required edits in several repositories that one context cannot hold, [orchestration](references/orchestration.md) is an opt-in mode with one worker per repository. Use [work context](references/work-context.md) only when context isolation, interruption, handoff, or parallel work adds value. Do not create a new plan, agent, or checklist report for every iteration.
 
 ## Verify the integrated change and review it
 

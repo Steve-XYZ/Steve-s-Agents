@@ -17,6 +17,8 @@ Start a session at this workspace root when work names several tickets or change
 
 Give each parallel session its own worktree through T3 Code, which creates the worktree and binds the thread to it; two sessions in one checkout overwrite each other's branch and files. `~/agent-skills/scripts/set-workspace.py` is optional: it groups detached worktrees of several repositories under one folder for a session that must see them together, or for replaying history. T3 does not list detached worktrees, so open that folder as its own project.
 
+For required edits in several repositories, the `deliver-ticket` orchestration reference is an opt-in mode with one worker per repository; models come from `~/.config/agents/model-profiles.toml`.
+
 The repositories and blast radius a ticket names are leads. For that work, before the first slice, map each changed fact across every repository in this workspace with the workspace `CONTRACTS.md` and a search, and look for related tickets and in-flight branches. The `deliver-ticket` skill's ticket-scope reference has the procedure. Keep the set note at the set folder root, or at this workspace root, never inside a repository.
 
 ## Shared Setup

@@ -11,6 +11,7 @@ Personal agent guidance shared across development machines and agents, including
 - `scripts/install-agent-links.sh`: creates or repairs this machine's skill and guidance symlinks.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
 - `scripts/set-workspace.py`: creates one folder of detached worktrees across sibling repositories for a ticket set, with workspace guidance linked at its root.
+- `configs/<machine>/agents/model-profiles.toml.example`: placeholders for the orchestrator and tier models that orchestrated delivery reads from `~/.config/agents/model-profiles.toml`.
 - `scripts/related-work.py`: lists unmerged branches, uncommitted worktrees, and recent commits that touch the paths or code a change is about to touch.
 
 ## Delivery loop
@@ -161,6 +162,8 @@ scripts/set-workspace.py --workspace /home/stive/src/BOS --remove <set-name>
 Worktrees start detached at each line; the agent creates the ticket branches. T3 does not list detached worktrees, so open the set folder as its own project. Removal refuses uncommitted work and commits that no branch or tag holds, and keeps a set note at the folder root.
 
 The `deliver-ticket` ticket-scope reference treats a ticket's repositories and blast radius as leads, maps each changed fact across the workspace, and looks for related tickets and in-flight work with `scripts/related-work.py`. Ticket relatedness needs a tracker tool in the harness; without one the agent reports it as unassessed.
+
+For required edits in several repositories, `deliver-ticket`'s orchestration reference is an opt-in mode: one orchestrator at the workspace root writes shared contracts and cases, then launches one persistent worker per repository in dependency order. Models come from a local profile; copy `configs/<machine>/agents/model-profiles.toml.example` to `~/.config/agents/model-profiles.toml` and fill in the exact IDs your providers report. The mode stays provisional until a ticket-set replay supports it.
 
 ## Worktree guidance
 
