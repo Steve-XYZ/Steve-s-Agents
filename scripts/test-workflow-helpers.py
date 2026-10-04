@@ -21,6 +21,212 @@ def load(filename):
 review = load("review-package.py")
 validator = load("validate-skills.py")
 pr_state = load("pr-state.py")
+set_workspace = load("set-workspace.py")
+related = load("related-work.py")
+
+
+class SiblingRepos:
+    """Two sibling checkouts whose origin line is a local remote-tracking ref."""
+
+    def make(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="workspace-fixture-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.workspace = self.root / "BOS"
+        self.workspace.mkdir()
+        (self.workspace / "AGENTS.md").write_text("workspace rules\n")
+        (self.workspace / "CONTRACTS.md").write_text("contract map\n")
+        for name in ("alpha", "beta"):
+            repo = self.workspace / name
+            repo.mkdir()
+            self.git(name, "init", "-q", "-b", "main")
+            self.git(name, "config", "user.name", "Fixture")
+            self.git(name, "config", "user.email", "fixture@example.invalid")
+            (repo / "Formatter.cs").write_text("old\n")
+            (repo / "Other.cs").write_text("other\n")
+            self.git(name, "add", ".")
+            self.git(name, "commit", "-qm", "base")
+            self.git(name, "update-ref", "refs/remotes/origin/line", "HEAD")
+            (repo / "AGENTS.md").write_text(f"{name} rules\n")
+            (repo / ".git/info/exclude").write_text("AGENTS.md\nCLAUDE.md\n")
+
+    def git(self, name, *args):
+        return review.git(self.workspace / name, *args)
+
+    def commit(self, name, path, text, message):
+        (self.workspace / name / path).write_text(text)
+        self.git(name, "add", path)
+        self.git(name, "commit", "-qm", message)
+        return self.git(name, "rev-parse", "HEAD")
+
+
+class SetWorkspaceTests(SiblingRepos, unittest.TestCase):
+    def setUp(self):
+        self.make()
+        self.sets = self.root / "BOS-sets"
+
+    def test_detached_worktrees_at_each_line_with_linked_guidance(self):
+        self.git("beta", "update-ref", "refs/remotes/origin/other", "HEAD")
+        line = self.git("alpha", "rev-parse", "origin/line")
+        self.commit("alpha", "Other.cs", "moved on\n", "unrelated local work")
+        destination, commits = set_workspace.create(self.workspace, self.sets, "set-1", "line", ["alpha", "beta=other"])
+        self.assertEqual(destination, self.sets.resolve() / "set-1")
+        self.assertEqual(commits["alpha"], ("line", line))
+        self.assertEqual(commits["beta"][0], "other")
+        self.assertEqual((destination / "AGENTS.md").resolve(), (self.workspace / "AGENTS.md").resolve())
+        self.assertEqual((destination / "CONTRACTS.md").read_text(), "contract map\n")
+        self.assertFalse((destination / "CLAUDE.md").exists())
+        self.assertEqual((destination / "alpha/AGENTS.md").read_text(), "alpha rules\n")
+        self.assertEqual(review.git(destination / "alpha", "rev-parse", "HEAD"), line)
+        self.assertEqual(review.git(destination / "alpha", "status", "--porcelain"), "")
+        self.assertNotEqual(self.git("alpha", "rev-parse", "HEAD"), line)
+
+    def test_missing_line_or_folder_inside_workspace_creates_nothing(self):
+        with self.assertRaisesRegex(ValueError, "names a commit"):
+            set_workspace.create(self.workspace, self.sets, "set-1", "missing")
+        with self.assertRaisesRegex(ValueError, "pass --base"):
+            set_workspace.create(self.workspace, self.sets, "set-1", None, ["alpha"])
+        with self.assertRaisesRegex(ValueError, "not a Git checkout"):
+            set_workspace.create(self.workspace, self.sets, "set-1", "line", ["gamma"])
+        with self.assertRaisesRegex(ValueError, "outside"):
+            set_workspace.create(self.workspace, self.workspace / "sets", "set-1", "line")
+        self.assertFalse(self.sets.exists())
+        self.assertFalse((self.workspace / "sets").exists())
+        self.assertEqual(self.git("alpha", "worktree", "list").count("\n"), 0)
+
+    def test_remove_refuses_changes_and_keeps_the_set_note(self):
+        destination, _ = set_workspace.create(self.workspace, self.sets, "set-1", "line")
+        (destination / "alpha/Formatter.cs").write_text("unfinished\n")
+        with self.assertRaisesRegex(ValueError, "changes first"):
+            set_workspace.remove(self.workspace, self.sets, "set-1")
+        self.assertTrue((destination / "beta/Formatter.cs").exists())
+        review.git(destination / "alpha", "checkout", "--", "Formatter.cs")
+        (destination / "SET.md").write_text("decisions\n")
+        self.assertEqual(set_workspace.remove(self.workspace, self.sets, "set-1"), ["SET.md"])
+        self.assertEqual(sorted(p.name for p in destination.iterdir()), ["SET.md"])
+        self.assertEqual(self.git("alpha", "worktree", "list").count("\n"), 0)
+        (destination / "SET.md").unlink()
+        destination.rmdir()
+        set_workspace.create(self.workspace, self.sets, "set-2", "line")
+        self.assertEqual(set_workspace.remove(self.workspace, self.sets, "set-2"), [])
+        self.assertFalse((self.sets / "set-2").exists())
+
+    def test_set_names_cannot_leave_the_sets_folder(self):
+        (self.workspace / "sets").mkdir()
+        for name in ("../BOS/sets", "nested/set", "..", ".", ""):
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "one folder name"):
+                set_workspace.create(self.workspace, self.sets, name, "line")
+        with self.assertRaisesRegex(ValueError, "one folder name"):
+            set_workspace.remove(self.workspace, self.sets, "../BOS/alpha")
+        self.assertEqual(list((self.workspace / "sets").iterdir()), [])
+        self.assertEqual(self.git("alpha", "worktree", "list").count("\n"), 0)
+
+    def test_remove_keeps_detached_commits_reachable(self):
+        destination, _ = set_workspace.create(self.workspace, self.sets, "set-1", "line")
+        alpha = destination / "alpha"
+        (alpha / "Formatter.cs").write_text("committed in the set\n")
+        review.git(alpha, "commit", "-qam", "detached work")
+        work = review.git(alpha, "rev-parse", "HEAD")
+        with self.assertRaisesRegex(ValueError, "on no branch or tag"):
+            set_workspace.remove(self.workspace, self.sets, "set-1")
+        self.assertTrue(alpha.is_dir())
+        self.assertTrue((destination / "beta").is_dir())
+        review.git(alpha, "branch", "keep/set-work")
+        self.assertEqual(set_workspace.remove(self.workspace, self.sets, "set-1"), [])
+        self.assertEqual(self.git("alpha", "rev-parse", "keep/set-work"), work)
+
+    def test_inherited_git_dir_cannot_redirect_removal_checks(self):
+        destination, _ = set_workspace.create(self.workspace, self.sets, "set-1", "line")
+        alpha = destination / "alpha"
+        (alpha / "Formatter.cs").write_text("committed in the set\n")
+        review.git(alpha, "commit", "-qam", "detached work")
+        hook_env = {**set_workspace.GIT_ENV, "GIT_DIR": str(self.workspace / "alpha/.git"),
+                    "GIT_WORK_TREE": str(self.workspace / "alpha")}
+        with patch.dict(set_workspace.os.environ, hook_env, clear=True):
+            env = set_workspace.clean_env()
+        self.assertNotIn("GIT_DIR", env)
+        self.assertNotIn("GIT_WORK_TREE", env)
+        with patch.object(set_workspace, "GIT_ENV", env), self.assertRaisesRegex(ValueError, "on no branch or tag"):
+            set_workspace.remove(self.workspace, self.sets, "set-1")
+        self.assertTrue(alpha.is_dir())
+
+    def test_remove_rejects_a_folder_that_is_not_a_worktree(self):
+        stray = self.sets / "set-1" / "alpha"
+        stray.mkdir(parents=True)
+        with self.assertRaises((ValueError, subprocess.CalledProcessError)):
+            set_workspace.remove(self.workspace, self.sets, "set-1")
+        self.assertTrue(stray.exists())
+
+
+class RelatedWorkTests(SiblingRepos, unittest.TestCase):
+    def setUp(self):
+        self.make()
+
+    def branch(self, name, branch, path, text):
+        self.git(name, "checkout", "-q", "-b", branch, "origin/line")
+        commit = self.commit(name, path, text, f"{branch} work")
+        self.git(name, "checkout", "-q", "main")
+        return commit
+
+    def scan(self, name, **options):
+        settings = {"patterns": ["*Formatter*"], "regexes": [], "since_days": 30, "exclude": [], **options}
+        return related.scan(self.workspace / name, "line", settings["patterns"], settings["regexes"],
+                            settings["since_days"], settings["exclude"])
+
+    def test_reports_only_unmerged_branches_touching_the_paths(self):
+        commit = self.branch("alpha", "feature/BOS-1", "Formatter.cs", "label v1\n")
+        self.git("alpha", "update-ref", "refs/remotes/origin/feature/BOS-1", commit)
+        self.branch("alpha", "feature/BOS-2", "Other.cs", "unrelated\n")
+        self.git("alpha", "branch", "-q", "merged", "origin/line")
+        result = self.scan("alpha")
+        self.assertEqual([b["branch"] for b in result["branches"]], ["feature/BOS-1"])
+        self.assertEqual(result["branches"][0]["files"], ["Formatter.cs"])
+        self.assertEqual(self.scan("alpha", exclude=["*BOS-1"])["branches"], [])
+        self.assertEqual(self.scan("beta")["branches"], [])
+
+    def test_skips_the_current_branch_and_matches_code_by_regex(self):
+        self.branch("alpha", "feature/BOS-3", "Other.cs", "FormatDrawName()\n")
+        self.assertEqual(self.scan("alpha")["branches"], [])
+        result = self.scan("alpha", patterns=[], regexes=["FormatDrawName"])
+        self.assertEqual(result["branches"][0]["files"], ["Other.cs"])
+        self.git("alpha", "checkout", "-q", "feature/BOS-3")
+        self.assertEqual(self.scan("alpha", patterns=[], regexes=["FormatDrawName"])["branches"], [])
+
+    def test_reports_uncommitted_work_in_other_worktrees(self):
+        other = self.root / "thread-2"
+        self.git("alpha", "worktree", "add", "-q", "-b", "feature/BOS-4", str(other), "origin/line")
+        (other / "Formatter.cs").write_text("in progress\n")
+        (self.workspace / "alpha/Formatter.cs").write_text("own edit\n")
+        result = self.scan("alpha")
+        self.assertEqual(result["worktrees"], [{"worktree": str(other.resolve()), "branch": "feature/BOS-4", "files": ["Formatter.cs"]}])
+
+    def test_regex_alone_checks_uncommitted_work_in_other_worktrees(self):
+        other = self.root / "thread-3"
+        self.git("alpha", "worktree", "add", "-q", "-b", "feature/BOS-6", str(other), "origin/line")
+        (other / "Other.cs").write_text("FormatDrawName()\n")
+        (other / "New.cs").write_text("calls FormatDrawName\n")
+        (other / "Unrelated.cs").write_text("nothing here\n")
+        result = self.scan("alpha", patterns=[], regexes=["FormatDrawName"])
+        self.assertEqual(result["worktrees"][0]["files"], ["New.cs", "Other.cs"])
+
+    def test_quoted_paths_and_posix_classes_match_like_git(self):
+        other = self.root / "thread-4"
+        self.git("alpha", "worktree", "add", "-q", "-b", "feature/BOS-7", str(other), "origin/line")
+        (other / "Other.cs").write_text("Format DrawName()\n")
+        (other / "New File.cs").write_text("Format DrawName()\n")
+        (other / "Quote\"d.cs").write_text("Format\tDrawName()\n")
+        (other / "Plain.cs").write_text("FormatDrawName()\n")
+        result = self.scan("alpha", patterns=[], regexes=["Format[[:space:]]+DrawName"])
+        self.assertEqual(result["worktrees"][0]["files"], ["New File.cs", "Other.cs", "Quote\"d.cs"])
+        result = self.scan("alpha", patterns=["New File.cs"], regexes=[])
+        self.assertEqual(result["worktrees"][0]["files"], ["New File.cs"])
+
+    def test_reports_recent_changes_on_the_line(self):
+        commit = self.commit("beta", "Formatter.cs", "merged label\n", "BOS-5 merged")
+        self.git("beta", "update-ref", "refs/remotes/origin/line", commit)
+        result = self.scan("beta")
+        self.assertEqual([(c["commit"], c["subject"]) for c in result["recent_on_base"]], [(commit, "BOS-5 merged")])
+        self.assertEqual(self.scan("beta", since_days=-1)["recent_on_base"], [])
 
 
 class ReviewPackageTests(unittest.TestCase):
@@ -204,6 +410,22 @@ class CatalogTests(unittest.TestCase):
                     self.assertTrue(any("escapes repository" in x for x in validator.validate(root)))
             skill.write_text(original + "\n[inside](../global-guidance/ENGINEERING.md)\n")
             self.assertEqual(validator.validate(root), [])
+
+    def test_model_profile_examples_are_complete(self):
+        import tomllib
+        examples = [ROOT / f"configs/{machine}/agents/model-profiles.toml.example" for machine in ("wsl", "macos")]
+        self.assertEqual(examples[0].read_text(), examples[1].read_text())
+        profile = tomllib.loads(examples[0].read_text())
+        self.assertGreater(profile["limits"]["max_concurrent_workers"], 0)
+        entries = {"orchestrator": profile["orchestrator"], **{f"tiers.{k}": v for k, v in profile["tiers"].items()},
+                   **{f"fallback.{k}": v for k, v in profile["fallback"].items()}}
+        self.assertEqual(set(profile["tiers"]), {"low", "medium", "high"})
+        self.assertEqual(set(profile["fallback"]), {"orchestrator", "medium", "high"})
+        for name, entry in entries.items():
+            with self.subTest(entry=name):
+                self.assertTrue({"provider", "model", "thinking"} <= set(entry))
+        for name in ("orchestrator", "fallback.orchestrator"):
+            self.assertIn("thinking_hard_contracts", entries[name])
 
     def test_routing_fields_require_lists(self):
         with tempfile.TemporaryDirectory(prefix="catalog-fixture-") as tmp:

@@ -10,6 +10,16 @@ The BOS workspace is `/home/stive/src/BOS` on the WSL Linux filesystem and conta
 
 Linear defines BOS outcomes and stated constraints. Treat suggested causes, files, and implementation paths as leads to verify. Confirm the target repository, current branch, and expected base before editing. When working from this workspace root, read the target repository's `AGENTS.md`; its instructions govern that repository.
 
+## Cross-repo and multi-ticket work
+
+Start a session at this workspace root when work names several tickets or changes a fact another repository reads. This root is not a Git checkout, so run Git checks in each selected repository. Start inside one repository only for work whose facts have no reader outside it.
+
+Give each parallel session its own worktree through T3 Code, which creates the worktree and binds the thread to it; two sessions in one checkout overwrite each other's branch and files. `~/src/stive/Steve-s-Agents/scripts/set-workspace.py` is optional: it groups detached worktrees of several repositories under one folder for a session that must see them together, or for replaying history. T3 does not list detached worktrees, so open that folder as its own project.
+
+Required edits in two or more repositories use the `deliver-ticket` orchestration reference: one orchestrator here and one worker per repository, with models from `~/.config/agents/model-profiles.toml`.
+
+The repositories and blast radius a ticket names are leads. For that work, before the first slice, map each changed fact across every repository in this workspace with the workspace `CONTRACTS.md` and a search, and look for related tickets and in-flight branches. The `deliver-ticket` skill's ticket-scope reference has the procedure. Keep the set note at the set folder root, or at this workspace root, never inside a repository.
+
 ## Ubuntu/WSL Setup
 
 Keep builds and repositories under the Linux filesystem rather than `/mnt/c`.

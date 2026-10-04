@@ -10,6 +10,9 @@ Personal agent guidance shared across development machines and agents, including
 - `configs/macos/`, `configs/wsl/`: reference copies of each machine's local configuration, including the untracked BOS project guidance.
 - `scripts/install-agent-links.sh`: creates or repairs this machine's skill and guidance symlinks.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
+- `scripts/set-workspace.py`: creates one folder of detached worktrees across sibling repositories for a ticket set, with workspace guidance linked at its root.
+- `configs/<machine>/agents/model-profiles.toml.example`: placeholders for the orchestrator and tier models that orchestrated delivery reads from `~/.config/agents/model-profiles.toml`.
+- `scripts/related-work.py`: lists unmerged branches, uncommitted worktrees, and recent commits that touch the paths or code a change is about to touch.
 
 ## Delivery loop
 
@@ -143,6 +146,24 @@ Installer regression checks use disposable homes and do not run either CLI:
 ```sh
 python3 scripts/test-install-agent-links.py
 ```
+
+## Work across repositories
+
+A ticket set or a change whose readers sit in another repository starts at the BOS workspace root, so the agent sees every repository and the workspace guidance. `configs/<machine>/bos/workspace/` holds that guidance; copy it to the workspace root by hand like the other BOS files, since the installer does not manage it. The workspace root also holds `CONTRACTS.md`, the map of events, HTTP calls, settings, and facts computed in more than one repository. It describes private systems, so it is kept only on each machine and never committed here.
+
+Parallel sessions get their own worktrees through T3 Code, which binds each thread to its worktree. Shell-created worktrees lack that binding. When one session must see several repositories' worktrees together, or to replay a historical set, `scripts/set-workspace.py` groups detached worktrees in a folder beside the workspace:
+
+```sh
+scripts/set-workspace.py --workspace /home/stive/src/BOS --base <line> --fetch <set-name>
+scripts/set-workspace.py --workspace /home/stive/src/BOS <set-name> player-manager=<line> lotto-app-v2=<line> lotto-propagator=<other-base>
+scripts/set-workspace.py --workspace /home/stive/src/BOS --remove <set-name>
+```
+
+Worktrees start detached at each line; the agent creates the ticket branches. T3 does not list detached worktrees, so open the set folder as its own project. Removal refuses uncommitted work and commits that no branch or tag holds, and keeps a set note at the folder root.
+
+The `deliver-ticket` ticket-scope reference treats a ticket's repositories and blast radius as leads, maps each changed fact across the workspace, and looks for related tickets and in-flight work with `scripts/related-work.py`. Ticket relatedness needs a tracker tool in the harness; without one the agent reports it as unassessed.
+
+Required edits in two or more repositories follow `deliver-ticket`'s orchestration reference: one orchestrator at the workspace root writes shared contracts and cases, then launches one persistent worker per repository in dependency order. Edits in one repository stay in the current thread. Models come from a local profile; copy `configs/<machine>/agents/model-profiles.toml.example` to `~/.config/agents/model-profiles.toml` and fill in the exact IDs and thinking options your providers report. Without a valid profile or a host that can bind threads to worktrees, the agent reports the gap and asks before working in one thread. The mode's effect stays unassessed until a ticket-set replay.
 
 ## Worktree guidance
 

@@ -8,6 +8,13 @@ The repository's `scripts/review-package.py` freezes a committed comparison:
 python3 /path/to/Steve-s-Agents/scripts/review-package.py --repo /path/to/project --base <base-sha> --head <head-sha>
 ```
 
+For a change across repositories, package each one into a folder of the same parent and add the set note beside them:
+
+```sh
+python3 /path/to/Steve-s-Agents/scripts/review-package.py --repo player-manager --base <base> --head <head> --output /tmp/review-set/player-manager
+python3 /path/to/Steve-s-Agents/scripts/review-package.py --repo lotto-propagator --base <base> --head <head> --output /tmp/review-set/lotto-propagator
+```
+
 Use the PR merge base for its initial diff, or the previous reviewed head for a fix round. The command prints a new temporary directory containing `review.json`, `diff.patch`, and `stat.txt`. It refuses tracked dirty state and excludes untracked files. It does not fetch refs, run tests, or prove correctness. Add requirement and finding pointers to the record. Keep private diffs local; review before any authorized upload.
 
 Do not commit merely to satisfy this helper when commits are not authorized. Use a reviewed local snapshot or another supported read-only comparison and state exactly which files it includes. Never describe a commit-only package as covering uncommitted work.

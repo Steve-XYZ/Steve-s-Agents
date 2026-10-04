@@ -9,7 +9,7 @@ Treat the requested outcome, acceptance criteria, and stated constraints as auth
 
 ## Orient and establish scope
 
-Inspect the checkout before editing:
+Inspect each checkout the work touches before editing. From a workspace or set folder that is not itself a Git checkout, run these checks in every repository the work selects, for example with `git -C <repo>`:
 
 ```sh
 git rev-parse --show-toplevel || exit 1
@@ -21,6 +21,8 @@ git rev-parse --abbrev-ref '@{upstream}' 2>/dev/null || echo '<no upstream>'
 Use remote names, not URLs that may contain credentials. Read root and applicable nested repository instructions, then locate the affected owner, analogous behavior, and executable checks. Do not assume the host loaded nested instructions.
 
 Resolve a supplied base with `git rev-parse --verify '<ref>^{commit}'`; inspect divergence with `git merge-base --is-ancestor <base-ref> HEAD`. Exit 1 establishes non-ancestry, not its cause. Fetch when freshness matters. Resolve an unexpected branch safely before editing; preserve unrelated work and report any unresolved mismatch.
+
+A ticket's named repositories, surfaces, and blast radius are leads, like its suggested cause. When the work runs from a multi-repository workspace, names several tickets, or changes a fact another repository, process, or customer line reads, read [ticket scope](references/ticket-scope.md) before choosing the first slice.
 
 Investigate discoverable facts. Use `diagnosing-bugs` for an unexplained failure. Use `shape-feature` when an unresolved outcome or costly design choice prevents selecting a useful next slice. Continue after those decisions are settled when implementation is already authorized.
 
@@ -43,17 +45,17 @@ Repeat until the authorized outcome is complete:
 5. Remove code, flags, branches, tests, comments, or compatibility paths this slice has made obsolete. Keep a path only for a demonstrated caller or contract. Do not force an extraction or unrelated cleanup.
 6. Reassess the next slice. Revise the impact map and brief when evidence changes the design. Delete invalid planned work instead of completing it for consistency. Continue within scope; ask when the new direction changes a consequential requirement or authority boundary.
 
-Keep related implementation in one context. Use [work context](references/work-context.md) only when context isolation, interruption, handoff, or parallel work adds value. Do not create a new plan, agent, or checklist report for every iteration.
+Keep related implementation in one context within a repository. When required edits span two or more repositories, follow [orchestration](references/orchestration.md): one orchestrator and one persistent worker per repository, except where it lists. Use [work context](references/work-context.md) only when context isolation, interruption, handoff, or parallel work adds value. Do not create a new plan, agent, or checklist report for every iteration.
 
 ## Verify the integrated change and review it
 
-Inspect the complete diff against the outcome and impact map. Confirm changed shared facts, primary and ancillary effects, and tests still agree after integration. Reopen any newly affected behavior. Passing slices do not prove their composition.
+Inspect the complete diff against the outcome and impact map. For a ticket set or a change across repositories, inspect every repository's diff together against the set note. Confirm changed shared facts, primary and ancillary effects, and tests still agree after integration. Reopen any newly affected behavior. Passing slices do not prove their composition.
 
 Check for obsolete code and duplicated policy. Apply the repository's comment rule; preserve useful invariant or external-contract information and remove stale rationale. Do not rewrite unrelated comments.
 
 Self-review prepares the change; it is not independent review. Require `code-review` in a fresh context for material changes to money movement, authorization boundaries, durable concurrent state, irreversible migrations, or external effects that are difficult to undo. For other changes, use independent review when requested, required locally, or needed to resolve a concrete risk. Start with one reviewer. Inspect a risky invariant early if a wrong decision would be expensive, then review the integrated result.
 
-Provide the requirement, exact diff, contracts, evidence, and gaps without the author's reasoning history. Use [review evidence](../code-review/references/review-evidence.md) for a pinned handoff. If a fresh reviewer is unavailable, report that gap; do not relabel self-review as independent. Use `triage-review` to validate findings and fix accepted ones.
+Provide the requirement, exact diff, contracts, evidence, and gaps without the author's reasoning history. A change across repositories goes to one reviewer as one package with the set note. Use [review evidence](../code-review/references/review-evidence.md) for a pinned handoff. If a fresh reviewer is unavailable, report that gap; do not relabel self-review as independent. Use `triage-review` to validate findings and fix accepted ones.
 
 ## Report and publish within authorization
 

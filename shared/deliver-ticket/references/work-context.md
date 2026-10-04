@@ -4,7 +4,7 @@ Use this when work spans sessions, a handoff would otherwise lose decisions, or 
 
 ## Preserve only what the next step needs
 
-Keep one durable note in the repository's established task location, or a local location outside the worktree. Report its path before ending a session. Do not silently add a tracked plan or put private task details in a public repository.
+Keep one durable note in the repository's established task location, or a local location outside the worktree. Work across repositories keeps one note at the set folder or workspace root, outside every repository, rather than one per repository. Report its path before ending a session. Do not silently add a tracked plan or put private task details in a public repository.
 
 Record the outcome and constraints separately from the tentative approach, completed slices and their commit/evidence pointers, important decisions and rejected hypotheses, current unknowns, and the next slice or experiment. Update at useful checkpoints, not after every tool call. Remove superseded pending work.
 
@@ -24,4 +24,4 @@ Delegate bounded independent questions or implementation units whose handoff is 
 
 A worktree isolates checked-out files, HEAD, and index. It does not isolate all Git refs or runtime resources. Use it for competing edits, historical reproduction, or experiments that could disturb active work. Do not require it for every ticket.
 
-Have one integrator inspect and verify the combined change. Worker reports alone do not prove integration. Respect the host's delegation permissions; lack of subagents does not justify pretending contexts are independent.
+Have one integrator inspect and verify the combined change. Worker reports alone do not prove integration. Workers per repository follow [orchestration](orchestration.md). Respect the host's delegation permissions; lack of subagents does not justify pretending contexts are independent.

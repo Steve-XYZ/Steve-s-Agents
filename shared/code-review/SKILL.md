@@ -30,6 +30,8 @@ Start with:
 3. changed tests,
 4. surrounding implementation as far as the changed behavior reaches.
 
+When the change belongs to a ticket set or spans repositories, review every repository's diff together against the set note or, without one, against the tickets. Check that each repository and surface in scope has a change or a recorded reason, and that every copy of a shared fact gives the same result for the same cases.
+
 Read every changed line. Partition the diff into behavioral clusters, then check whether the scope matches the requirement without missing behavior or unrelated expansion. Follow call paths and end-to-end wiring when the changed behavior depends on code outside the diff. Cover independent clusters in focused passes. If coverage remains incomplete, name the uncovered behavior and withhold a complete verdict; recommend a split when it would make review reliable.
 
 ## 3. Review in passes
