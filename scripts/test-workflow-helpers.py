@@ -135,6 +135,21 @@ class SetWorkspaceTests(SiblingRepos, unittest.TestCase):
         self.assertEqual(set_workspace.remove(self.workspace, self.sets, "set-1"), [])
         self.assertEqual(self.git("alpha", "rev-parse", "keep/set-work"), work)
 
+    def test_inherited_git_dir_cannot_redirect_removal_checks(self):
+        destination, _ = set_workspace.create(self.workspace, self.sets, "set-1", "line")
+        alpha = destination / "alpha"
+        (alpha / "Formatter.cs").write_text("committed in the set\n")
+        review.git(alpha, "commit", "-qam", "detached work")
+        hook_env = {**set_workspace.GIT_ENV, "GIT_DIR": str(self.workspace / "alpha/.git"),
+                    "GIT_WORK_TREE": str(self.workspace / "alpha")}
+        with patch.dict(set_workspace.os.environ, hook_env, clear=True):
+            env = set_workspace.clean_env()
+        self.assertNotIn("GIT_DIR", env)
+        self.assertNotIn("GIT_WORK_TREE", env)
+        with patch.object(set_workspace, "GIT_ENV", env), self.assertRaisesRegex(ValueError, "on no branch or tag"):
+            set_workspace.remove(self.workspace, self.sets, "set-1")
+        self.assertTrue(alpha.is_dir())
+
     def test_remove_rejects_a_folder_that_is_not_a_worktree(self):
         stray = self.sets / "set-1" / "alpha"
         stray.mkdir(parents=True)

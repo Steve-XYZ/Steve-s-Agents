@@ -16,8 +16,16 @@ GUIDANCE = ("AGENTS.md", "CLAUDE.md")
 WORKSPACE_FILES = GUIDANCE + ("CONTRACTS.md",)
 
 
+def clean_env():
+    names = subprocess.check_output(["git", "rev-parse", "--local-env-vars"], text=True).split()
+    return {key: value for key, value in os.environ.items() if key not in names}
+
+
+GIT_ENV = clean_env()
+
+
 def git(repo, *args, raw=False):
-    output = subprocess.check_output(["git", "-C", str(repo), *args], text=True, stderr=subprocess.PIPE)
+    output = subprocess.check_output(["git", "-C", str(repo), *args], text=True, stderr=subprocess.PIPE, env=GIT_ENV)
     return output if raw else output.strip()
 
 
@@ -47,7 +55,7 @@ def linked(source_dir, target_dir, names):
 
 
 def unreferenced(path):
-    if subprocess.run(["git", "-C", str(path), "symbolic-ref", "--quiet", "HEAD"], capture_output=True).returncode == 0:
+    if subprocess.run(["git", "-C", str(path), "symbolic-ref", "--quiet", "HEAD"], capture_output=True, env=GIT_ENV).returncode == 0:
         return
     head = git(path, "rev-parse", "HEAD")
     if not git(path, "for-each-ref", "--count=1", "--contains", head, "refs/heads", "refs/remotes", "refs/tags"):

@@ -16,7 +16,7 @@ Never launch one implementer per ticket for tickets that share a fact.
 
 Write each shared fact's contract into the set note: owner, inputs, outputs, edge cases, and shared cases with concrete inputs and expected outputs. Every repository that computes the fact must pass the same cases before its worker counts as done. A prose contract alone lets two copies drift apart.
 
-Also record per repository the acceptance criteria, the dependencies on other repositories, and the deploy order. Producers come before consumers, and a payload change comes before the frontend that reads it. Separate repositories do not prove that work can run independently.
+Also record per repository the acceptance criteria, the dependencies on other repositories, and the deploy order. Set the order from compatibility with what is already deployed. A producer can ship first only when the deployed consumer can read its new payload. For an incompatible change, ship a consumer that accepts both shapes first, or version the payload. Separate repositories do not prove that work can run independently.
 
 ## Launch workers
 

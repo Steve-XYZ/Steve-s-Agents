@@ -10,13 +10,22 @@ only in a ticket. A squash-merged branch still looks unmerged until it is delete
 import argparse
 from fnmatch import fnmatch
 import json
+import os
 from pathlib import Path
 import subprocess
 import time
 
 
+def clean_env():
+    names = subprocess.check_output(["git", "rev-parse", "--local-env-vars"], text=True).split()
+    return {key: value for key, value in os.environ.items() if key not in names}
+
+
+GIT_ENV = clean_env()
+
+
 def git(repo, *args, raw=False):
-    output = subprocess.check_output(["git", "-C", str(repo), *args], text=True, stderr=subprocess.PIPE)
+    output = subprocess.check_output(["git", "-C", str(repo), *args], text=True, stderr=subprocess.PIPE, env=GIT_ENV)
     return output if raw else output.strip()
 
 
@@ -90,7 +99,7 @@ def untracked_matches(worktree, regex, untracked):
     if not untracked:
         return set()
     result = subprocess.run(["git", "-C", str(worktree), "grep", "-l", "-z", "-E", "--untracked", "-e", regex, "--",
-                             *(f":(literal){path}" for path in untracked)], capture_output=True, text=True)
+                             *(f":(literal){path}" for path in untracked)], capture_output=True, text=True, env=GIT_ENV)
     if result.returncode not in (0, 1):
         raise subprocess.CalledProcessError(result.returncode, result.args, result.stdout, result.stderr)
     return set(paths(result.stdout))
@@ -117,7 +126,7 @@ def dirty_worktrees(repo, patterns, regexes):
 def scan(repo, ref, patterns, regexes, since_days, exclude):
     base = resolve(repo, ref)
     current = subprocess.run(["git", "-C", str(repo), "symbolic-ref", "--quiet", "--short", "HEAD"],
-                             capture_output=True, text=True).stdout.strip()
+                             capture_output=True, text=True, env=GIT_ENV).stdout.strip()
     report = {"repo": repo.name, "base": ref, "base_commit": base, "branches": [], "worktrees": [], "recent_on_base": []}
     for branch in branches(repo, since_days):
         if branch["branch"].removeprefix("origin/") in (ref, current) or any(fnmatch(branch["branch"], pattern) for pattern in exclude):
