@@ -1,6 +1,6 @@
 ---
 name: shape-feature
-description: Use to resolve unclear product behavior, scope, or a costly architectural choice before implementation, in existing systems or new projects. Use even when a ticket exists if its decisions remain open. Do not use for a fully specified change with an established route, unknown-cause diagnosis, or pure code review.
+description: Use to resolve unclear product behavior, scope, or a costly architectural choice before implementation, in existing systems or new projects. Use even when a ticket exists if its decisions remain open, and to map how several related tickets affect each other and which repositories they touch. Do not use for a fully specified change with an established route, unknown-cause diagnosis, or pure code review.
 ---
 
 # Shape a change
@@ -10,6 +10,8 @@ Resolve what prevents selecting a useful first slice. Preserve the requested out
 ## Inspect before asking
 
 Read relevant repository instructions, existing behavior, analogous implementations, and validation seams. Separate unknown facts from decisions the user must make. Investigate facts available in code, documentation, tickets, or approved sources.
+
+When the request covers several tickets, or a change whose readers may sit in other repositories, read [ticket scope](../deliver-ticket/references/ticket-scope.md) and map scope and related work before shaping decisions. A planning-only request stops at the set note.
 
 Ask only about choices that materially change behavior, contracts, data, architecture, scope, or authority. Give a recommendation when evidence supports it. Do not turn ordinary implementation choices into a product interview.
 

@@ -10,6 +10,8 @@ Personal agent guidance shared across development machines and agents, including
 - `configs/macos/`, `configs/wsl/`: reference copies of each machine's local configuration, including the untracked BOS project guidance.
 - `scripts/install-agent-links.sh`: creates or repairs this machine's skill and guidance symlinks.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
+- `scripts/set-workspace.py`: creates one folder of detached worktrees across sibling repositories for a ticket set, with workspace guidance linked at its root.
+- `scripts/related-work.py`: lists unmerged branches, uncommitted worktrees, and recent commits that touch the paths or code a change is about to touch.
 
 ## Delivery loop
 
@@ -143,6 +145,22 @@ Installer regression checks use disposable homes and do not run either CLI:
 ```sh
 python3 scripts/test-install-agent-links.py
 ```
+
+## Work across repositories
+
+A ticket set or a change whose readers sit in another repository starts at the BOS workspace root, so the agent sees every repository and the workspace guidance. `configs/<machine>/bos/workspace/` holds that guidance; copy it to the workspace root by hand like the other BOS files, since the installer does not manage it. The workspace root also holds `CONTRACTS.md`, the map of events, HTTP calls, settings, and facts computed in more than one repository. It describes private systems, so it is kept only on each machine and never committed here.
+
+For parallel sessions or an isolated set, create a set folder beside the workspace:
+
+```sh
+scripts/set-workspace.py --workspace /home/stive/src/BOS --base <line> --fetch <set-name>
+scripts/set-workspace.py --workspace /home/stive/src/BOS <set-name> player-manager=<line> lotto-app-v2=<line> lotto-propagator=<other-base>
+scripts/set-workspace.py --workspace /home/stive/src/BOS --remove <set-name>
+```
+
+Worktrees start detached at each line; the agent creates the ticket branches. Open the set folder in T3 Code as its own project. Removal refuses uncommitted work and keeps a set note at the folder root.
+
+The `deliver-ticket` ticket-scope reference treats a ticket's repositories and blast radius as leads, maps each changed fact across the workspace, and looks for related tickets and in-flight work with `scripts/related-work.py`. Ticket relatedness needs a tracker tool in the harness; without one the agent reports it as unassessed.
 
 ## Worktree guidance
 

@@ -29,6 +29,10 @@ For each proposed rule, include the failure it targets and a negative case where
 
 The added routing cases cover simple delivery, ambiguous existing systems, shaping-to-delivery continuation, authorized independent slices, invalidated plans, risky review, stale runtime evidence, and false review findings. Some require a dedicated runtime or PR fixture; until that fixture is available and run, they remain unassessed.
 
+## Replay a real ticket set
+
+The ticket-scope reference has a replay record for a real multi-repository ticket set: base commits, what happened without the reference, and how to score a rerun. It names private repositories, so it stays with the project's workspace guidance rather than here, and remains unassessed until run on a machine that has them.
+
 ## Reproduce an explicit-invocation task
 
 Create an isolated task outside this repository:

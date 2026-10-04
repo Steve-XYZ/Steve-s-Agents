@@ -14,6 +14,7 @@ This update applies the September 2026 practitioner research to PR #7. It preser
 | Separate CI observations from human gates and reject stale snapshots | Waiting forever for approval or reusing checks from another head | [Sentry iteration fix](https://github.com/getsentry/skills/commit/32fdf36273ac530120134ac484b3ab09717f3410) |
 | Route repeated failures to code, tests, local knowledge, or nothing | An expanding global lessons file | [VS Code feedback learning](https://github.com/microsoft/vscode/blob/fc0256deff8a612de2bdb07b3d748299f15f2b63/.github/skills/feedback-learning/SKILL.md) |
 | Track the version and owner of specialized knowledge | Stale dependency guidance and conflicting generated references | [UsageRules collision fix](https://github.com/ash-project/usage_rules/commit/2f02ce8481aa816028db2e173b656f3289ac0f33) |
+| Map ticket scope and related work across repositories before the first slice, and plan a set's shared facts once | A ticket that names too few repositories, parallel tickets rewriting each other's code, and copied logic drifting between two Admins | Local evidence from a three-repository ticket set: review requested a missing repository's PR, two parallel tickets edited the same files, and a follow-up ticket finished surfaces the set had covered. The private replay record lives with the project's workspace guidance. |
 | Review ownership and removable paths beyond the patch | A correct addition leaving duplicate policy or dead code | [Peter Steinberger's deep review](https://github.com/steipete/agent-scripts/blob/95d8d8694953eb82ccbbb33b9b17b1e1f04ebc28/skills/github-deep-review/SKILL.md) |
 
 These sources show implementations and reported failures. They do not prove a productivity gain in this setup. The specific risk triggers and five-entry-point design are local choices to evaluate.
@@ -29,7 +30,7 @@ These sources show implementations and reported failures. They do not prove a pr
 
 ## Deliberate exclusions
 
-No full framework import, mandatory detailed plan, per-slice fresh implementer, default reviewer panel, test-for-every-function rule, forced refactoring, or universal worktree setup. Do not add a hook until a recurring deterministic failure justifies it.
+No full framework import, mandatory detailed plan, per-slice fresh implementer, default reviewer panel, test-for-every-function rule, forced refactoring, or universal worktree setup. Set folders are for work across repositories or parallel sessions only. Do not add a hook until a recurring deterministic failure justifies it.
 
 One behavioral slice can span several safe PRs or deployments. Keep rollout constraints explicit instead of treating a vertical slice as an atomic release.
 
