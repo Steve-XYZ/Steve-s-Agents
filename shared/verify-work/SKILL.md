@@ -18,14 +18,16 @@ An earlier run, a worker's report, a green build, or "should pass" is not a chec
 
 ## Evidence levels
 
-Every material claim in a report carries one level.
+Every material claim in a report carries one level, set by what actually ran:
 
-| Level | The evidence |
+| What ran | Level |
 | --- | --- |
-| `observed` | The real artifact produced the outcome on its user's path, on the current build: the app, command, endpoint, job, or stored value. |
-| `tested` | A test or script ran the real code on the claimed branch and would fail if the behavior were wrong. Calling a function directly is `tested`, not `observed`. |
-| `inspected` | Source reading or a traced argument. Nothing ran. |
-| `UNPROVEN` | No evidence, or the check could not run. Name what is missing. |
+| The product's own entry point, invoked the way its user or consuming system invokes it, on the current build: the command a user types, the endpoint, the screen, the scheduled job, or a read-back of the value it stored | `observed` |
+| A test runner, or a script that imports and calls the code; the check would fail if the behavior were wrong | `tested` |
+| Nothing: source reading or a traced argument | `inspected` |
+| No check, or the check could not run; name what is missing | `UNPROVEN` |
+
+A test suite is `tested` even when it is started from a terminal.
 
 A claim needs `observed` when it depends on wiring, configuration, startup, or runtime state that a lower check cannot tell apart, such as a flag reaching the code, a setting read per tenant, or a job picking up a record. Otherwise use the cheapest level that settles it. When an `observed` claim has no environment that can produce it, report the level reached and name the missing environment. [Choosing proof](references/choosing-proof.md) picks the cheapest observation that settles a claim and covers failure-first regressions, runtime identity, and retained evidence. [Local complexity](references/local-complexity.md) measures a named control-flow risk in changed functions.
 
