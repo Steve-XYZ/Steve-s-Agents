@@ -41,7 +41,7 @@ def create(case, output):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("case", choices=("simple", "slices", "shape", "feedback"))
+    parser.add_argument("case", choices=sorted(json.loads((ROOT / "evals/task-fixtures.json").read_text())))
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     try:
