@@ -56,6 +56,8 @@ When the change touches money or durable state, a shared flag, status, predicate
 
 For repeated rounds or a review handoff, read [review evidence](references/review-evidence.md). Reuse traceable validation that covers the code being reviewed; run new checks for changed behavior or a concrete unresolved doubt. A claimed result without accessible evidence is not a passed check.
 
+Check each claim in the author's evidence against the level it needs under `verify-work`. Evidence that cannot fail for the behavior it claims, or that sits below the level the claim needs, is a should-fix for missing validation. For a material change to money movement, authorization boundaries, durable concurrent state, irreversible migrations, or hard-to-undo external effects, rerun the proof of its one or two safety facts yourself with `verify-work`; the author's run does not count.
+
 Run the narrowest reliable build, test, lint, format, migration, or runtime checks that can prove or disprove material findings. Confirm that tests execute the changed branch and would fail for the behavior being challenged. Distinguish changed-code failures from unrelated environment or baseline failures with an exact head/base comparison when that distinction affects the verdict.
 
 Never present unexecuted validation as completed evidence.

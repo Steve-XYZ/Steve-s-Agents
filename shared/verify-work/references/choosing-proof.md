@@ -1,4 +1,4 @@
-# Prove it works
+# Choosing proof
 
 Choose the observation that distinguishes required behavior from a plausible wrong implementation. Start before the production edit, then verify the integrated result.
 
@@ -35,4 +35,4 @@ Tie material results to the claim, exact tested commit or working-tree state, en
 
 A successful restore, build, clean diff, or unrelated green test is insufficient for a behavioral claim. An observed failure is not waived because it may predate the change. Compare the same command at exact base and head if that distinction matters; record the delta and a specific owner/follow-up for a baseline failure.
 
-Mark missing material proof `UNPROVEN`. Distinguish inspection and static reasoning from executed behavior. Do not claim a workflow improvement from catalog validation or a single happy-path run.
+Mark missing material proof `UNPROVEN`. Label inspection and static reasoning `inspected`, never `tested` or `observed`. Do not claim a workflow improvement from catalog validation or a single happy-path run.

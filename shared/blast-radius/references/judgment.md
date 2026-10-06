@@ -1,6 +1,6 @@
 # Deep Judgment Pass
 
-Load this only when a specific risk to this change is named, still unresolved after the caller's questions, and material if wrong. The gate lives at the call site ( [grill](grill.md) in `deliver-ticket`, the brief in `shape-feature` ) so arriving here means it is already satisfied. State the risk, its missing evidence, and the decision this pass must support, then stop once those decisions are supported. Concerns without a material connection to the change stay out of scope.
+Load this only when a specific risk to this change is named, still unresolved after the blast-radius questions, and material if wrong. The gate lives in `blast-radius`, so arriving here means it is already satisfied. State the risk, its missing evidence, and the decision this pass must support, then stop once those decisions are supported. Concerns without a material connection to the change stay out of scope.
 
 Do not use this file to search for improvements, generate review findings, or produce a separate plan or artifact.
 
@@ -12,7 +12,7 @@ Compare candidate designs by what callers must know, where policy is duplicated,
 
 Name which component is authoritative for each fact and which copies are derived or cached. For shared contracts, schemas, or messages, inspect the actual producers and consumers, compatibility expectations, deployment order, rollback behavior, and generated artifacts. Preserve existing contracts unless the requirement changes them.
 
-For a shared flag, status, enum, or eligibility predicate, inspect every writer and reader plus initial, null/default, legacy, migration, backfill, and test-fixture states, then compare the predicates used at each action surface. Reuse the provenance map when `change-impact` has already built one. A new write-side rule does not repair stored rows or a reader that independently reconstructs the old rule.
+For a shared flag, status, enum, or eligibility predicate, inspect every writer and reader plus initial, null/default, legacy, migration, backfill, and test-fixture states, then compare the predicates used at each action surface. Reuse the provenance map when `blast-radius` has already built one. A new write-side rule does not repair stored rows or a reader that independently reconstructs the old rule.
 
 ## Create an honest feedback path
 

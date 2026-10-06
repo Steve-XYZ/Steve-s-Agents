@@ -1,0 +1,4 @@
+interface:
+  display_name: "Orchestrate"
+  short_description: "Coordinate one worker per repository"
+  default_prompt: "Use $orchestrate to coordinate these tickets across repositories with shared contract cases and one worker per repository."

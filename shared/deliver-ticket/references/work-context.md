@@ -24,4 +24,4 @@ Delegate bounded independent questions or implementation units whose handoff is 
 
 A worktree isolates checked-out files, HEAD, and index. It does not isolate all Git refs or runtime resources. Use it for competing edits, historical reproduction, or experiments that could disturb active work. Do not require it for every ticket.
 
-Have one integrator inspect and verify the combined change. Worker reports alone do not prove integration. Workers per repository follow [orchestration](orchestration.md). Respect the host's delegation permissions; lack of subagents does not justify pretending contexts are independent.
+Have one integrator inspect and verify the combined change. Worker reports alone do not prove integration. Workers per repository follow `orchestrate`. Respect the host's delegation permissions; lack of subagents does not justify pretending contexts are independent.

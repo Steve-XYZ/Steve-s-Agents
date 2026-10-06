@@ -1,8 +1,10 @@
 # Reference copy. Install at ~/.config/agents/model-profiles.toml and fill in the
 # exact provider instance IDs, model IDs and thinking options that the installed
 # providers report. Display names in comments are the intended models only.
-# The orchestration reference validates this file before any launch and stops on
-# a missing entry, a <placeholder>, or an unsupported model or option.
+# Agents read this file only when the user has not named a model for a delegated
+# role. An entry with a <placeholder>, or a model or option the provider does not
+# offer, is skipped: the role uses its fallback entry, then the current session's
+# model, and the agent reports which source it used.
 
 [limits]
 max_concurrent_workers = 2
@@ -29,6 +31,19 @@ thinking = "<option for medium>"
 provider = "<provider-instance-id>"
 model = "<exact-model-id>"
 thinking = "<option for high>"
+
+[reviewer]
+# Fresh code-review contexts. A different model family from the implementers
+# catches different mistakes.
+provider = "<provider-instance-id>"
+model = "<exact-model-id>"
+thinking = "<option for high>"
+
+[verifier]
+# Independent verify-work contexts. Prefer a different family from the implementers.
+provider = "<provider-instance-id>"
+model = "<exact-model-id>"
+thinking = "<option for medium>"
 
 # Fallbacks: the other strong model, each a complete entry with its own
 # provider-specific thinking options. Used only when the preferred model is

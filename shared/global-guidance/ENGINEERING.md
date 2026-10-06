@@ -11,7 +11,8 @@
 - Stay within the authorized outcome. Work through observable behavior and proof, reassess when evidence changes the plan, and remove code made obsolete by the change. Follow established repository patterns.
 - Keep a comment only when its information cannot move into a name, type, or test. Default to two lines; going longer is a cost you must be able to name, such as an invariant, external constraint, or failure semantic that the code and tests cannot carry. Never comment change rationale, ticket history, or ticket IDs, and no docblocks on internal code. Delete a stale comment when the code can carry the truth. Correct one only when it records something the code cannot and a fact in it has become materially false or dangerous; otherwise leave comment wording alone.
 - Do not add dependencies, abstractions, plans, docs, subagents, or artifacts unless they add clear value.
-- Run targeted checks before broader suites; never claim completion without concrete evidence.
+- When delegating to a subagent, worker, reviewer, or verifier, use the model the user named; otherwise the role's usable entry in `~/.config/agents/model-profiles.toml`; otherwise the current session's model. State which source applied.
+- Run targeted checks before broader suites. Before claiming work is done, fixed, or passing, use `verify-work`.
 - Use existing authorization for commits, pushes, and other requested actions; do not ask again at each phase. Ask before external writes, deployments, destructive operations, history rewrites, dependencies, or material scope/risk changes outside that authorization.
 - Do not overwrite, revert, stage, or delete unrelated or unknown changes.
 - Never expose secrets or send private data externally.

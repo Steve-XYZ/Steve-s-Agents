@@ -83,7 +83,9 @@ When a reliable seam exists:
 
 If no honest regression seam exists, explain the limitation instead of adding artificial coverage.
 
-For a material money, authorization, durable concurrency, irreversible migration, or hard-to-undo external-effect fix, apply the independent review requirement in [delivery](../deliver-ticket/SKILL.md). Lack of a reviewer is a reported gap, not independent approval.
+Before reporting the fix as working, use `verify-work` to rerun the original evidence loop on the current build and label the result.
+
+For a material money, authorization, durable concurrency, irreversible migration, or hard-to-undo external-effect fix, obtain a fresh-context `code-review`. Lack of a reviewer is a reported gap, not independent approval.
 
 Remove temporary instrumentation and disposable artifacts created for the diagnosis. Report the cause, change if authorized, validation actually executed, and unresolved risks.
 

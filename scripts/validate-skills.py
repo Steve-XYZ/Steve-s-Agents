@@ -10,6 +10,8 @@ from pathlib import Path
 import re
 from urllib.parse import unquote, urlsplit
 
+MAX_SKILL_WORDS = 1200
+
 
 def validate(root):
     root = Path(root).resolve()
@@ -37,6 +39,19 @@ def validate(root):
         if name in names:
             errors.append(f"{path}: duplicate installed name {name}")
         names.add(name)
+        description = fields.get("description", "")
+        if description and not description.startswith("Use "):
+            errors.append(f'{path}: description must start with "Use " and state only when to use the skill')
+        if len(description) > 1024:
+            errors.append(f"{path}: description exceeds 1024 characters")
+        words = len(text[match.end():].split())
+        if words > MAX_SKILL_WORDS:
+            errors.append(f"{path}: body has {words} words; limit is {MAX_SKILL_WORDS}")
+        metadata = path.parent / "agents/openai.yaml"
+        if not metadata.is_file():
+            errors.append(f"{path.parent}: missing agents/openai.yaml")
+        elif f"${name}" not in metadata.read_text():
+            errors.append(f"{metadata}: default_prompt must name ${name}")
     for area in ("shared", "dotnet"):
         for path in (root / area).rglob("*.md"):
             text = re.sub(r"```.*?```", "", path.read_text(), flags=re.S)

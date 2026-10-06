@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blast Radius"
+  short_description: "Map what a change touches and what must hold"
+  default_prompt: "Use $blast-radius to map what this change affects beyond its diff and prove the facts its safety depends on."

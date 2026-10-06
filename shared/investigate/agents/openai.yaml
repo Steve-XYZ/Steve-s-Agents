@@ -1,0 +1,4 @@
+interface:
+  display_name: "Investigate"
+  short_description: "Answer questions about a system with cited evidence"
+  default_prompt: "Use $investigate to answer this question about the system with cited evidence, without changing anything."
