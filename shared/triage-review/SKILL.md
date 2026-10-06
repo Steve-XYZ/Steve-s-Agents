@@ -1,6 +1,6 @@
 ---
 name: triage-review
-description: Use when your pull request has been reviewed and you must classify each current finding, implement owned fixes, validate them, and optionally push or respond when explicitly authorized. Also use for findings from an independent delivery review or actionable CI failures. Do not use for an initial review or delivery without feedback.
+description: Use when your pull request has review findings, an independent delivery review returned findings, or CI reports actionable failures. Do not use for an initial review or for delivery without feedback.
 ---
 
 # Triage Review

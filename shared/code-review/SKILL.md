@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Use for requested PR/code reviews or an independent review required by delivery risk or repository policy. Run independent delivery review in a fresh context. Do not use to implement changes or diagnose an unknown failure.
+description: Use for requested PR or code reviews and for an independent review that delivery risk or repository policy requires. Do not use to implement changes or diagnose an unknown failure.
 ---
 
 # Code Review

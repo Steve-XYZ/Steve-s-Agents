@@ -42,7 +42,7 @@ Orchestrated delivery is the rule for ticket sets with required edits in several
 Create an isolated task outside this repository:
 
 ```sh
-python3 evals/make-task-fixture.py slices --output /tmp/workflow-slices-trial
+python3 evals/make-task-fixture.py slices --output /tmp/orders-export
 ```
 
 The destination must not exist. The command prints `prompt.txt`; supply its contents to a fresh agent. Available tasks are the keys of `task-fixtures.json`: `simple`, `slices`, `shape`, `feedback`, `currency`, and `claims`. Pass `--skill <name>` to run the same task under another entry skill, for example a baseline under the old route. The feedback task preserves the first slices trial's escaped edge case and supplies review claims to adjudicate. Only the raw task, fixture files, and guidance catalog are copied. Expected outcomes and prior results stay here, outside the task context.

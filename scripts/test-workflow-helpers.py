@@ -417,16 +417,15 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(examples[0].read_text(), examples[1].read_text())
         profile = tomllib.loads(examples[0].read_text())
         self.assertGreater(profile["limits"]["max_concurrent_workers"], 0)
-        entries = {"orchestrator": profile["orchestrator"], "reviewer": profile["reviewer"], "verifier": profile["verifier"],
+        entries = {"reviewer": profile["reviewer"], "verifier": profile["verifier"],
                    **{f"tiers.{k}": v for k, v in profile["tiers"].items()},
                    **{f"fallback.{k}": v for k, v in profile["fallback"].items()}}
+        self.assertEqual(set(profile), {"limits", "tiers", "reviewer", "verifier", "fallback"})
         self.assertEqual(set(profile["tiers"]), {"low", "medium", "high"})
-        self.assertEqual(set(profile["fallback"]), {"orchestrator", "medium", "high"})
+        self.assertEqual(set(profile["fallback"]), {"medium", "high"})
         for name, entry in entries.items():
             with self.subTest(entry=name):
-                self.assertTrue({"provider", "model", "thinking"} <= set(entry))
-        for name in ("orchestrator", "fallback.orchestrator"):
-            self.assertIn("thinking_hard_contracts", entries[name])
+                self.assertEqual(set(entry), {"provider", "model", "thinking"})
 
     def test_routing_fields_require_lists(self):
         with tempfile.TemporaryDirectory(prefix="catalog-fixture-") as tmp:
@@ -483,6 +482,18 @@ class CatalogTests(unittest.TestCase):
             self.assertTrue(any("must name $unslop" in x for x in validator.validate(root)))
             metadata.unlink()
             self.assertTrue(any("missing agents/openai.yaml" in x for x in validator.validate(root)))
+
+    def test_skills_link_other_skills_only_through_handoff_contracts(self):
+        with tempfile.TemporaryDirectory(prefix="catalog-fixture-") as tmp:
+            root = Path(tmp)
+            for name in ("shared", "dotnet", "evals"):
+                shutil.copytree(ROOT / name, root / name)
+            skill = root / "shared/shape-feature/SKILL.md"
+            original = skill.read_text()
+            skill.write_text(original + "\n[scope](../blast-radius/references/ticket-scope.md)\n")
+            self.assertTrue(any("links into another skill" in x for x in validator.validate(root)))
+            skill.write_text(original + "\n[handoff](../code-review/references/review-evidence.md)\n")
+            self.assertEqual(validator.validate(root), [])
 
 
 if __name__ == "__main__":

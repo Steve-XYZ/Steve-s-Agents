@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: Use when the cause is unknown or the user asks to diagnose, debug, investigate, or fix something broken, failing, throwing, flaky, or slow. Continue to implementation only when a fix is requested. Do not use for a ticket with an established cause or for pure code review.
+description: Use when the cause is unknown or the user asks to diagnose, debug, investigate, or fix something broken, failing, throwing, flaky, or slow. Do not use for a ticket with an established cause, a question about behavior that works, or pure code review.
 ---
 
 # Diagnosing Bugs

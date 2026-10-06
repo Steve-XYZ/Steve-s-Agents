@@ -27,7 +27,7 @@ Every material claim in a report carries one level.
 | `inspected` | Source reading or a traced argument. Nothing ran. |
 | `UNPROVEN` | No evidence, or the check could not run. Name what is missing. |
 
-Behavior that a user or another system sees needs `observed`. When no available environment can produce it, report the claim at the level reached and name the missing environment. [Choosing proof](references/choosing-proof.md) picks the cheapest observation that settles a claim and covers failure-first regressions, runtime identity, and retained evidence. [Local complexity](references/local-complexity.md) measures a named control-flow risk in changed functions.
+A claim needs `observed` when it depends on wiring, configuration, startup, or runtime state that a lower check cannot tell apart, such as a flag reaching the code, a setting read per tenant, or a job picking up a record. Otherwise use the cheapest level that settles it. When an `observed` claim has no environment that can produce it, report the level reached and name the missing environment. [Choosing proof](references/choosing-proof.md) picks the cheapest observation that settles a claim and covers failure-first regressions, runtime identity, and retained evidence. [Local complexity](references/local-complexity.md) measures a named control-flow risk in changed functions.
 
 ## Drive the real thing
 
@@ -44,7 +44,7 @@ A worker's report, a review finding, an investigation's conclusions, and finding
 
 Stay read-only unless the requester lists the allowed writes exactly. Never print or store secrets; delete temporary files that hold credentials.
 
-To delegate verification, give a fresh context the claims verbatim, the requirement or contract they rest on, the exact state (repository, commit, environment, time range), what it may read, the allowed writes, and the report shape. Leave out the author's reasoning and the verdict you expect. Spend independent verification on the claims with the weakest evidence or the highest cost if wrong; rerunning a command the author already ran adds nothing.
+To delegate verification, give a fresh context the claims verbatim, the requirement or contract they rest on, the exact state (repository, commit, environment, time range), what it may read, the allowed writes, and the report shape. Leave out the author's reasoning and the verdict you expect. Spend independent verification on the claims with the weakest evidence or the highest cost if wrong.
 
 ## Red flags
 

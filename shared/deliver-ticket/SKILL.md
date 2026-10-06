@@ -51,7 +51,7 @@ Keep related implementation in one context within a repository. Do not create a 
 
 Inspect the complete diff against the outcome and the impact map; for a ticket set, inspect every repository's diff together against the set note. Passing slices do not prove their composition. Reopen any newly affected behavior. Check for obsolete code and duplicated policy. Apply the repository's comment rule; preserve invariant or external-contract information and remove stale rationale. Do not rewrite unrelated comments.
 
-Before claiming the outcome works, use `verify-work`. Every acceptance criterion and material preserved behavior gets an evidence level, and behavior a user or another system sees is driven through its real entry point.
+Before claiming the outcome works, use `verify-work`. Every acceptance criterion and material preserved behavior gets an evidence level, and behavior that depends on wiring, configuration, or runtime state is driven through its real entry point.
 
 ## Independent review
 

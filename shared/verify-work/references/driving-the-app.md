@@ -30,7 +30,7 @@ Stop what this run started by its process or container id, never by process name
 When any of the above had to be discovered, record what worked so the next agent starts at Drive:
 
 - **Where.** A `## Verify` section in the agent instructions file closest to the surface (`AGENTS.md` or `CLAUDE.md`), or the file that section points to.
-- **Tracked files.** Update an untracked or local instructions file directly. For a tracked one, put the proposed section in the report unless the user asked for it in this change.
+- **Who owns the file.** Update the instructions file directly only when it is untracked, is not a symlink, and is not a copy of a file kept elsewhere. Otherwise put the proposed section in the report unless the user asked for it in this change; a symlink can write outside the worktree, and a reference copy gets overwritten at the next sync.
 - **What.** The exact launch command, the readiness check, the isolation settings, the evidence location, the gotchas you hit, the test identities and where their credentials live (never the values), and one line per feature you drove: how a user reaches it, the command, and the result that proves it.
 
 When a recorded recipe fails, fix the recipe if the project legitimately changed and report a regression if the project broke. Never edit a recipe to match broken behavior.

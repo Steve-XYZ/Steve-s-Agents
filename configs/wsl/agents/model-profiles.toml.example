@@ -2,22 +2,17 @@
 # exact provider instance IDs, model IDs and thinking options that the installed
 # providers report. Display names in comments are the intended models only.
 # Agents read this file only when the user has not named a model for a delegated
-# role. An entry with a <placeholder>, or a model or option the provider does not
-# offer, is skipped: the role uses its fallback entry, then the current session's
-# model, and the agent reports which source it used.
+# role. An entry with a <placeholder>, or a model the provider does not offer, is
+# skipped: the role uses its fallback entry, then the current session's model,
+# and the agent reports which source it used. Without this file every delegated
+# role runs on the session's model, so the tiers below have no effect.
 
 [limits]
 max_concurrent_workers = 2
 
-[orchestrator]
-# Preferred strong model: Opus 5.5 or GPT 6.1 Sol.
-provider = "<provider-instance-id>"
-model = "<exact-model-id>"
-thinking = "<option for medium>"
-thinking_hard_contracts = "<option for high>"
-
 [tiers.low]
-# Muse Spark 1.3 through OpenCode. No fallback: unavailable low work moves to [tiers.medium].
+# Muse Spark 1.3 through OpenCode. No fallback entry: when this model is
+# unavailable, low work runs on the current session's model.
 provider = "<opencode-instance-id>"
 model = "<exact-model-id>"
 thinking = "<option for xhigh>"
@@ -48,12 +43,6 @@ thinking = "<option for medium>"
 # Fallbacks: the other strong model, each a complete entry with its own
 # provider-specific thinking options. Used only when the preferred model is
 # unavailable; the switch is reported.
-
-[fallback.orchestrator]
-provider = "<provider-instance-id>"
-model = "<exact-model-id>"
-thinking = "<option for medium>"
-thinking_hard_contracts = "<option for high>"
 
 [fallback.medium]
 provider = "<provider-instance-id>"

@@ -11,6 +11,16 @@ import re
 from urllib.parse import unquote, urlsplit
 
 MAX_SKILL_WORDS = 1200
+HANDOFF_REFERENCES = {"shared/code-review/references/review-evidence.md"}
+
+
+def owning_skill(path, root):
+    for parent in path.parents:
+        if parent == root:
+            return None
+        if (parent / "SKILL.md").is_file():
+            return parent
+    return None
 
 
 def validate(root):
@@ -64,6 +74,11 @@ def validate(root):
                     errors.append(f"{path}: reference escapes repository {target}")
                 elif not candidate.exists():
                     errors.append(f"{path}: missing reference {target}")
+                else:
+                    source, owner = owning_skill(path.resolve(), root), owning_skill(candidate, root)
+                    relative = candidate.relative_to(root).as_posix()
+                    if source and owner and source != owner and relative not in HANDOFF_REFERENCES:
+                        errors.append(f"{path}: links into another skill {target}; name the skill instead")
     try:
         cases = json.loads((root / "evals/routing.json").read_text())
         seen = set()

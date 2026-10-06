@@ -32,9 +32,9 @@ def create(case, output, skill=None):
         path.write_text(content)
     for area in ("shared", "dotnet"):
         shutil.copytree(ROOT / area, output / "guidance" / area)
-    for args in (["init", "-q"], ["config", "user.name", "Fixture"],
-                 ["config", "user.email", "fixture@example.invalid"],
-                 ["add", "."], ["commit", "-qm", "fixture baseline"]):
+    for args in (["init", "-q"], ["config", "user.name", "Dana Reyes"],
+                 ["config", "user.email", "dana@example.invalid"],
+                 ["add", "."], ["commit", "-qm", "Import project"]):
         subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True)
     skill_path = output / "guidance/shared" / skill / "SKILL.md"
     prompt = f"Use ${skill} at {skill_path}. Work in {repo}. {fixture['prompt']} Read guidance only from this supplied catalog."

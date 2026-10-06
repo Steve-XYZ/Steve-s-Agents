@@ -35,6 +35,12 @@ Classify each related item as independent, sharing a fact, or conflicting. Share
 - A named surface the evidence excludes stays in the report with the evidence that excluded it.
 - A conflict between tickets, or a fix the outcome requires in a repository the user has not authorized, needs the user's decision before that slice.
 
+## Shared facts across repositories
+
+This applies to one ticket or a set, in one thread or with workers. Write each shared fact's contract into the set note: owner, inputs, outputs, edge cases, and shared cases with concrete inputs and expected outputs. Every repository that computes the fact passes the same cases before its change counts as done. A prose contract alone lets two copies drift apart.
+
+Record per repository the acceptance criteria, the dependencies on other repositories, and the deploy order. Set the order from compatibility with what is already deployed. A producer ships first only when the deployed consumer can read its new payload. For an incompatible change, ship a consumer that accepts both shapes first, or version the payload. Separate repositories do not prove that work can run independently.
+
 ## Plan a set
 
 When several tickets share a fact, land the fact's shape once, in the repository that owns it, before the tickets that consume it. Keep one implementer per repository across tickets that share a fact, never one per ticket. When the set qualifies, `orchestrate` assigns one worker per repository after the shared cases are written. Run tickets in parallel only when they share no fact and no file. When the same rule must live in two repositories, make both implementations pass the same cases. Do not copy one and adapt it silently.

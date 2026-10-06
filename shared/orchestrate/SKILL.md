@@ -15,15 +15,11 @@ Orchestrate when one of these holds:
 - a single thread working a cross-repository change has been compacted and must recover from notes;
 - the user asks for workers.
 
-Otherwise stay in one thread, including for one ticket whose edits span two repositories. The shared contract cases below still apply in one thread: write them in the set note and run them in every repository that computes the fact. A repository that only needs reading gets no worker.
+Otherwise stay in one thread, including for one ticket whose edits span two repositories; `blast-radius` still supplies the shared cases and deploy order. A repository that only needs reading gets no worker.
 
 ## Before any worker edits
 
-Map scope with `blast-radius`, including its ticket-scope procedure, and keep the set note it describes.
-
-Write each shared fact's contract into the set note: owner, inputs, outputs, edge cases, and shared cases with concrete inputs and expected outputs. Every repository that computes the fact must pass the same cases before its worker counts as done. A prose contract alone lets two copies drift apart.
-
-Record per repository the acceptance criteria, the dependencies on other repositories, and the deploy order. Set the order from compatibility with what is already deployed. A producer ships first only when the deployed consumer can read its new payload. For an incompatible change, ship a consumer that accepts both shapes first, or version the payload.
+Map scope with `blast-radius`. Its ticket-scope reference defines the set note, the shared contract cases, and the deploy order. Write all three before any worker edits.
 
 ## Choose each worker's model
 
@@ -39,7 +35,7 @@ Take the model and thinking option from the first source that has a usable entry
 2. `~/.config/agents/model-profiles.toml`: the tier entry, or its `fallback` entry when the preferred model is unavailable;
 3. the current session's provider, model, and thinking option.
 
-An entry is usable when it has no `<placeholder>` and the provider reports its model and option as supported. Option names and values differ between providers; read them from the provider. Record each worker's model, thinking option, tier, and source (`user`, `profile`, `fallback`, or `session`) in the set note before launch, and pass all of them explicitly in the launch.
+An entry is usable when it has no `<placeholder>` and the provider reports its model as supported. Option names and values differ between providers; read them from the provider. When the host cannot set a thinking option, launch with the model alone and record the option as the host default. Record each worker's model, thinking option, tier, and source (`user`, `profile`, `fallback`, or `session`) in the set note before launch, and pass all of them explicitly in the launch.
 
 A low-tier worker that finds work above its tier stops and reports. Reclassify the work and launch it at the new tier.
 
@@ -51,6 +47,8 @@ Each worker gets one brief. A field you cannot fill means that repository's work
 
 ```text
 GOAL        the outcome for this repository in one sentence
+TIER        low, medium, or high; a low-tier worker stops and reports on any shared-contract,
+            permission, money, or persistent-data change
 SCOPE       repository, worktree path, base commit, branch; paths it must not touch
 CONTEXT     set-note path, this repository's scope rows, upstream worker reports it depends on
 CONTRACT    the shared cases this repository must pass
