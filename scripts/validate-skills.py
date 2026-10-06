@@ -60,7 +60,7 @@ def validate(root):
         metadata = path.parent / "agents/openai.yaml"
         if not metadata.is_file():
             errors.append(f"{path.parent}: missing agents/openai.yaml")
-        elif f"${name}" not in metadata.read_text():
+        elif f"${name}" not in "".join(re.findall(r"^\s*default_prompt:\s*(.*)$", metadata.read_text(), re.M)):
             errors.append(f"{metadata}: default_prompt must name ${name}")
     for area in ("shared", "dotnet"):
         for path in (root / area).rglob("*.md"):

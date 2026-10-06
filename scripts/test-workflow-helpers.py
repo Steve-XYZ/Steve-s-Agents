@@ -478,7 +478,10 @@ class CatalogTests(unittest.TestCase):
                     self.assertTrue(any(message in x for x in validator.validate(root)), validator.validate(root))
             skill.write_text(original)
             metadata = root / "shared/unslop/agents/openai.yaml"
-            metadata.write_text(metadata.read_text().replace("$unslop", "$other"))
+            original_metadata = metadata.read_text()
+            metadata.write_text(original_metadata.replace("$unslop", "$other"))
+            self.assertTrue(any("must name $unslop" in x for x in validator.validate(root)))
+            metadata.write_text(original_metadata.replace("$unslop", "$other") + "# mentions $unslop\n")
             self.assertTrue(any("must name $unslop" in x for x in validator.validate(root)))
             metadata.unlink()
             self.assertTrue(any("missing agents/openai.yaml" in x for x in validator.validate(root)))

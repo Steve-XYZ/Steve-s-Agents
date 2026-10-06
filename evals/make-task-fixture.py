@@ -15,7 +15,7 @@ def create(case, output, skill=None):
     fixtures = json.loads((ROOT / "evals/task-fixtures.json").read_text())
     fixture = fixtures[case]
     skill = skill or fixture["skill"]
-    if not (ROOT / "shared" / skill / "SKILL.md").is_file():
+    if skill not in {path.parent.name for path in (ROOT / "shared").glob("*/SKILL.md")}:
         raise ValueError(f"No shared skill named {skill}")
     output = Path(output).resolve()
     if output == ROOT or ROOT in output.parents:
