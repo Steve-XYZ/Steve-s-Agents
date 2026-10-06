@@ -1,0 +1,176 @@
+diff --git a/README.md b/README.md
+index 0452094..df22978 100644
+--- a/README.md
++++ b/README.md
+@@ -5,6 +5,7 @@ Stock reports and CSV exports for the warehouse team.
+ ```sh
+ python3 -m inventory report
+ python3 -m inventory report --warehouse north
++python3 -m inventory report --currency EUR
+ python3 -m inventory export --currency EUR > items.csv
+ ```
+ 
+diff --git a/inventory/cli.py b/inventory/cli.py
+index bd80235..0c51221 100644
+--- a/inventory/cli.py
++++ b/inventory/cli.py
+@@ -3,6 +3,7 @@ import json
+ from pathlib import Path
+ 
+ from inventory.export import export_csv
++from inventory.rates import RATES
+ from inventory.report import format_report
+ from inventory.settings import DEFAULTS, load_settings
+ 
+@@ -12,6 +13,7 @@ def build_parser():
+     commands = parser.add_subparsers(dest="command", required=True)
+     report = commands.add_parser("report", help="print stock levels and total value")
+     report.add_argument("--warehouse")
++    report.add_argument("--currency", choices=sorted(RATES))
+     report.add_argument("--data", default="data/items.json")
+     export = commands.add_parser("export", help="write items as CSV")
+     export.add_argument("--currency")
+@@ -20,9 +22,8 @@ def build_parser():
+ 
+ 
+ def resolve_options(args, settings):
+-    options = {**DEFAULTS, **{key: value for key, value in vars(args).items() if value is not None}}
+-    options.update(settings)
+-    return options
++    given = {key: value for key, value in vars(args).items() if value is not None}
++    return {**DEFAULTS, **settings, **given}
+ 
+ 
+ def main(argv=None):
+@@ -30,7 +31,7 @@ def main(argv=None):
+     options = resolve_options(args, load_settings())
+     items = json.loads(Path(options["data"]).read_text())
+     if options["command"] == "report":
+-        print(format_report(items, options["warehouse"]))
++        print(format_report(items, options["warehouse"], options["currency"]))
+     else:
+         print(export_csv(items, options["currency"]), end="")
+     return 0
+diff --git a/inventory/report.py b/inventory/report.py
+index 6dab2a3..d14f64e 100644
+--- a/inventory/report.py
++++ b/inventory/report.py
+@@ -1,13 +1,15 @@
+ from decimal import Decimal
+ 
++from inventory.rates import convert
++
+ 
+ def total_value(items):
+     return sum((Decimal(str(item["price"])) * item["quantity"] for item in items), Decimal("0"))
+ 
+ 
+-def format_report(items, warehouse):
++def format_report(items, warehouse, currency="USD"):
+     lines = [f"Warehouse: {warehouse}"]
+     for item in sorted(items, key=lambda item: item["name"]):
+         lines.append(f"{item['name']}: {item['quantity']}")
+-    lines.append(f"Total: {total_value(items):.2f} USD")
++    lines.append(f"Total: {convert(total_value(items), currency):.2f} {currency}")
+     return "\n".join(lines)
+diff --git a/tests/test_cli.py b/tests/test_cli.py
+index 2ccea50..4451011 100644
+--- a/tests/test_cli.py
++++ b/tests/test_cli.py
+@@ -1,6 +1,19 @@
++import contextlib
++import io
++import json
++import os
++import tempfile
+ import unittest
++from pathlib import Path
+ 
+-from inventory.cli import build_parser
++from inventory.cli import build_parser, main, resolve_options
++from inventory.settings import DEFAULTS
++
++ITEMS = [
++    {"name": "bolt", "price": 0.25, "quantity": 100},
++    {"name": "anchor", "price": 12.5, "quantity": 2},
++    {"name": "hinge", "price": 3.1, "quantity": 10},
++]
+ 
+ 
+ class ParserTest(unittest.TestCase):
+@@ -11,3 +24,61 @@ class ParserTest(unittest.TestCase):
+     def test_export_accepts_currency(self):
+         args = build_parser().parse_args(["export", "--currency", "EUR"])
+         self.assertEqual(args.currency, "EUR")
++
++    def test_report_accepts_currency(self):
++        args = build_parser().parse_args(["report", "--currency", "EUR"])
++        self.assertEqual(args.currency, "EUR")
++
++
++class ResolveOptionsTest(unittest.TestCase):
++    def test_command_line_beats_settings_and_defaults(self):
++        args = build_parser().parse_args(["export", "--currency", "EUR"])
++        options = resolve_options(args, {"currency": "USD"})
++        self.assertEqual(options["currency"], "EUR")
++
++    def test_settings_beat_defaults(self):
++        args = build_parser().parse_args(["report"])
++        options = resolve_options(args, {"warehouse": "north"})
++        self.assertEqual(options["warehouse"], "north")
++
++    def test_defaults_apply_when_nothing_else_is_set(self):
++        args = build_parser().parse_args(["report"])
++        options = resolve_options(args, {})
++        self.assertEqual(options["currency"], DEFAULTS["currency"])
++
++
++class MainTest(unittest.TestCase):
++    def setUp(self):
++        workdir = tempfile.TemporaryDirectory()
++        self.addCleanup(workdir.cleanup)
++        self.addCleanup(os.chdir, os.getcwd())
++        os.chdir(workdir.name)
++        Path("inventory.toml").write_text('[inventory]\ncurrency = "USD"\n')
++        Path("items.json").write_text(json.dumps(ITEMS))
++
++    def run_main(self, *argv):
++        out = io.StringIO()
++        with contextlib.redirect_stdout(out):
++            self.assertEqual(main([*argv, "--data", "items.json"]), 0)
++        return out.getvalue()
++
++    def test_report_defaults_to_usd(self):
++        self.assertEqual(self.run_main("report").splitlines()[-1], "Total: 81.00 USD")
++
++    def test_report_currency_overrides_configured_currency(self):
++        self.assertEqual(
++            self.run_main("report", "--currency", "EUR").splitlines()[-1],
++            "Total: 74.52 EUR",
++        )
++
++    def test_export_currency_overrides_configured_currency(self):
++        self.assertEqual(
++            self.run_main("export", "--currency", "EUR"),
++            "name,quantity,price_eur\nanchor,2,11.50\nbolt,100,0.23\nhinge,10,2.85\n",
++        )
++
++    def test_export_defaults_to_configured_currency(self):
++        self.assertEqual(
++            self.run_main("export"),
++            "name,quantity,price_usd\nanchor,2,12.50\nbolt,100,0.25\nhinge,10,3.10\n",
++        )
+diff --git a/tests/test_report.py b/tests/test_report.py
+index 340912c..95d4593 100644
+--- a/tests/test_report.py
++++ b/tests/test_report.py
+@@ -14,3 +14,9 @@ class ReportTest(unittest.TestCase):
+             format_report(ITEMS, "main").splitlines(),
+             ["Warehouse: main", "anchor: 2", "bolt: 100", "Total: 50.00 USD"],
+         )
++
++    def test_total_converts_to_requested_currency(self):
++        self.assertEqual(
++            format_report(ITEMS, "main", "EUR").splitlines()[-1],
++            "Total: 46.00 EUR",
++        )

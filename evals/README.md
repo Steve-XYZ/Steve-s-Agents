@@ -27,22 +27,24 @@ Record actual behavior, invariant preservation, invalid findings, escaped defect
 
 For each proposed rule, include the failure it targets and a negative case where it should stay out of the way. Retain or revert based on those results. Keep the failure, proposed prevention, comparison, cost, and decision in the evaluation record; retire superseded rules instead of appending permanent global instructions.
 
-The added routing cases cover simple delivery, ambiguous existing systems, shaping-to-delivery continuation, authorized independent slices, invalidated plans, risky review, stale runtime evidence, and false review findings. Some require a dedicated runtime or PR fixture; until that fixture is available and run, they remain unassessed.
+The added routing cases cover simple delivery, ambiguous existing systems, shaping-to-delivery continuation, authorized independent slices, invalidated plans, risky review, stale runtime evidence, and false review findings. The October cases add read-only questions, claim validation, completion under time pressure, an undocumented run recipe, blast-radius questions, a single ticket across two repositories, and delegated model sources. Some require a dedicated runtime or PR fixture; until that fixture is available and run, they remain unassessed.
+
+Before writing new guidance, run the task without it. When that control already behaves, the guidance has nothing to fix. To check wording, run five or more fresh samples per variant against a no-guidance control and read every flagged output yourself; varied interpretations across samples mean the wording does not bind. Name trial directories and prompts like real work, and grade from the files an agent read and changed rather than from its report.
 
 ## Replay a real ticket set
 
-The ticket-scope reference has a replay record for a real multi-repository ticket set: base commits, what happened without the reference, and how to score a rerun. It names private repositories, so it stays with the project's workspace guidance rather than here, and remains unassessed until run on a machine that has them.
+The `blast-radius` ticket-scope reference has a replay record for a real multi-repository ticket set: base commits, what happened without the reference, and how to score a rerun. It names private repositories, so it stays with the project's workspace guidance rather than here, and remains unassessed until run on a machine that has them.
 
-Orchestrated delivery is the rule for required edits in several repositories, and its effect is unassessed. Run the same replay with orchestration and with one thread, plus a single-repository control, and compare missed surfaces, worker count, repeated investigation, total usage, and elapsed time. Revise the rule from the result.
+Orchestrated delivery is the rule for ticket sets with required edits in several repositories, and its effect is unassessed. Run the same replay with orchestration and with one thread, plus a single-repository control, and compare missed surfaces, worker count, repeated investigation, total usage, and elapsed time. Revise the rule from the result.
 
 ## Reproduce an explicit-invocation task
 
 Create an isolated task outside this repository:
 
 ```sh
-python3 evals/make-task-fixture.py slices --output /tmp/workflow-slices-trial
+python3 evals/make-task-fixture.py slices --output /tmp/orders-export
 ```
 
-The destination must not exist. The command prints `prompt.txt`; supply its contents to a fresh agent. Available tasks are `simple`, `slices`, `shape`, and `feedback`. The feedback task preserves the first slices trial's escaped edge case and supplies review claims to adjudicate. Only the raw task, fixture files, and guidance catalog are copied. Expected outcomes and prior results stay here, outside the task context.
+The destination must not exist. The command prints `prompt.txt`; supply its contents to a fresh agent. Available tasks are the keys of `task-fixtures.json`: `simple`, `slices`, `shape`, `feedback`, `currency`, `claims`, `parcel`, and `discounts`. A task with a `change` entry gets a second commit, so a review task can review the latest commit. Pass `--skill <name>` to run the same task under another entry skill, for example a baseline under the old route. The feedback task preserves the first slices trial's escaped edge case and supplies review claims to adjudicate. Only the raw task, fixture files, and guidance catalog are copied. Expected outcomes and prior results stay here, outside the task context.
 
-The [September 21 trial record](results/2026-09-21/README.md) includes resulting patches, rerun output, and limits. Explicit invocation proves neither automatic selection nor comparative effectiveness.
+The [September 21 trial record](results/2026-09-21/README.md) includes resulting patches, rerun output, and limits. The [October 6 record](results/2026-10-06/README.md) compares the `currency` and `claims` tasks before and after the restructure. Explicit invocation proves neither automatic selection nor comparative effectiveness.

@@ -1,0 +1,20 @@
+Four of the five claims hold, but claims 2 and 3 only hold as worded for the shipped config, and the change alters existing `export` behavior in two cases. I changed no code. `git status` is identical before and after, and no `__pycache__` was written. I used a scratch copy of HEAD under `/tmp` for baseline comparison and deleted it. Outputs are in this session only, nothing is saved to disk.
+
+State checked: HEAD `b8376b2` plus the uncommitted working tree, Python 3.14.4, run from `/tmp/stockreport-1/repo` with its own `inventory.toml` (`currency = "USD"`).
+
+| # | Claim | Verdict and level | Evidence |
+| --- | --- | --- | --- |
+| 1 | `report --currency EUR` prints the converted total labelled EUR | confirmed, `observed` | `python3 -B -m inventory report --currency EUR` printed `Total: 74.52 EUR` and exited 0. The independent oracle is 25 + 25 + 31 = 81.00, times 0.92, which gives 74.52. The base commit rejects the flag (`unrecognized arguments`, exit 2). |
+| 2 | `report` without the flag still prints USD | overstated, `observed` for the shipped config only | With the repo's toml, `report` printed `Total: 81.00 USD`. But `report` now reads the currency from `inventory.toml`. With `currency = "EUR"` in the toml, `report` printed `74.52 EUR`, where the base commit always printed USD. The test `test_report_without_flag_uses_currency_setting` pins this. The ticket says "keeps printing USD" and also "settings provide defaults", so the intended behavior needs your call. |
+| 3 | CSV export format is unchanged | format confirmed, `observed`. "Export output is unchanged" is wrong in two cases. | I compared base and head byte for byte across 3 toml states and 3 flag states. Header, columns, sort order, rounding and line endings are identical everywhere. Two combinations differ. With toml `USD`, `export --currency EUR` gave USD at base and gives EUR now. With toml `EUR`, `export --currency USD` gave EUR at base and gives USD now. Both come from claim 4. |
+| 4 | Command-line flags now override `inventory.toml` | confirmed for `--currency` and `--data`, `observed`. `--warehouse` is `inspected`. | At base, settings overrode flags. At head, toml USD with `--currency EUR` gives EUR, and toml EUR with `--currency USD` gives USD, for both `report` and `export`. `--data` pointing at another file overrode the toml's `data` (`x: 3`, `Total: 6.00 USD`). `--warehouse` goes through the same merge in `resolve_options` and I did not run it against a toml that sets a warehouse. |
+| 5 | The full test suite passes | confirmed, `observed` | `python3 -B -m unittest discover -v` ran 13 tests, OK, exit 0. I also ran the new tests against base source. 6 of 13 fail there: the EUR report, the report total, flag-beats-settings, the `--data` override and the export flag override. The 2 tests that pass at base are the "stays USD" and "export format unchanged" tests, as expected. |
+
+What the claims missed:
+- **Export behavior change.** In this repo, `export --currency EUR > items.csv` (the README example) produced USD at base because the toml overrode the flag. It now produces EUR. That matches the README and is a fix, but anyone relying on the old output gets different data. The ticket says only "do not change the CSV format", so mention it in the PR description.
+- **Test fixture gap.** `test_report_without_flag_stays_usd` uses a toml fixture set to USD. It cannot tell "always USD" from "USD because the setting says so", so it does not cover the question in claim 2.
+- **Unknown currency.** `report --currency GBP` now exits 1 with a `KeyError: 'GBP'` traceback, because the flag is newly accepted on `report`. `export` already behaved this way. The ticket is silent on it and nothing tests it.
+
+To raise the weaker rows: for claim 2, decide whether a toml `EUR` should change the report default, then adjust the code or the test fixture. For the `--warehouse` part of claim 4, run `report --warehouse north` against a toml with `warehouse = "south"`.
+
+Files, all in `/tmp/stockreport-1/repo`: `inventory/cli.py`, `inventory/settings.py`, `inventory/report.py`, `tests/test_cli.py`, `tests/test_report.py`.

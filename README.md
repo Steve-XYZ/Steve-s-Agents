@@ -5,26 +5,44 @@ Personal agent guidance shared across development machines and agents, including
 ## Contents
 
 - `shared/global-guidance/ENGINEERING.md`: global defaults, symlinked to `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md`.
-- `shared/`: workflow skills — `deliver-ticket`, `code-review`, `triage-review`, `diagnosing-bugs`, `shape-feature`, `unslop`.
+- `shared/`: phase skills `shape-feature`, `deliver-ticket`, `diagnosing-bugs`, `investigate`, `orchestrate`, `code-review`, and `triage-review`; gate skills `verify-work`, `blast-radius`, and `unslop`.
 - `dotnet/aspnet-core/`: the ASP.NET Core facts a model gets wrong from memory — target-framework and breaking changes, middleware order, Blazor render modes. Not a documentation summary.
 - `configs/macos/`, `configs/wsl/`: reference copies of each machine's local configuration, including the untracked BOS project guidance.
 - `scripts/install-agent-links.sh`: creates or repairs this machine's skill and guidance symlinks.
 - `scripts/link-worktree-guidance.sh`: links ignored project guidance into new Git worktrees.
 - `scripts/set-workspace.py`: creates one folder of detached worktrees across sibling repositories for a ticket set, with workspace guidance linked at its root.
-- `configs/<machine>/agents/model-profiles.toml.example`: placeholders for the orchestrator and tier models that orchestrated delivery reads from `~/.config/agents/model-profiles.toml`.
+- `configs/<machine>/agents/model-profiles.toml.example`: placeholders for the models delegated roles fall back to when you name none, read from `~/.config/agents/model-profiles.toml`.
 - `scripts/related-work.py`: lists unmerged branches, uncommitted worktrees, and recent commits that touch the paths or code a change is about to touch.
 
-## Delivery loop
+## Workflow
 
-Keep five entry points: `deliver-ticket`, `shape-feature`, `diagnosing-bugs`, `code-review`, and `triage-review`. They select a reasoning mode, not a mandatory sequence of ceremonies.
+Phase skills own one stage of work and hand off to each other by name. They select a reasoning mode, not a mandatory sequence of ceremonies.
+
+| Phase | Use it to |
+| --- | --- |
+| `shape-feature` | settle what to build when the outcome, scope, or a costly design choice is open |
+| `deliver-ticket` | build a defined outcome through verified slices |
+| `diagnosing-bugs` | find the demonstrated cause of a failure |
+| `investigate` | answer how or why something works, or whether a request holds, without changing anything |
+| `orchestrate` | run a ticket set across repositories with one worker per repository |
+| `code-review` | judge a change against its requirement |
+| `triage-review` | classify review findings and fix the valid ones |
+
+Gate skills hold the knowledge several phases share, so no phase skill becomes the library the others reach into:
+
+- `verify-work` proves claims with a check run now and labels each one `observed`, `tested`, `inspected`, or `UNPROVEN`. It drives the real app, records how to run a project when nobody has, and checks claims other agents made. The global guidance sends every completion claim through it.
+- `blast-radius` maps what a change touches beyond its diff, pressure-tests what must stay true, and names the one or two facts its safety depends on.
+- `unslop` shapes reports, findings, and PR bodies.
 
 Delivery follows one observable behavior and its proof at a time. Inspect its owner and affected paths, choose evidence before the production edit, implement, verify, remove code made obsolete, and reassess the next slice. Later planned work remains provisional. Several authorized behavioral clusters call for a safe sequence, not an automatic stop.
 
 Use shaping for unresolved decisions in existing systems as well as new projects. Keep a short durable work note only when continuity or handoff needs it. Retain one implementer across coupled slices. Separate planning contexts, workers, or worktrees only when isolation or handoff earns their cost.
 
-Self-review checks the integrated change. Fresh independent review is required for material money, authorization, durable concurrency, irreversible migration, or hard-to-undo external-effect changes. Use one reviewer first. Triage tests findings against evidence before fixing them. A missing reviewer or material proof blocks a readiness claim, not an authorized diagnostic draft.
+Self-review checks the integrated change. Fresh independent review is required for material money, authorization, durable concurrency, irreversible migration, or hard-to-undo external-effect changes, and that reviewer reruns the proof of the change's safety facts instead of accepting the author's run. Use one reviewer first. Triage tests findings against evidence before fixing them. A missing reviewer or material proof blocks a readiness claim, not an authorized diagnostic draft.
 
-See [the foundation decisions](docs/workflow-foundation.md) for evidence, rejected defaults, and the boundary between this repository and project-owned tools. The WSL audit used a machine-local Claude `user-invocable-only` override; the installer preserves local routing settings.
+You normally choose each thread's model yourself. When an agent delegates a worker, reviewer, or verifier and you named no model for it, the global guidance takes the role's usable entry from `~/.config/agents/model-profiles.toml`, then the current session's model, and reports which source applied.
+
+See [the foundation decisions](docs/workflow-foundation.md) for evidence, rejected defaults, and the boundary between this repository and project-owned tools. [AGENTS.md](AGENTS.md) holds the rules for writing and testing a skill change. The WSL audit used a machine-local Claude `user-invocable-only` override; the installer preserves local routing settings.
 
 Writing guidance lives in `unslop`, separate from the engineering defaults. Workflow skills load it when preparing a PR body, findings, or final report; requested prose writing and rewriting can also invoke it directly. Reuse it while it remains in context. Routine progress updates do not trigger a new load, and no startup hook or per-response reread is needed.
 
@@ -161,9 +179,9 @@ scripts/set-workspace.py --workspace /home/stive/src/BOS --remove <set-name>
 
 Worktrees start detached at each line; the agent creates the ticket branches. T3 does not list detached worktrees, so open the set folder as its own project. Removal refuses uncommitted work and commits that no branch or tag holds, and keeps a set note at the folder root.
 
-The `deliver-ticket` ticket-scope reference treats a ticket's repositories and blast radius as leads, maps each changed fact across the workspace, and looks for related tickets and in-flight work with `scripts/related-work.py`. Ticket relatedness needs a tracker tool in the harness; without one the agent reports it as unassessed.
+The `blast-radius` ticket-scope reference treats a ticket's repositories and blast radius as leads, maps each changed fact across the workspace, and looks for related tickets and in-flight work with `scripts/related-work.py`. Ticket relatedness needs a tracker tool in the harness; without one the agent reports it as unassessed.
 
-Required edits in two or more repositories follow `deliver-ticket`'s orchestration reference: one orchestrator at the workspace root writes shared contracts and cases, then launches one persistent worker per repository in dependency order. Edits in one repository stay in the current thread. Models come from a local profile; copy `configs/<machine>/agents/model-profiles.toml.example` to `~/.config/agents/model-profiles.toml` and fill in the exact IDs and thinking options your providers report. Without a valid profile or a host that can bind threads to worktrees, the agent reports the gap and asks before working in one thread. The mode's effect stays unassessed until a ticket-set replay.
+Several tickets with required edits in two or more repositories follow `orchestrate`: one orchestrator at the workspace root writes shared contracts and cases, then launches one persistent worker per repository in dependency order with a fixed brief, and keeps the set note as a ledger keyed by head SHA. One ticket across two repositories stays in one thread and still runs the shared cases in both. Worker models come from your instruction, then a local profile, then the session's model; copy `configs/<machine>/agents/model-profiles.toml.example` to `~/.config/agents/model-profiles.toml` and fill in the exact IDs and thinking options your providers report. A missing profile no longer stops the work. Without a host that can bind threads to worktrees, the agent says so and works in one thread. The mode's effect stays unassessed until a ticket-set replay.
 
 ## Worktree guidance
 

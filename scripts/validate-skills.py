@@ -10,6 +10,18 @@ from pathlib import Path
 import re
 from urllib.parse import unquote, urlsplit
 
+MAX_SKILL_WORDS = 1200
+HANDOFF_REFERENCES = {"shared/code-review/references/review-evidence.md"}
+
+
+def owning_skill(path, root):
+    for parent in path.parents:
+        if parent == root:
+            return None
+        if (parent / "SKILL.md").is_file():
+            return parent
+    return None
+
 
 def validate(root):
     root = Path(root).resolve()
@@ -37,6 +49,19 @@ def validate(root):
         if name in names:
             errors.append(f"{path}: duplicate installed name {name}")
         names.add(name)
+        description = fields.get("description", "")
+        if description and not description.startswith("Use "):
+            errors.append(f'{path}: description must start with "Use " and state only when to use the skill')
+        if len(description) > 1024:
+            errors.append(f"{path}: description exceeds 1024 characters")
+        words = len(text[match.end():].split())
+        if words > MAX_SKILL_WORDS:
+            errors.append(f"{path}: body has {words} words; limit is {MAX_SKILL_WORDS}")
+        metadata = path.parent / "agents/openai.yaml"
+        if not metadata.is_file():
+            errors.append(f"{path.parent}: missing agents/openai.yaml")
+        elif f"${name}" not in "".join(re.findall(r"^\s*default_prompt:\s*(.*)$", metadata.read_text(), re.M)):
+            errors.append(f"{metadata}: default_prompt must name ${name}")
     for area in ("shared", "dotnet"):
         for path in (root / area).rglob("*.md"):
             text = re.sub(r"```.*?```", "", path.read_text(), flags=re.S)
@@ -49,6 +74,11 @@ def validate(root):
                     errors.append(f"{path}: reference escapes repository {target}")
                 elif not candidate.exists():
                     errors.append(f"{path}: missing reference {target}")
+                else:
+                    source, owner = owning_skill(path.resolve(), root), owning_skill(candidate, root)
+                    relative = candidate.relative_to(root).as_posix()
+                    if source and owner and source != owner and relative not in HANDOFF_REFERENCES:
+                        errors.append(f"{path}: links into another skill {target}; name the skill instead")
     try:
         cases = json.loads((root / "evals/routing.json").read_text())
         seen = set()

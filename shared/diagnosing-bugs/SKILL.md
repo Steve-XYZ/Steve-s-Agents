@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: Use when the cause is unknown or the user asks to diagnose, debug, investigate, or fix something broken, failing, throwing, flaky, or slow. Continue to implementation only when a fix is requested. Do not use for a ticket with an established cause or for pure code review.
+description: Use when the cause is unknown or the user asks to diagnose, debug, investigate, or fix something broken, failing, throwing, flaky, or slow. Do not use for a ticket with an established cause, a question about behavior that works, or pure code review.
 ---
 
 # Diagnosing Bugs
@@ -75,15 +75,15 @@ When the user requested a fix, implement the smallest change supported by the ev
 
 ## 5. Prove the result
 
-When a reliable seam exists:
-
-1. convert a material, reproducible symptom into regression coverage and observe its relevant assertion fail before the fix,
-2. apply the fix and observe it pass,
-3. rerun the original evidence loop.
+1. When a test in the project already calls the failing code, turn the symptom into a test and see it fail on its assertion before the fix. Otherwise the evidence loop's reproduction is the failing check.
+2. Apply the fix and see that check pass.
+3. Rerun the original evidence loop.
 
 If no honest regression seam exists, explain the limitation instead of adding artificial coverage.
 
-For a material money, authorization, durable concurrency, irreversible migration, or hard-to-undo external-effect fix, apply the independent review requirement in [delivery](../deliver-ticket/SKILL.md). Lack of a reviewer is a reported gap, not independent approval.
+Before reporting the fix as working, use `verify-work` to rerun the original evidence loop on the current build and label the result.
+
+For a material money, authorization, durable concurrency, irreversible migration, or hard-to-undo external-effect fix, obtain a fresh-context `code-review`. Lack of a reviewer is a reported gap, not independent approval.
 
 Remove temporary instrumentation and disposable artifacts created for the diagnosis. Report the cause, change if authorized, validation actually executed, and unresolved risks.
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Verify Work"
+  short_description: "Prove claims with fresh, labeled evidence"
+  default_prompt: "Use $verify-work to check these claims against the current state and report each one with its evidence level."

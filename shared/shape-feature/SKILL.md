@@ -11,7 +11,7 @@ Resolve what prevents selecting a useful first slice. Preserve the requested out
 
 Read relevant repository instructions, existing behavior, analogous implementations, and validation seams. Separate unknown facts from decisions the user must make. Investigate facts available in code, documentation, tickets, or approved sources.
 
-When the request covers several tickets, or a change whose readers may sit in other repositories, read [ticket scope](../deliver-ticket/references/ticket-scope.md) and map scope and related work before shaping decisions. A planning-only request stops at the set note.
+When the request covers several tickets, or a change whose readers may sit in other repositories, use `blast-radius` to map scope and related work before shaping decisions. A planning-only request stops at the set note.
 
 Ask only about choices that materially change behavior, contracts, data, architecture, scope, or authority. Give a recommendation when evidence supports it. Do not turn ordinary implementation choices into a product interview.
 
@@ -19,7 +19,7 @@ Ask only about choices that materially change behavior, contracts, data, archite
 
 Use current primary sources when a framework, protocol, or provider fact determines correctness. Run a small authorized experiment when it is cheaper than continued speculation. Keep exploratory changes separate from production behavior and remove discarded experiments.
 
-When a material question about ownership, contracts, state, failure behavior, or validation remains unresolved, read [judgment](../deliver-ticket/references/judgment.md). Stop the investigation once the next useful decision is supported.
+When a material question about ownership, contracts, state, failure behavior, or validation remains unresolved, use `blast-radius`, including its judgment pass. Stop the investigation once the next useful decision is supported.
 
 ## Establish a proportional brief
 
@@ -27,7 +27,7 @@ Record the outcome and constraints, acceptance criteria, decisions and evidence,
 
 A slice may cross application layers. Prefer an observable behavior or a resolved uncertainty over completing a whole architectural layer.
 
-Use a conversation brief for small work. For long exploration, interruptions, handoff, or a context reset, use [work context](../deliver-ticket/references/work-context.md). A separate planning session is conditional, not a prerequisite.
+Use a conversation brief for small work. For long exploration, interruptions, handoff, or a context reset, keep one note outside the worktree with the outcome, decisions and their evidence, unknowns, and the next step, and report its path. A separate planning session is conditional, not a prerequisite.
 
 ## Continue within the request
 

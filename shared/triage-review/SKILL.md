@@ -1,6 +1,6 @@
 ---
 name: triage-review
-description: Use when your pull request has been reviewed and you must classify each current finding, implement owned fixes, validate them, and optionally push or respond when explicitly authorized. Also use for findings from an independent delivery review or actionable CI failures. Do not use for an initial review or delivery without feedback.
+description: Use when your pull request has review findings, an independent delivery review returned findings, or CI reports actionable failures. Do not use for an initial review or for delivery without feedback.
 ---
 
 # Triage Review
@@ -45,7 +45,7 @@ Do not implement a change believed to be wrong merely to close a thread.
 
 ## 4. Fix what is valid
 
-Apply one accepted behavioral correction and its proof at a time. For a feasible material regression, observe the relevant failure before fixing it, then observe success. Remove code the correction makes obsolete and reassess remaining findings. Where regression tests cannot establish the result, use the narrowest honest build, migration, static, or runtime evidence and state its limits.
+Apply one accepted behavioral correction and its proof at a time, choosing the proof with `verify-work`. Treat each correction as a fix: see the failure first as `verify-work`'s proof reference describes, then see it pass. Remove code the correction makes obsolete and reassess remaining findings. Where regression tests cannot establish the result, use the narrowest honest build, migration, static, or runtime evidence and state its limits.
 
 When a finding describes a failure class such as starvation, lost progress, duplication, ordering, or idempotency, cover the class rather than only the observed instance. State any boundary not covered.
 

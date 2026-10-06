@@ -40,7 +40,7 @@ For a named C# cyclomatic risk that the repository does not measure, run the aff
 dotnet build <project> --no-incremental \
   -p:EnableNETAnalyzers=true \
   -p:RunAnalyzersDuringBuild=true \
-  -p:CustomAfterMicrosoftCommonTargets=<deliver-ticket>/references/complexity.targets
+  -p:CustomAfterMicrosoftCommonTargets=<verify-work>/references/complexity.targets
 ```
 
 The injected Roslyn `CA1502` check uses a cyclomatic-complexity limit of 25 and keeps that diagnostic at warning severity even when the project treats other warnings as errors. It changes only that command invocation and does not write project configuration. Do not replace an existing `CustomAfterMicrosoftCommonTargets` value; if the build already uses that extension point, mark the named complexity risk `UNPROVEN`.
@@ -51,7 +51,7 @@ Before accepting a clean C# result, verify the evaluated build includes this ref
 dotnet msbuild <project> --nologo \
   -p:EnableNETAnalyzers=true \
   -p:RunAnalyzersDuringBuild=true \
-  -p:CustomAfterMicrosoftCommonTargets=<deliver-ticket>/references/complexity.targets \
+  -p:CustomAfterMicrosoftCommonTargets=<verify-work>/references/complexity.targets \
   -getProperty:NoWarn,CodeAnalysisRuleSet \
   -getItem:EditorConfigFiles,AdditionalFiles,Analyzer
 ```

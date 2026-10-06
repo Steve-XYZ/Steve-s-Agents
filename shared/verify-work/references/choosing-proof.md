@@ -1,8 +1,17 @@
-# Prove it works
+# Choosing proof
 
 Choose the observation that distinguishes required behavior from a plausible wrong implementation. Start before the production edit, then verify the integrated result.
 
-For a feasible material regression or invariant, observe the relevant assertion fail before the fix and pass afterward. An import error, unrelated build failure, or test that cannot exercise the changed branch is not RED evidence. Characterization, captured traces, and disposable experiments are alternatives when they answer the question; state their limits instead of adding artificial coverage.
+## See the failure first, by type of work
+
+Decide from what the work is, not from how important it feels:
+
+- **Fix.** Reproduce the failure before changing code, with a test, a command, or captured evidence of the symptom. When a test in the project already calls the failing code (search the tests for its module or symbol), the reproduction is a test seen failing.
+- **New or changed behavior.** Each acceptance criterion that an existing test can reach gets a test seen failing without the change.
+- **Refactor.** Pin current behavior before any structure moves: a characterization test, a recorded output, or an equivalence script. The pin passes before and after. A type check or lint run is not a pin.
+- **Exploration.** Nothing has to fail first. State what the experiment cannot prove.
+
+A test is seen failing when it ran against code without the change and failed on its assertion, either before the edit or against the base commit in a separate worktree. An import error, an unrelated build failure, or a test that cannot reach the changed branch does not count. Never revert or stash work in the user's checkout to show a failure. Where no test can reach the behavior, use a characterization, trace, or disposable experiment and state its limits instead of adding artificial coverage.
 
 Derive expected values from requirements, a worked example, or an independent oracle. A test that repeats the implementation's calculation can repeat its mistake. Characterization records existing behavior; it does not establish correctness.
 
@@ -35,4 +44,4 @@ Tie material results to the claim, exact tested commit or working-tree state, en
 
 A successful restore, build, clean diff, or unrelated green test is insufficient for a behavioral claim. An observed failure is not waived because it may predate the change. Compare the same command at exact base and head if that distinction matters; record the delta and a specific owner/follow-up for a baseline failure.
 
-Mark missing material proof `UNPROVEN`. Distinguish inspection and static reasoning from executed behavior. Do not claim a workflow improvement from catalog validation or a single happy-path run.
+Mark missing material proof `UNPROVEN`. Label inspection and static reasoning `inspected`, never `tested` or `observed`. Do not claim a workflow improvement from catalog validation or a single happy-path run.
