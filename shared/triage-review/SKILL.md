@@ -45,7 +45,7 @@ Do not implement a change believed to be wrong merely to close a thread.
 
 ## 4. Fix what is valid
 
-Apply one accepted behavioral correction and its proof at a time, choosing the proof with `verify-work`. For a feasible material regression, observe the relevant failure before fixing it, then observe success. Remove code the correction makes obsolete and reassess remaining findings. Where regression tests cannot establish the result, use the narrowest honest build, migration, static, or runtime evidence and state its limits.
+Apply one accepted behavioral correction and its proof at a time, choosing the proof with `verify-work`. Treat each correction as a fix: see the failure first as `verify-work`'s proof reference describes, then see it pass. Remove code the correction makes obsolete and reassess remaining findings. Where regression tests cannot establish the result, use the narrowest honest build, migration, static, or runtime evidence and state its limits.
 
 When a finding describes a failure class such as starvation, lost progress, duplication, ordering, or idempotency, cover the class rather than only the observed instance. State any boundary not covered.
 

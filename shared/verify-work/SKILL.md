@@ -29,7 +29,7 @@ Every material claim in a report carries one level, set by what actually ran:
 
 A test suite is `tested` even when it is started from a terminal.
 
-A claim needs `observed` when it depends on wiring, configuration, startup, or runtime state that a lower check cannot tell apart, such as a flag reaching the code, a setting read per tenant, or a job picking up a record. Otherwise use the cheapest level that settles it. When an `observed` claim has no environment that can produce it, report the level reached and name the missing environment. [Choosing proof](references/choosing-proof.md) picks the cheapest observation that settles a claim and covers failure-first regressions, runtime identity, and retained evidence. [Local complexity](references/local-complexity.md) measures a named control-flow risk in changed functions.
+A claim needs `observed` when it depends on wiring, configuration, startup, or runtime state that a lower check cannot tell apart, such as a flag reaching the code, a setting read per tenant, or a job picking up a record. Otherwise use the cheapest level that settles it. When an `observed` claim has no environment that can produce it, report the level reached and name the missing environment. [Choosing proof](references/choosing-proof.md) says when a failure must be seen first for each type of work, and covers the cheapest observation that settles a claim, runtime identity, and retained evidence. [Local complexity](references/local-complexity.md) measures a named control-flow risk in changed functions.
 
 ## Drive the real thing
 
@@ -61,4 +61,4 @@ Stop and run the check when you notice any of these:
 
 ## Report
 
-Give one row per material claim: the claim, its level, the command or observation, and where the output lives. For each claim below `observed`, say what would raise it. When this is the final report, reuse `unslop`, loading it only if absent.
+Give one row per material claim: the claim, its level, the command or observation, and where the output lives. A `tested` row for new or changed behavior also says when its test was seen failing, before the edit or against the base commit; a test never seen failing is not evidence for the change. A test that pins existing behavior passes before and after; label it a pin. For each claim below `observed`, say what would raise it. When this is the final report, reuse `unslop`, loading it only if absent.

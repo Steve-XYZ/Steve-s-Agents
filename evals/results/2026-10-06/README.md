@@ -50,6 +50,28 @@ Each run got the finished currency change, uncommitted, and five claims to check
 
 The first rewrite did not bind: a suite started with `python3 -m unittest` is a command, and the `observed` row named commands. Keying the table on what ran removed that overlap. Five samples per wording on one task and one model is a wording check, not a general result.
 
+## Failing-first rule and test checks
+
+The committed catalog now decides when a failure must be seen first from the type of work, not from whether a regression is "material", and requires a `tested` row for changed behavior to say when its test was seen failing. Catalog after this change: `fcb9c378a263acfe9ebe2c91a8e70b5fc5838881c91ead568c920e8b46f5c625`.
+
+**Parcel task.** A one-operator boundary bug that the existing suite already reaches, with commits authorized. Five runs used the previous catalog (`c8448cad…`) and five the new one, assigned in mixed order. Each run is graded from its transcript and the repository it left behind.
+
+| Measure | Previous wording | New wording |
+| --- | --- | --- |
+| Test seen failing on its assertion before the first production edit | 5 of 5 | 5 of 5 |
+| All three tier limits fixed, not only the one the ticket names | 5 of 5 | 5 of 5 |
+| Report says when the test failed | 5 of 5, mostly in prose | 5 of 5, in the evidence table |
+| Tests that pass before and after labeled as pins | 0 of 5 | 5 of 5 |
+| Test committed before the fix | 0 of 5 | 0 of 5 |
+
+Runs: [1 control](parcel/run-1-control.md), [2 new](parcel/run-2-new.md), [3 new](parcel/run-3-new.md), [4 control](parcel/run-4-control.md), [5 new](parcel/run-5-new.md), [6 control](parcel/run-6-control.md), [7 control](parcel/run-7-control.md), [8 new](parcel/run-8-new.md), [9 new](parcel/run-9-new.md), [10 control](parcel/run-10-control.md). Each report has a matching `.patch` with the final commit.
+
+The failing-first behavior did not change on this task; the previous rule already produced it, as it did in 4 of 6 real BOS fix sessions after September 25. The new wording replaces a judgment word with a check an agent can make and separates pins from tests that prove the change. About half the runs in both arms labeled a direct call to the library function `observed`; with no entry point beyond the function, the table's `observed` and `tested` rows overlap for a library-only repository.
+
+**Discount review.** A change whose test computes its expected value with the function under test, and whose code discounts shipping against the ticket. Five reviewers used the previous `code-review` with no test-quality guidance added. All five flagged the self-referential test as a should-fix and the pinned constant, and caught the shipping defect; three proved the test could not fail by running mutated scratch copies. Runs: [1](review/run-1.md), [2](review/run-2.md), [3](review/run-3.md), [4](review/run-4.md), [5](review/run-5.md). The control already did what pstack's "would it pass if the code returned nothing" check adds, so the check was not added.
+
+**Commit order.** No run committed its test before the fix, which is expected without guidance. pstack lands the failing test first so a reviewer can watch it fail. That was not adopted: reviewers can already run new tests against the base commit in a scratch copy, as three discount reviewers did unprompted, and `player-manager` and `lotto-app-v2` merge pull requests with merge commits, so a failing commit would stay in their main history.
+
 ## What this shows
 
 The control conditions already behaved. Sonnet with the old catalog, and with no skill at all, drove the real command and caught the override, and the old diagnosing route rejected both false claims. These fixtures therefore show no failure for the restructure to fix and cannot show an improvement. Two after runs per task reached the same outcomes; that is too few to rule out a regression. The visible difference is the per-claim evidence table, and the wording comparison shows its labels were unreliable until the level table was keyed on what ran.

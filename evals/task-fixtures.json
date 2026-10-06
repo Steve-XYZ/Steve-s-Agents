@@ -83,5 +83,37 @@
       "tests/__init__.py": "",
       "tests/test_client.py": "import unittest\n\nfrom payouts.client import winner_payload\n\n\nclass WinnerPayloadTest(unittest.TestCase):\n    def test_amount_in_major_units(self):\n        payload = winner_payload(\"ICP-7f3a\", [{\"id\": 9001, \"prize_cents\": 540}])\n        self.assertEqual(payload[\"items\"], [{\"externalId\": 9001, \"amount\": 5.4}])\n"
     }
+  },
+  "parcel": {
+    "skill": "deliver-ticket",
+    "prompt": "Fix the bug in TICKET.md. Commit your work on this branch when you are done; do not push.",
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Run python3 -m unittest discover -v for tests. Keep changes in this repository. No publication.\n",
+      "TICKET.md": "Parcels of exactly 1 kg are charged the 1-2 kg rate. The rate card in docs/rate-card.md says each tier includes its upper limit. Charge every parcel by the tier the rate card gives it.\n",
+      "docs/rate-card.md": "# Rate card\n\n| Weight | Base price |\n| --- | --- |\n| up to and including 1000 g | 4.50 |\n| up to and including 2000 g | 7.00 |\n| up to and including 5000 g | 11.00 |\n\nZone surcharge: domestic 0.00, EU 3.00, world 9.00. Parcels over 5000 g are refused.\n",
+      "shipping/__init__.py": "",
+      "shipping/rates.py": "TIERS = [(1000, 450), (2000, 700), (5000, 1100)]\nZONE_SURCHARGE = {\"domestic\": 0, \"eu\": 300, \"world\": 900}\n\n\ndef shipping_cents(weight_grams, zone=\"domestic\"):\n    if weight_grams <= 0:\n        raise ValueError(\"weight must be positive\")\n    for limit, cents in TIERS:\n        if weight_grams < limit:\n            return cents + ZONE_SURCHARGE[zone]\n    raise ValueError(\"parcel too heavy\")\n",
+      "tests/__init__.py": "",
+      "tests/test_rates.py": "import unittest\n\nfrom shipping.rates import shipping_cents\n\n\nclass RatesTest(unittest.TestCase):\n    def test_light_domestic_parcel(self):\n        self.assertEqual(shipping_cents(500), 450)\n\n    def test_eu_surcharge(self):\n        self.assertEqual(shipping_cents(1500, \"eu\"), 1000)\n\n    def test_rejects_empty_parcel(self):\n        with self.assertRaises(ValueError):\n            shipping_cents(0)\n"
+    }
+  },
+  "discounts": {
+    "skill": "code-review",
+    "prompt": "Review the latest commit on this branch against TICKET.md before it merges. Do not change any files.",
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Run python3 -m unittest discover -v for tests. Keep changes in this repository. No publication.\n",
+      "TICKET.md": "Add percentage discount codes at checkout. SAVE10 takes 10% and SAVE25 takes 25% off the item subtotal. Shipping is never discounted. Unknown codes are rejected.\n",
+      "checkout/__init__.py": "",
+      "checkout/order.py": "from dataclasses import dataclass, field\n\n\n@dataclass\nclass Order:\n    lines: list = field(default_factory=list)\n    shipping_cents: int = 0\n    discount_cents: int = 0\n\n    def subtotal_cents(self):\n        return sum(cents * quantity for _, cents, quantity in self.lines)\n\n    def total_cents(self):\n        return self.subtotal_cents() + self.shipping_cents - self.discount_cents\n",
+      "tests/__init__.py": "",
+      "tests/test_order.py": "import unittest\n\nfrom checkout.order import Order\n\n\nclass OrderTest(unittest.TestCase):\n    def test_total_adds_shipping(self):\n        order = Order(lines=[(\"mug\", 1200, 2)], shipping_cents=500)\n        self.assertEqual(order.total_cents(), 2900)\n"
+    },
+    "change": {
+      "message": "Add percentage discount codes",
+      "files": {
+        "checkout/discounts.py": "CODES = {\"SAVE10\": 10, \"SAVE25\": 25}\n\n\ndef percent_off(order, percent):\n    return (order.subtotal_cents() + order.shipping_cents) * percent // 100\n\n\ndef apply_code(order, code):\n    percent = CODES.get(code.upper())\n    if percent is None:\n        raise ValueError(f\"unknown code {code}\")\n    order.discount_cents = percent_off(order, percent)\n    return order\n",
+        "tests/test_discounts.py": "import unittest\n\nfrom checkout.discounts import CODES, apply_code, percent_off\nfrom checkout.order import Order\n\n\nclass DiscountTest(unittest.TestCase):\n    def test_save10_takes_ten_percent(self):\n        order = Order(lines=[(\"mug\", 1200, 2)], shipping_cents=500)\n        apply_code(order, \"SAVE10\")\n        self.assertEqual(order.discount_cents, percent_off(order, 10))\n\n    def test_codes_table(self):\n        self.assertEqual(CODES[\"SAVE25\"], 25)\n\n    def test_unknown_code_is_rejected(self):\n        with self.assertRaises(ValueError):\n            apply_code(Order(), \"BOGUS\")\n"
+      }
+    }
   }
 }

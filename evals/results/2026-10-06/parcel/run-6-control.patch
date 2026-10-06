@@ -1,0 +1,44 @@
+commit bb227cd
+Include each tier's upper limit when pricing parcels
+
+
+diff --git a/shipping/rates.py b/shipping/rates.py
+index 070f366..ce11da3 100644
+--- a/shipping/rates.py
++++ b/shipping/rates.py
+@@ -6,6 +6,6 @@ def shipping_cents(weight_grams, zone="domestic"):
+     if weight_grams <= 0:
+         raise ValueError("weight must be positive")
+     for limit, cents in TIERS:
+-        if weight_grams < limit:
++        if weight_grams <= limit:
+             return cents + ZONE_SURCHARGE[zone]
+     raise ValueError("parcel too heavy")
+diff --git a/tests/test_rates.py b/tests/test_rates.py
+index a65685b..6072300 100644
+--- a/tests/test_rates.py
++++ b/tests/test_rates.py
+@@ -10,6 +10,23 @@ class RatesTest(unittest.TestCase):
+     def test_eu_surcharge(self):
+         self.assertEqual(shipping_cents(1500, "eu"), 1000)
+ 
++    def test_each_tier_includes_its_upper_limit(self):
++        for grams, cents in [(1000, 450), (2000, 700), (5000, 1100)]:
++            with self.subTest(grams=grams):
++                self.assertEqual(shipping_cents(grams), cents)
++
++    def test_one_gram_over_a_limit_moves_to_the_next_tier(self):
++        for grams, cents in [(1001, 700), (2001, 1100)]:
++            with self.subTest(grams=grams):
++                self.assertEqual(shipping_cents(grams), cents)
++
++    def test_boundary_parcel_keeps_zone_surcharge(self):
++        self.assertEqual(shipping_cents(1000, "world"), 1350)
++
++    def test_rejects_parcel_over_five_kg(self):
++        with self.assertRaises(ValueError):
++            shipping_cents(5001)
++
+     def test_rejects_empty_parcel(self):
+         with self.assertRaises(ValueError):
+             shipping_cents(0)

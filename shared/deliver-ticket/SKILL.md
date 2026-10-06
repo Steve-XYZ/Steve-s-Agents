@@ -39,7 +39,7 @@ Several independent behavioral clusters call for a safe sequence, not an automat
 Repeat until the authorized outcome is complete:
 
 1. Choose the next observable behavior or uncertainty to resolve. Inspect its owner, callers, and material effects before choosing files.
-2. Choose its proof with `verify-work` before the production edit. For a feasible material regression or invariant, see a relevant assertion fail first; an import failure or broken harness is not that failure. For exploration or impractical reproduction, use characterization, traces, or a bounded experiment and state what they cannot prove.
+2. Choose its proof with `verify-work` before the production edit. Its proof reference decides from the type of work whether a failing test comes first: a fix, new behavior an existing test can reach, or a pin before a refactor.
 3. Implement only that behavior through the necessary layers. Prefer fewer concepts, less duplicated policy, fewer invalid states, and less coordination for the next change. Preserve contracts unless the requirement changes them.
 4. Run the selected proof at the affected boundary and check material preserved behavior. Derive expected results independently of the implementation.
 5. Remove code, flags, branches, tests, comments, or compatibility paths this slice has made obsolete. Keep a path only for a demonstrated caller or contract. Do not force an extraction or unrelated cleanup.

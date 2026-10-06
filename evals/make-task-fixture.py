@@ -20,7 +20,7 @@ def create(case, output, skill=None):
     output = Path(output).resolve()
     if output == ROOT or ROOT in output.parents:
         raise ValueError("Create trial work outside the guidance repository")
-    for name in fixture["files"]:
+    for name in [*fixture["files"], *fixture.get("change", {}).get("files", {})]:
         if not (output / "repo" / name).resolve().is_relative_to(output / "repo"):
             raise ValueError("Fixture file escapes its repository")
     output.mkdir(parents=True, exist_ok=False)
@@ -36,6 +36,13 @@ def create(case, output, skill=None):
                  ["config", "user.email", "dana@example.invalid"],
                  ["add", "."], ["commit", "-qm", "Import project"]):
         subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True)
+    if "change" in fixture:
+        for name, content in fixture["change"]["files"].items():
+            path = repo / name
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content)
+        for args in (["add", "."], ["commit", "-qm", fixture["change"]["message"]]):
+            subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True)
     skill_path = output / "guidance/shared" / skill / "SKILL.md"
     prompt = f"Use ${skill} at {skill_path}. Work in {repo}. {fixture['prompt']} Read guidance only from this supplied catalog."
     (output / "prompt.txt").write_text(prompt + "\n")

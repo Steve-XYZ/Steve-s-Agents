@@ -75,11 +75,9 @@ When the user requested a fix, implement the smallest change supported by the ev
 
 ## 5. Prove the result
 
-When a reliable seam exists:
-
-1. convert a material, reproducible symptom into regression coverage and observe its relevant assertion fail before the fix,
-2. apply the fix and observe it pass,
-3. rerun the original evidence loop.
+1. When a test in the project already calls the failing code, turn the symptom into a test and see it fail on its assertion before the fix. Otherwise the evidence loop's reproduction is the failing check.
+2. Apply the fix and see that check pass.
+3. Rerun the original evidence loop.
 
 If no honest regression seam exists, explain the limitation instead of adding artificial coverage.
 
