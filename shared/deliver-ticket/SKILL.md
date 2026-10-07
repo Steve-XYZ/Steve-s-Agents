@@ -57,7 +57,7 @@ Before claiming the outcome works, use `verify-work`. Every acceptance criterion
 
 Self-review is not independent review. Require a fresh-context `code-review` for material changes to money movement, authorization boundaries, durable concurrent state, irreversible migrations, or external effects that are difficult to undo. For other changes, use independent review when requested, required locally, or needed for a concrete risk. Start with one reviewer.
 
-Give the reviewer the requirement, exact diff, contracts, evidence table, and gaps without your reasoning history. A change across repositories goes to one reviewer as one package with the set note. Use [review evidence](../code-review/references/review-evidence.md) for a pinned handoff. If a fresh reviewer is unavailable, report that gap; do not relabel self-review as independent. Use `triage-review` to validate findings and fix accepted ones.
+Load `code-review` before launching the reviewer so its execution-permission rules govern the launch. Give the reviewer the requirement, exact diff, contracts, evidence table, and gaps without your reasoning history. A change across repositories goes to one reviewer as one package with the set note. Use [review evidence](../code-review/references/review-evidence.md) for a pinned handoff. If a fresh reviewer is unavailable, report that gap; do not relabel self-review as independent. Use `triage-review` to validate findings and fix accepted ones.
 
 ## Report and publish within authorization
 

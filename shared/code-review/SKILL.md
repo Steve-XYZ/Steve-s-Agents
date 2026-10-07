@@ -7,7 +7,9 @@ description: Use for requested PR or code reviews and for an independent review 
 
 Review the exact change the user placed in scope. Inspect and report; do not modify code, publish comments, approve, or request changes externally unless explicitly requested.
 
-For independent delivery review, start in a fresh context with the requirement, exact diff, applicable contracts, evidence, and gaps. Do not import the author's reasoning history. Use read-only tools where enforceable; a role prompt alone does not restrict permissions. If fresh context is unavailable, label the result self-review and report the unmet requirement.
+For independent delivery review, start in a fresh context with the requirement, exact diff, applicable contracts, evidence, and gaps. Do not import the author's reasoning history. If fresh context is unavailable, label the result self-review and report the unmet requirement.
+
+For a delegated review, preserve the parent's authorized execution mode. In T3, omit `runtimeMode` or use `inherit`; do not select `approval-required` merely for a review. Keep source edits and external writes outside the assignment. Permit the assigned validation's local scratch, cache, and build outputs. Use narrower tool controls only when they support that validation without changing the authorized approval policy; a role prompt alone does not enforce permissions. Honor explicit permission limits instead of widening them.
 
 ## 1. Establish authority
 
