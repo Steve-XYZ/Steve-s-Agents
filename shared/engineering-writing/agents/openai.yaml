@@ -1,0 +1,4 @@
+interface:
+  display_name: "Engineering Writing"
+  short_description: "Clear GitHub PR and review artifacts"
+  default_prompt: "Use $engineering-writing to draft this GitHub PR or review artifact, preserving its evidence, severity, and technical meaning."

@@ -5,7 +5,7 @@ Personal agent guidance shared across development machines and agents, including
 ## Contents
 
 - `shared/global-guidance/ENGINEERING.md`: global defaults, symlinked to `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md`.
-- `shared/`: phase skills `shape-feature`, `deliver-ticket`, `diagnosing-bugs`, `investigate`, `orchestrate`, `code-review`, and `triage-review`; gate skills `verify-work`, `blast-radius`, and `unslop`.
+- `shared/`: phase skills `shape-feature`, `deliver-ticket`, `diagnosing-bugs`, `investigate`, `orchestrate`, `code-review`, and `triage-review`; gate skills `verify-work`, `blast-radius`, `unslop`, and `engineering-writing`.
 - `dotnet/aspnet-core/`: the ASP.NET Core facts a model gets wrong from memory — target-framework and breaking changes, middleware order, Blazor render modes. Not a documentation summary.
 - `configs/macos/`, `configs/wsl/`: reference copies of each machine's local configuration, including the untracked BOS project guidance.
 - `scripts/install-agent-links.sh`: creates or repairs this machine's skill and guidance symlinks.
@@ -32,7 +32,8 @@ Gate skills hold the knowledge several phases share, so no phase skill becomes t
 
 - `verify-work` proves claims with a check run now and labels each one `observed`, `tested`, `inspected`, or `UNPROVEN`. It drives the real app, records how to run a project when nobody has, and checks claims other agents made. The global guidance sends every completion claim through it.
 - `blast-radius` maps what a change touches beyond its diff, pressure-tests what must stay true, and names the one or two facts its safety depends on.
-- `unslop` shapes reports, findings, and PR bodies.
+- `unslop` owns general language rules for reports and rewrites.
+- `engineering-writing` shapes GitHub PR descriptions, review summaries, inline comments, and replies while preserving the calling workflow's facts and judgment.
 
 Delivery follows one observable behavior and its proof at a time. Inspect its owner and affected paths, choose evidence before the production edit, implement, verify, remove code made obsolete, and reassess the next slice. Later planned work remains provisional. Several authorized behavioral clusters call for a safe sequence, not an automatic stop.
 
@@ -44,7 +45,7 @@ You normally choose each thread's model yourself. When an agent delegates a work
 
 See [the foundation decisions](docs/workflow-foundation.md) for evidence, rejected defaults, and the boundary between this repository and project-owned tools. [AGENTS.md](AGENTS.md) holds the rules for writing and testing a skill change. The WSL audit used a machine-local Claude `user-invocable-only` override; the installer preserves local routing settings.
 
-Writing guidance lives in `unslop`, separate from the engineering defaults. Workflow skills load it when preparing a PR body, findings, or final report; requested prose writing and rewriting can also invoke it directly. Reuse it while it remains in context. Routine progress updates do not trigger a new load, and no startup hook or per-response reread is needed.
+Writing guidance stays separate from the engineering defaults. `deliver-ticket`, `code-review`, and `triage-review` use `engineering-writing` only when drafting GitHub artifacts; it loads `unslop` if absent. Internal reports and general rewrites use `unslop` alone. Reuse loaded guidance. Routine responses and progress updates do not trigger a new load, and no startup hook or per-response reread is needed.
 
 ## When a reference earns its place
 

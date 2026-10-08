@@ -53,6 +53,8 @@ Do not fix unrelated defects discovered during triage. Review the fix diff and d
 
 ## 5. Publish safely
 
+Before drafting GitHub-facing PR descriptions, review summaries, inline comments, or review replies, use `engineering-writing`; it loads `unslop` only if absent. Reuse loaded guidance; routine responses and progress updates do not trigger either skill.
+
 Do not push or publish responses unless explicitly authorized.
 
 Immediately before any authorized push or response, refresh the PR and confirm its remote head still matches the expected head or the last head produced by this triage. If someone else changed it, stop and reassess instead of overwriting or responding against stale code. Never force-push or rewrite history without separate authorization.
@@ -65,6 +67,6 @@ Do not describe the pull request as ready while a current `CHANGES_REQUESTED` re
 
 ## 6. Finish
 
-When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.
+For internal findings or final reports, use `unslop` alone if it is not already in context.
 
 Report per finding: classification, evidence, change if any, and validation executed. State the resulting local and remote head when publication occurred, then list unresolved evidence, deferred follow-ups, and validation not run.
