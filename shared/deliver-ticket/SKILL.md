@@ -63,6 +63,6 @@ Load `code-review` before launching the reviewer so its execution-permission rul
 
 Report changed behavior, the evidence table, and remaining risk. Do not claim readiness while required evidence or review is missing. A diagnostic draft or request for help can expose a gap when publication is authorized; it does not imply readiness. Never waive required repository gates.
 
-When preparing the final report or PR body, reuse `unslop`, loading it only if absent.
+Before drafting GitHub-facing PR descriptions, review summaries, inline comments, or review replies, use `engineering-writing`; it loads `unslop` only if absent. For internal reports, use `unslop` alone if absent. Reuse loaded guidance; routine responses and progress updates do not trigger either skill.
 
 Commit, push, or update a PR when already authorized; do not ask again merely because a phase changed. Otherwise keep external writes within the user's authorization. Immediately before publishing, confirm the remote head and intended base, then verify the resulting remote state. Never overwrite someone else's concurrent changes.

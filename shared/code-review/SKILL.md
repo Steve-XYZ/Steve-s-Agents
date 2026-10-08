@@ -66,7 +66,7 @@ Never present unexecuted validation as completed evidence.
 
 ## 5. Report findings
 
-When preparing a PR body, findings, or final report, load `unslop` if it is not already in context and apply it while drafting.
+Before drafting GitHub-facing PR descriptions, review summaries, inline comments, or review replies, use `engineering-writing`; it loads `unslop` only if absent. For internal findings or reports, use `unslop` alone if absent. Reuse loaded guidance; routine responses and progress updates do not trigger either skill.
 
 Start with a one-line verdict: approve, comment, or request changes. Request changes when a blocker remains, comment when only should-fix findings remain, and approve when only nits or no findings remain unless repository rules require another disposition. A correct change that leaves avoidable complexity behind is a should-fix, not an approve. List findings first, ordered by severity:
 
@@ -82,6 +82,6 @@ Do not repeat a full finding in both the review body and an inline comment. When
 
 On a repeated review, account for prior findings as fixed, withdrawn, still open, outdated, or newly introduced. Inspect the fix diff, not only the author's responses. Expand for named contract or behavior risks; perform a whole-change pass when requested, required by repository policy, or when the prior review is unavailable.
 
-If no findings remain, say so directly and identify any validation gap or residual risk. End with validation performed and the final verdict.
+If no findings remain, say so directly and identify any validation gap or residual risk. Include validation performed and the final verdict.
 
 When explicitly asked to publish a live PR review, confirm the head SHA has not changed immediately before posting and follow repository-specific language and formatting rules.
