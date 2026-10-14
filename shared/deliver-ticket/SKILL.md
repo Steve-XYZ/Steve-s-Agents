@@ -42,7 +42,7 @@ Repeat until the authorized outcome is complete:
 2. Choose its proof with `verify-work` before the production edit. Its proof reference decides from the type of work whether a failing test comes first: a fix, new behavior an existing test can reach, or a pin before a refactor.
 3. Implement only that behavior through the necessary layers. Prefer fewer concepts, less duplicated policy, fewer invalid states, and less coordination for the next change. Preserve contracts unless the requirement changes them.
 4. Run the selected proof at the affected boundary and check material preserved behavior. Derive expected results independently of the implementation.
-5. Remove code, flags, branches, tests, comments, or compatibility paths this slice has made obsolete. Keep a path only for a demonstrated caller or contract. Do not force an extraction or unrelated cleanup.
+5. Remove code, flags, branches, tests, comments, or compatibility paths this slice has made obsolete. Keep a path only for a demonstrated caller or contract. When fixing a workaround or suppression, do not remove a public parameter or its passing compatibility test unless the requirement changes that contract. Do not force an extraction or unrelated cleanup.
 6. Reassess the next slice. Revise the brief when evidence changes the design. Delete invalid planned work instead of completing it for consistency. Ask when the new direction changes a consequential requirement or authority boundary.
 
 Keep related implementation in one context within a repository. Do not create a new plan, agent, or checklist report for every iteration.

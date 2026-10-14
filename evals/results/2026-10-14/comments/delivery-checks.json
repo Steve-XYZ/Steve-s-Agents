@@ -1,0 +1,212 @@
+{
+  "directory-delivery-1": {
+    "head_sha": "af77b48c79035e2e282f7471405cce092df6a53f",
+    "tree_sha": "aadc4982d695f2699f392217b688921a8327ef9c",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    },
+    "contracts": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_source_uses_canonical_records (test_directory.DirectoryTest.test_default_source_uses_canonical_records) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (test_directory.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_export_tags_stay_stable_across_rows_and_calls (test_directory.DirectoryTest.test_export_tags_stay_stable_across_rows_and_calls) ... ok\ntest_label_lists_are_independent (test_directory.DirectoryTest.test_label_lists_are_independent) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 9 tests in 0.000s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  },
+  "directory-delivery-2": {
+    "head_sha": "52d42c85ae1db4666d2afad66f652e047eee3164",
+    "tree_sha": "ea352deb9f1c20b179f6c076ea014e885ba5726b",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    },
+    "contracts": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_uses_canonical_source (test_directory.DirectoryTest.test_default_uses_canonical_source) ... ok\ntest_default_wire_format (test_directory.DirectoryTest.test_default_wire_format) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (test_directory.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_export_tags_do_not_accumulate (test_directory.DirectoryTest.test_export_tags_do_not_accumulate) ... ok\ntest_labels_are_fresh (test_directory.DirectoryTest.test_labels_are_fresh) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.000s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  },
+  "directory-delivery-3": {
+    "head_sha": "8a25fb24ec0e5ebbc8d4e834d03bda1da7ec932c",
+    "tree_sha": "247eb90d0b5b642642cf9ccc7649c82017c10dd2",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    },
+    "contracts": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_export_uses_canonical_source_order (test_directory.DirectoryTest.test_default_export_uses_canonical_source_order) ... ok\ntest_default_wire_format (test_directory.DirectoryTest.test_default_wire_format) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (test_directory.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_export_tags_are_repeatable (test_directory.DirectoryTest.test_export_tags_are_repeatable) ... ok\ntest_labels_are_independent (test_directory.DirectoryTest.test_labels_are_independent) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.000s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  },
+  "directory-delivery-4": {
+    "head_sha": "d4576f38f15271e07fbf61dbf0698d9ef3af6f3b",
+    "tree_sha": "911ab593bf091f781313498139a90e0f7435a97d",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    },
+    "contracts": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_uses_canonical_source (test_directory.DirectoryTest.test_default_uses_canonical_source) ... ok\ntest_default_wire_format (test_directory.DirectoryTest.test_default_wire_format) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (test_directory.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_labels_for_returns_fresh_lists (test_directory.DirectoryTest.test_labels_for_returns_fresh_lists) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_tags_do_not_accumulate_across_rows_or_exports (test_directory.DirectoryTest.test_tags_do_not_accumulate_across_rows_or_exports) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.001s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  },
+  "directory-delivery-5": {
+    "head_sha": "944ba542433aa7f005eec6f96c1091368006b92e",
+    "tree_sha": "707f94209023d24e94dfebd616682c982e8cc9e9",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ERROR\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n======================================================================\nERROR: test_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"<string>\", line 23, in test_explicit_label_buffer\nTypeError: labels_for() takes 1 positional argument but 2 were given\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nFAILED (errors=1)\n"
+    },
+    "contracts": {
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 17, in <module>\nTypeError: labels_for() takes 1 positional argument but 2 were given\n"
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_source (test_directory.DirectoryTest.test_default_source) ... ok\ntest_default_wire_format (test_directory.DirectoryTest.test_default_wire_format) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_labels_are_fresh (test_directory.DirectoryTest.test_labels_are_fresh) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_tagged_consumer (test_directory.DirectoryTest.test_tagged_consumer) ... ok\ntest_tagged_exports_are_repeatable (test_directory.DirectoryTest.test_tagged_exports_are_repeatable) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.001s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  },
+  "directory-canonical-1": {
+    "head_sha": "b0c75ad187cdbfae7096e4cf3c9ade52f0987388",
+    "tree_sha": "ebcf16c8e8483377ecb6bffa9b9a602747aee949",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    },
+    "contracts": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_uses_canonical_source (test_directory.DirectoryTest.test_default_uses_canonical_source) ... ok\ntest_default_wire_format (test_directory.DirectoryTest.test_default_wire_format) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (test_directory.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_labels_are_fresh_on_each_call (test_directory.DirectoryTest.test_labels_are_fresh_on_each_call) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_tags_do_not_accumulate (test_directory.DirectoryTest.test_tags_do_not_accumulate) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.000s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  },
+  "directory-canonical-2": {
+    "head_sha": "d0a5cddebdee13087d7fbdfd27c2e8f4e95b6936",
+    "tree_sha": "b26be9776f7f1b588f04f77a6455924d837b169e",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    },
+    "contracts": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_uses_canonical_source (test_directory.DirectoryTest.test_default_uses_canonical_source) ... ok\ntest_default_wire_format (test_directory.DirectoryTest.test_default_wire_format) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (test_directory.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_labels_do_not_share_buffer (test_directory.DirectoryTest.test_labels_do_not_share_buffer) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_source_order_and_csv_escaping (test_directory.DirectoryTest.test_source_order_and_csv_escaping) ... ok\ntest_tags_are_stable_across_rows_and_exports (test_directory.DirectoryTest.test_tags_are_stable_across_rows_and_exports) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 11 tests in 0.001s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  },
+  "directory-canonical-3": {
+    "head_sha": "ffd34a86ed30119da69cb80bc8d6530b952cd93d",
+    "tree_sha": "08e4736d1dff0e97e0232936c57cf50d673e63e9",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    },
+    "contracts": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_uses_canonical_source (test_directory.DirectoryTest.test_default_uses_canonical_source) ... ok\ntest_default_wire_format (test_directory.DirectoryTest.test_default_wire_format) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (test_directory.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_labels_are_independent (test_directory.DirectoryTest.test_labels_are_independent) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_tagged_exports (test_directory.DirectoryTest.test_tagged_exports) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.001s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  },
+  "directory-canonical-4": {
+    "head_sha": "657805452d5b6c9b4bf9fc708719d8b22a518dd4",
+    "tree_sha": "817082de22363c2bc99efc8c93eb6b7afd16c5a4",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    },
+    "contracts": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_export_result (test_directory.DirectoryTest.test_default_export_result) ... ok\ntest_default_uses_canonical_source (test_directory.DirectoryTest.test_default_uses_canonical_source) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (test_directory.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_labels_are_independent (test_directory.DirectoryTest.test_labels_are_independent) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_tags_do_not_accumulate (test_directory.DirectoryTest.test_tags_do_not_accumulate) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.000s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  },
+  "directory-canonical-5": {
+    "head_sha": "5d27544da46c6cfe29cf96ccf69bee245cca6477",
+    "tree_sha": "5a14d08b00187a0a6d199df81642f72ccfede3d1",
+    "tracked_diff": "",
+    "original_tests": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (__main__.DirectoryTest.test_consumer) ... ok\ntest_display_label (__main__.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (__main__.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_order (__main__.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (__main__.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (__main__.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 6 tests in 0.000s\n\nOK\n"
+    },
+    "contracts": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "submitted_suite": {
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": "test_consumer (test_directory.DirectoryTest.test_consumer) ... ok\ntest_default_source (test_directory.DirectoryTest.test_default_source) ... ok\ntest_default_wire_format (test_directory.DirectoryTest.test_default_wire_format) ... ok\ntest_display_label (test_directory.DirectoryTest.test_display_label) ... ok\ntest_explicit_label_buffer (test_directory.DirectoryTest.test_explicit_label_buffer) ... ok\ntest_export_tags (test_directory.DirectoryTest.test_export_tags) ... ok\ntest_labels_for_isolated_calls (test_directory.DirectoryTest.test_labels_for_isolated_calls) ... ok\ntest_order (test_directory.DirectoryTest.test_order) ... ok\ntest_version_one_public_api (test_directory.DirectoryTest.test_version_one_public_api) ... ok\ntest_wire_format (test_directory.DirectoryTest.test_wire_format) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.000s\n\nOK\n"
+    },
+    "clean_module_diff": ""
+  }
+}

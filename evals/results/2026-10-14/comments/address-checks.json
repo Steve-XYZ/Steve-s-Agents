@@ -1,0 +1,26 @@
+{
+  "address-delivery": {
+    "head_sha": "d4b60725ac7968dee955e2a8a4377a3947001972",
+    "contracts_exit": 0,
+    "token_diff": "",
+    "suite_exit": 0,
+    "suite_output": "test_join_address (tests.test_address.AddressTest.test_join_address) ... ok\ntest_length (tests.test_tokens.TokenTest.test_length) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n",
+    "stderr": ""
+  },
+  "address-canonical": {
+    "head_sha": "fec781b09da378cfc3da8d2a3e798c745c3ce1bd",
+    "contracts_exit": 0,
+    "token_diff": "",
+    "suite_exit": 0,
+    "suite_output": "test_join_address (tests.test_address.AddressTest.test_join_address) ... ok\ntest_length (tests.test_tokens.TokenTest.test_length) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n",
+    "stderr": ""
+  },
+  "address-review": {
+    "head_sha": "ade41377280f4e066ccc281b9b50bc0703758ed2",
+    "contracts_exit": 0,
+    "token_diff": "",
+    "suite_exit": 0,
+    "suite_output": "test_address_parts (tests.test_address.AddressTest.test_address_parts) ... ok\ntest_empty_parts (tests.test_address.AddressTest.test_empty_parts) ... ok\ntest_length (tests.test_tokens.TokenTest.test_length) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK\n",
+    "stderr": ""
+  }
+}

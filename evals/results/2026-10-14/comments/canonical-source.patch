@@ -1,0 +1,31 @@
+diff --git a/directory/export.py b/directory/export.py
+index fe88a96..7333fbb 100644
+--- a/directory/export.py
++++ b/directory/export.py
+@@ -1,7 +1,7 @@
+ import csv
+ import io
+ 
+-from directory.legacy_source import LegacySource
++from directory.source import Source
+ 
+ 
+ def read_v1(raw):
+@@ -29,7 +29,7 @@ def labels_for(tags, labels=[]):  # noqa: B006
+ 
+ 
+ def export_directory(source=None, tags=()):
+-    source = source or LegacySource()
++    source = source or Source()
+     stream = io.StringIO(newline="")
+     # The importer requires CRLF records even on Unix; see consumer/import_directory.py.
+     writer = csv.writer(stream, lineterminator="\r\n")
+diff --git a/directory/legacy_source.py b/directory/legacy_source.py
+deleted file mode 100644
+index 560d2af..0000000
+--- a/directory/legacy_source.py
++++ /dev/null
+@@ -1,3 +0,0 @@
+-class LegacySource:
+-    def records(self):
+-        return [{"key": "a", "name": "Alpha"}, {"key": "b", "name": "Beta"}]

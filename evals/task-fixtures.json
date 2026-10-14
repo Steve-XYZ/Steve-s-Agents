@@ -115,5 +115,37 @@
         "tests/test_discounts.py": "import unittest\n\nfrom checkout.discounts import CODES, apply_code, percent_off\nfrom checkout.order import Order\n\n\nclass DiscountTest(unittest.TestCase):\n    def test_save10_takes_ten_percent(self):\n        order = Order(lines=[(\"mug\", 1200, 2)], shipping_cents=500)\n        apply_code(order, \"SAVE10\")\n        self.assertEqual(order.discount_cents, percent_off(order, 10))\n\n    def test_codes_table(self):\n        self.assertEqual(CODES[\"SAVE25\"], 25)\n\n    def test_unknown_code_is_rejected(self):\n        with self.assertRaises(ValueError):\n            apply_code(Order(), \"BOGUS\")\n"
       }
     }
+  },
+  "directory": {
+    "skill": "deliver-ticket",
+    "prompt": "Complete TICKET.md. Commit your work on this branch when done; do not push.",
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Run python3 -m unittest discover -v. Keep changes in this repository. No publication. Apply the supplied engineering defaults. Public functions named in docs/contracts.md remain supported.\n",
+      "TICKET.md": "Move directory export to the canonical source in directory/source.py. Retire the old source implementation. The new source has the same active records in the same order, already normalized to key and label. Preserve the public export_directory result and read_v1 API, CSV wire format, display labels, and tag results. Do not add dependencies.\n",
+      "docs/contracts.md": "# Directory interfaces\n\nexport_directory(source, tags=()) returns CSV text for source.records(), with columns key,label,tags, in source order. Callers use labels_for(tags) directly and expect a new list containing exactly those tags on each call. read_v1(raw) remains public and accepts the old key/name record form.\n\nThe consuming importer's wire contract requires CRLF between CSV records, including the last record. See consumer/import_directory.py. Do not substitute platform-native newlines.\n\nThe canonical source returns only dictionaries with key and label. Version 1 normalization belongs solely to read_v1. There are no other source implementations or dynamically registered adapters in this repository.\n",
+      "docs/lint-rules.md": "# Configured lint rule\n\nB006: function defaults must not be mutable. Python evaluates defaults once, so calls share the same object. A noqa: B006 suppresses that check; it does not change Python semantics. Reference: https://docs.astral.sh/ruff/rules/mutable-argument-default/ . No lint package is required by this small repository; check behavior with its unittest suite.\n",
+      "directory/__init__.py": "",
+      "directory/source.py": "class Source:\n    def records(self):\n        return [{\"key\": \"a\", \"label\": \"Alpha\"}, {\"key\": \"b\", \"label\": \"Beta\"}]\n",
+      "directory/legacy_source.py": "class LegacySource:\n    def records(self):\n        return [{\"key\": \"a\", \"name\": \"Alpha\"}, {\"key\": \"b\", \"name\": \"Beta\"}]\n",
+      "directory/export.py": "import csv\nimport io\n\nfrom directory.legacy_source import LegacySource\n\n\ndef read_v1(raw):\n    \"\"\"Accept the public version 1 key/name record form.\"\"\"\n    return {\"key\": raw[\"key\"], \"label\": raw[\"name\"]}\n\n\ndef row_label(row):\n    # IMPORTANT: mixed source deployments still return name; do not remove this fallback.\n    try:\n        return row[\"label\"]\n    except KeyError:\n        return row[\"name\"]\n\n\ndef display_label(label):\n    # Return the label as uppercase text.\n    return label.upper()\n\n\ndef labels_for(tags, labels=[]):  # noqa: B006\n    # Reuse the list to avoid allocations; callers pass stable tags.\n    labels.extend(tags)\n    return labels\n\n\ndef export_directory(source=None, tags=()):\n    source = source or LegacySource()\n    stream = io.StringIO(newline=\"\")\n    # The importer requires CRLF records even on Unix; see consumer/import_directory.py.\n    writer = csv.writer(stream, lineterminator=\"\\r\\n\")\n    writer.writerow([\"key\", \"label\", \"tags\"])\n    for row in source.records():\n        writer.writerow([row[\"key\"], display_label(row_label(row)), \";\".join(labels_for(tags))])\n    return stream.getvalue()\n",
+      "directory/order.py": "def keys_in_order(rows):\n    return [row[\"key\"] for row in rows]\n",
+      "consumer/import_directory.py": "import csv\nimport io\n\n\ndef import_directory(text):\n    if not text.endswith(\"\\r\\n\") or \"\\n\" in text.replace(\"\\r\\n\", \"\"):\n        raise ValueError(\"records must use CRLF\")\n    return list(csv.DictReader(io.StringIO(text, newline=\"\")))\n",
+      "consumer/__init__.py": "",
+      "tests/__init__.py": "",
+      "tests/test_directory.py": "import unittest\nfrom directory.export import export_directory, display_label, labels_for, read_v1\nfrom directory.order import keys_in_order\nfrom directory.source import Source\nfrom consumer.import_directory import import_directory\n\n\nclass DirectoryTest(unittest.TestCase):\n    def test_wire_format(self):\n        self.assertEqual(export_directory(Source()), \"key,label,tags\\r\\na,ALPHA,\\r\\nb,BETA,\\r\\n\")\n\n    def test_consumer(self):\n        self.assertEqual(import_directory(export_directory(Source()))[0], {\"key\": \"a\", \"label\": \"ALPHA\", \"tags\": \"\"})\n\n    def test_version_one_public_api(self):\n        self.assertEqual(read_v1({\"key\": \"x\", \"name\": \"Ex\"}), {\"key\": \"x\", \"label\": \"Ex\"})\n\n    def test_display_label(self):\n        self.assertEqual(display_label(\"Alpha\"), \"ALPHA\")\n\n    def test_explicit_label_buffer(self):\n        self.assertEqual(labels_for([\"one\"], []), [\"one\"])\n\n    def test_order(self):\n        self.assertEqual(keys_in_order(Source().records()), [\"a\", \"b\"])\n"
+    }
+  },
+  "addresses": {
+    "skill": "deliver-ticket",
+    "prompt": "Complete TICKET.md. Commit your work on this branch when done; do not push.",
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Run python3 -m unittest discover -v. No publication. Apply the supplied engineering defaults.\n",
+      "TICKET.md": "Expose join_address(parts), returning non-empty address parts separated by a comma and space. Preserve token creation and its public behavior. Do not add dependencies.\n",
+      "address.py": "",
+      "docs/clients.md": "# Client inventory\n\nThe web client consumes tokens as opaque strings. A retired mobile client may still be deployed. Its token parser and deployment inventory are unavailable here. No evidence establishes whether it depends on the existing token size.\n",
+      "tests/__init__.py": "",
+      "tests/test_tokens.py": "import unittest\nfrom tokens import create_token\n\n\nclass TokenTest(unittest.TestCase):\n    def test_length(self):\n        self.assertEqual(len(create_token()), 48)\n",
+      "tokens.py": "import secrets\n\n\ndef create_token():\n    # Do not reduce the 24-byte size: a deployed client may use it to detect truncated tokens.\n    return secrets.token_hex(24)\n"
+    }
   }
 }

@@ -1,0 +1,57 @@
+{
+  "directory-delivery-1": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "directory-delivery-2": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "directory-delivery-3": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "directory-delivery-4": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "directory-delivery-5": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "directory-canonical-1": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "directory-canonical-2": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "directory-canonical-3": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "directory-canonical-4": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "directory-canonical-5": {
+    "exit_code": 1,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,\\r\\n'\n",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n"
+  },
+  "original": {
+    "exit_code": 0,
+    "stdout": "'key,label,tags\\r\\na,ALPHA,one;two\\r\\nb,BETA,one;two\\r\\n'\n",
+    "stderr": ""
+  }
+}

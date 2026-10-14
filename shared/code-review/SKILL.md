@@ -48,6 +48,8 @@ Check functional correctness, failure behavior, repository architecture, contrac
 
 Then ask whether this is the simplest diff that satisfies the requirement, rather than whether the chosen structure is correctly implemented. Name what the change makes removable or leaves stale: code, paths, branches, flags, fields, helpers, abstractions, compatibility shims, duplicated policy, comments, tests, and state. The local comment rule counts here; report a comment that restates the code, narrates the ticket, or has gone stale.
 
+On workaround or suppression fixes, replay deleted public compatibility tests against the new code. Permit incompatible parameter removal only when the requirement changes that contract.
+
 ### Conditional risk
 
 Only when relevant, inspect authorization, sensitive data, money calculations, idempotency, concurrency, shared contracts, migrations and rollback, destructive data changes, external providers, and performance.

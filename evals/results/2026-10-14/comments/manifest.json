@@ -1,0 +1,13 @@
+{
+  "baseline_commit": "e7b0832271a7a886eea1c0530b0b4eca181c1de4",
+  "pstack_commit": "837067b75aa20ab58d7b2a2f6c0531e37118c596",
+  "harness": "native collaboration, fresh fork_turns=none; version unavailable",
+  "model_source": "inherited current parent session, no usable local role profile; exact model ID and effort unavailable",
+  "token_cost": "unavailable",
+  "active_elapsed_time": "not instrumented; artifact intervals include scheduling delay",
+  "contexts": 36,
+  "candidate_skill_sha256": {
+    "shared/deliver-ticket/SKILL.md": "ab163f6e1393194a2c4862b6685ac93507597a267df1f6b386333234a7671263",
+    "shared/code-review/SKILL.md": "14e5b657b77bceb926876468cbd7e29ec483522631c4b538377aaafe0c7a2148"
+  }
+}

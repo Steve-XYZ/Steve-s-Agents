@@ -1,0 +1,52 @@
+[
+  {
+    "patch": "delivery-1.patch",
+    "tree_sha": "aadc4982d695f2699f392217b688921a8327ef9c",
+    "matches_recorded_artifact": true
+  },
+  {
+    "patch": "delivery-2.patch",
+    "tree_sha": "ea352deb9f1c20b179f6c076ea014e885ba5726b",
+    "matches_recorded_artifact": true
+  },
+  {
+    "patch": "delivery-3.patch",
+    "tree_sha": "247eb90d0b5b642642cf9ccc7649c82017c10dd2",
+    "matches_recorded_artifact": true
+  },
+  {
+    "patch": "delivery-4.patch",
+    "tree_sha": "911ab593bf091f781313498139a90e0f7435a97d",
+    "matches_recorded_artifact": true
+  },
+  {
+    "patch": "delivery-5.patch",
+    "tree_sha": "707f94209023d24e94dfebd616682c982e8cc9e9",
+    "matches_recorded_artifact": true
+  },
+  {
+    "patch": "candidate-delivery-1.patch",
+    "tree_sha": "ebcf16c8e8483377ecb6bffa9b9a602747aee949",
+    "matches_recorded_artifact": true
+  },
+  {
+    "patch": "candidate-delivery-2.patch",
+    "tree_sha": "b26be9776f7f1b588f04f77a6455924d837b169e",
+    "matches_recorded_artifact": true
+  },
+  {
+    "patch": "candidate-delivery-3.patch",
+    "tree_sha": "08e4736d1dff0e97e0232936c57cf50d673e63e9",
+    "matches_recorded_artifact": true
+  },
+  {
+    "patch": "candidate-delivery-4.patch",
+    "tree_sha": "817082de22363c2bc99efc8c93eb6b7afd16c5a4",
+    "matches_recorded_artifact": true
+  },
+  {
+    "patch": "candidate-delivery-5.patch",
+    "tree_sha": "5a14d08b00187a0a6d199df81642f72ccfede3d1",
+    "matches_recorded_artifact": true
+  }
+]

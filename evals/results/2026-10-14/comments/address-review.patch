@@ -1,0 +1,16 @@
+diff --git a/tests/test_address.py b/tests/test_address.py
+new file mode 100644
+index 0000000..2836fb5
+--- /dev/null
++++ b/tests/test_address.py
+@@ -0,0 +1,10 @@
++import unittest
++from address import join_address
++
++
++class AddressTest(unittest.TestCase):
++    def test_address_parts(self):
++        self.assertEqual(join_address(["12 Maple", "", "Paris"]), "12 Maple, Paris")
++
++    def test_empty_parts(self):
++        self.assertEqual(join_address([]), "")

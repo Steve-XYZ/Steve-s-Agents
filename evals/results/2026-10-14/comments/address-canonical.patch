@@ -1,0 +1,37 @@
+diff --git a/address.py b/address.py
+index e69de29..822953a 100644
+--- a/address.py
++++ b/address.py
+@@ -0,0 +1,2 @@
++def join_address(parts):
++    return ", ".join(part for part in parts if part)
+diff --git a/tests/test_address.py b/tests/test_address.py
+new file mode 100644
+index 0000000..495d963
+--- /dev/null
++++ b/tests/test_address.py
+@@ -0,0 +1,24 @@
++import unittest
++
++import address
++
++
++class AddressTest(unittest.TestCase):
++    def test_join_address(self):
++        self.assertTrue(callable(getattr(address, "join_address", None)))
++        cases = [
++            (
++                ["123 Main Street", "Springfield", "12345"],
++                "123 Main Street, Springfield, 12345",
++            ),
++            (
++                ["", "123 Main Street", "", "Springfield", ""],
++                "123 Main Street, Springfield",
++            ),
++            (["123 Main Street"], "123 Main Street"),
++            ([], ""),
++            (["", ""], ""),
++        ]
++        for parts, expected in cases:
++            with self.subTest(parts=parts):
++                self.assertEqual(address.join_address(parts), expected)
