@@ -11,14 +11,13 @@ import unittest
 
 
 REPO = None
-FRESH = ["-X", "pycache_prefix=" + sys.pycache_prefix] if sys.pycache_prefix else []
 
 
 def call(code, directory=None, data=None, import_root=None):
     directory = Path(directory or REPO)
     program = "import sys; sys.path.insert(0, " + repr(str(import_root or directory)) + "); " + code
     result = subprocess.run(
-        [sys.executable, "-I", "-B", *FRESH, "-c", program], cwd=directory,
+        [sys.executable, "-I", "-B", "-c", program], cwd=directory,
         input=data, capture_output=True, text=True, timeout=10,
     )
     if result.returncode:
@@ -29,7 +28,7 @@ def call(code, directory=None, data=None, import_root=None):
 class Simple(unittest.TestCase):
     def test_help_and_unchanged_invocations(self):
         for args, expected in [([], ""), (["ignored"], ""), (["--help"], "Use this command to receive local events.\n")]:
-            result = subprocess.run([sys.executable, "-B", *FRESH, "cli.py", *args], cwd=REPO, capture_output=True, text=True, timeout=10)
+            result = subprocess.run([sys.executable, "-B", "cli.py", *args], cwd=REPO, capture_output=True, text=True, timeout=10)
             self.assertEqual((result.returncode, result.stdout, result.stderr), (0, expected, ""))
 
 

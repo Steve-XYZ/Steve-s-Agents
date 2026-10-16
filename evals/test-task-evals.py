@@ -174,7 +174,15 @@ print(json.dumps(event))
         corrected.write_text('import json\ndef format_results(rows):\n    return json.dumps(rows)\n')
         py_compile.compile(str(corrected), cfile=importlib.util.cache_from_source(str(repo / "cli.py")),
                            invalidation_mode=py_compile.PycInvalidationMode.UNCHECKED_HASH, doraise=True)
-        self.assertEqual(grader.grade(self.record)["status"], "failed")
+        (repo / "test_isolated.py").write_text(f"""import subprocess, sys, unittest
+class Isolated(unittest.TestCase):
+    def test_nonempty(self):
+        program = "import sys; sys.path.insert(0, {str(repo)!r}); from cli import format_results; assert format_results([]) == '[]'"
+        subprocess.run([sys.executable, "-I", "-c", program], check=True)
+""")
+        result = grader.grade(self.record)
+        self.assertEqual([row["status"] for row in result["checks"]], ["failed", "failed"])
+        self.assertIn("ERROR: test_nonempty (test_isolated", (self.record / "grade-suite-0.txt").read_text())
 
     def test_grade_writes_do_not_follow_a_planted_temporary_file(self):
         self.prepare("simple")
