@@ -2,6 +2,7 @@
 """Exercise fixture outcomes and execution receipts without paid inference."""
 
 import importlib.util
+import py_compile
 import json
 import os
 from pathlib import Path
@@ -59,6 +60,10 @@ class TaskTests(unittest.TestCase):
         path.write_text("#!" + sys.executable + "\n" + f"MODE = {mode!r}\nUSAGE = {usage!r}\n" + r'''
 import json, os, pathlib, subprocess, sys, time
 if sys.argv[1:] == ['--version']:
+    if MODE == 'version-wait':
+        child = subprocess.Popen([sys.executable, '-c', 'import time; time.sleep(60)'])
+        pathlib.Path(__file__).with_name('version-child.pid').write_text(str(child.pid))
+        time.sleep(60)
     print('codex-fixture 1.0')
     sys.exit(0)
 repo = pathlib.Path(sys.argv[sys.argv.index('-C') + 1])
@@ -88,6 +93,15 @@ print(json.dumps(event))
 ''')
         path.chmod(0o755)
         return str(path)
+
+    def assert_stopped(self, pid):
+        # A killed orphan can briefly be a zombie on Linux, but cannot keep running.
+        stat = Path(f"/proc/{pid}/stat")
+        if stat.exists():
+            self.assertEqual(stat.read_text().split()[2], "Z")
+        else:
+            with self.assertRaises(ProcessLookupError):
+                os.kill(pid, 0)
 
     def test_control_keeps_answers_and_optional_guidance_out_of_task(self):
         repo = self.prepare("currency", control=True)
@@ -153,6 +167,23 @@ print(json.dumps(event))
         (repo / ".pytest_cache/v/cache").mkdir(parents=True)
         (repo / ".pytest_cache/v/cache/lastfailed").write_text("{}")
         self.assertEqual(grader.grade(self.record)["status"], "manual_required")
+
+    def test_checks_ignore_bytecode_that_the_snapshot_excludes(self):
+        repo = self.prepare("shape")
+        corrected = self.root / "cli.py"
+        corrected.write_text('import json\ndef format_results(rows):\n    return json.dumps(rows)\n')
+        py_compile.compile(str(corrected), cfile=importlib.util.cache_from_source(str(repo / "cli.py")),
+                           invalidation_mode=py_compile.PycInvalidationMode.UNCHECKED_HASH, doraise=True)
+        self.assertEqual(grader.grade(self.record)["status"], "failed")
+
+    def test_grade_writes_do_not_follow_a_planted_temporary_file(self):
+        self.prepare("simple")
+        unrelated = self.root / "unrelated.txt"
+        unrelated.write_text("keep")
+        (self.record / "grade.json.tmp").symlink_to(unrelated)
+        grader.grade(self.record)
+        self.assertEqual(unrelated.read_text(), "keep")
+        self.assertFalse((self.record / "grade.json").is_symlink())
 
     def test_disposable_destinations_and_record_separation(self):
         for task, record in [(self.task, self.task / "records"), (self.record / "work", self.record),
@@ -267,13 +298,13 @@ print(json.dumps(event))
             receipt = json.loads((record / "receipt.json").read_text())
             self.assertEqual(receipt["execution"]["status"], "cancelled" if cancelled else "timed_out")
             self.assertFalse((record / "grade.json").exists())
-            # A killed orphan can briefly be a zombie on Linux, but cannot keep running.
-            stat = Path(f"/proc/{child}/stat")
-            if stat.exists():
-                self.assertEqual(stat.read_text().split()[2], "Z")
-            else:
-                with self.assertRaises(ProcessLookupError):
-                    os.kill(child, 0)
+            self.assert_stopped(child)
+
+    def test_version_probe_timeout_kills_child_processes(self):
+        executable = self.fake_cli("version-wait")
+        runner.run("simple", self.task, self.record, model="chosen", effort="medium", timeout=0.5, executable=executable)
+        self.assertEqual(json.loads((self.record / "receipt.json").read_text())["execution"]["status"], "timed_out")
+        self.assert_stopped(int((self.root / "version-child.pid").read_text()))
 
     def test_multiple_repositories_are_real_checkouts_with_one_shared_contract(self):
         repo = self.prepare("workspace")
@@ -367,6 +398,13 @@ def export_accounts(accounts):
     return output.getvalue()
 ''')
         self.assertEqual(grader.grade(self.record, self.record / "all-readers.json")["status"], "passed")
+        policy = repo / "accounts/policy.py"
+        correct = policy.read_text()
+        policy.write_text(correct.replace("'can_withdraw': can_withdraw(account)", "'can_withdraw': state_allows(account)")
+                          .replace("def can_withdraw(account):", "def can_withdraw(account):\n    return bool(account.get('withdrawals_enabled'))\n\ndef state_allows(account):"))
+        self.assertEqual(grader.grade(self.record, self.record / "unchanged-api.json")["status"], "failed")
+        policy.write_text(correct.replace("return state ==", "return account.get('withdrawals_enabled') is True and state =="))
+        self.assertEqual(grader.grade(self.record, self.record / "legacy-required.json")["status"], "failed")
 
     def test_remaining_delivery_oracles_accept_correct_public_behavior(self):
         corrections = {

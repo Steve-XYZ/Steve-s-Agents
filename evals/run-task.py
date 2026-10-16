@@ -58,8 +58,14 @@ def execute(record, prompt, model, effort, timeout, executable):
     (record / "events.jsonl").touch()
     with (record / "stderr.txt").open("wb") as errors:
         try:
-            version = subprocess.run([executable, "--version"], stdout=subprocess.PIPE, stderr=errors, timeout=min(10, timeout), check=True)
-            result["harness_version"] = version.stdout.decode(errors="replace").strip()
+            probe = subprocess.Popen([executable, "--version"], stdout=subprocess.PIPE, stderr=errors, start_new_session=True)
+            try:
+                version = probe.communicate(timeout=min(10, timeout))[0]
+            finally:
+                terminate(probe)
+            if probe.returncode:
+                raise subprocess.CalledProcessError(probe.returncode, probe.args)
+            result["harness_version"] = version.decode(errors="replace").strip()
             remaining = timeout - (time.monotonic() - started)
             if remaining <= 0:
                 raise subprocess.TimeoutExpired([executable], timeout)

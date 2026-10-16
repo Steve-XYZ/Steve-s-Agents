@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import signal
 import subprocess
+import tempfile
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,7 +34,7 @@ def file_hashes(root):
             path = Path(directory) / name
             if path.is_symlink():
                 raise ValueError(f"Cannot snapshot a symlink: {path}")
-            if path.is_file() and name != ".git" and not name.endswith(".pyc"):
+            if path.is_file() and name != ".git":
                 files[path.relative_to(root).as_posix()] = hashlib.sha256(path.read_bytes()).hexdigest()
     return files
 
@@ -63,9 +64,9 @@ def new_output(path):
 
 def write_json(path, value):
     path = Path(path)
-    temporary = path.with_name(path.name + ".tmp")
-    temporary.write_text(json.dumps(value, indent=2) + "\n")
-    temporary.replace(path)
+    with tempfile.NamedTemporaryFile("w", dir=path.parent, prefix=path.name, suffix=".tmp", delete=False) as temporary:
+        temporary.write(json.dumps(value, indent=2) + "\n")
+    os.replace(temporary.name, path)
 
 
 def terminate(process):

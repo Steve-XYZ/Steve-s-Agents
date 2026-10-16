@@ -11,13 +11,14 @@ import unittest
 
 
 REPO = None
+FRESH = ["-X", "pycache_prefix=" + sys.pycache_prefix] if sys.pycache_prefix else []
 
 
 def call(code, directory=None, data=None, import_root=None):
     directory = Path(directory or REPO)
     program = "import sys; sys.path.insert(0, " + repr(str(import_root or directory)) + "); " + code
     result = subprocess.run(
-        [sys.executable, "-I", "-B", "-c", program], cwd=directory,
+        [sys.executable, "-I", "-B", *FRESH, "-c", program], cwd=directory,
         input=data, capture_output=True, text=True, timeout=10,
     )
     if result.returncode:
@@ -28,7 +29,7 @@ def call(code, directory=None, data=None, import_root=None):
 class Simple(unittest.TestCase):
     def test_help_and_unchanged_invocations(self):
         for args, expected in [([], ""), (["ignored"], ""), (["--help"], "Use this command to receive local events.\n")]:
-            result = subprocess.run([sys.executable, "-B", "cli.py", *args], cwd=REPO, capture_output=True, text=True, timeout=10)
+            result = subprocess.run([sys.executable, "-B", *FRESH, "cli.py", *args], cwd=REPO, capture_output=True, text=True, timeout=10)
             self.assertEqual((result.returncode, result.stdout, result.stderr), (0, expected, ""))
 
 
@@ -175,25 +176,28 @@ class Workspace(unittest.TestCase):
         cases = []
         expected = []
         for state, label, enabled in [('enabled', 'Enabled', True), ('disabled', 'Disabled', False), ('review', 'Pending review', False), (None, None, False), ('unknown', None, False)]:
-            for frozen in (False, True):
-                cases.append(dict(id="a-123", balance=1234, withdrawals_enabled=True, withdrawal_state=state, frozen=frozen))
-                expected.append((label, enabled and not frozen))
+            for legacy in ({"withdrawals_enabled": True}, {"withdrawals_enabled": False}, {}):
+                for frozen in (False, True):
+                    cases.append(dict(id="a-123", balance=1234, withdrawal_state=state, frozen=frozen, **legacy))
+                    expected.append((label, enabled and not frozen))
         for legacy in (False, True):
             cases.append(dict(id="legacy", balance=0, withdrawals_enabled=legacy))
             expected.append(('Enabled' if legacy else 'Disabled', legacy))
         payload = json.dumps(cases)
+        permitted = json.loads(call("import json; from policy import can_withdraw; print(json.dumps([can_withdraw(x) for x in json.load(sys.stdin)]))", REPO / "accounts", payload))
         events = json.loads(call("import json; from policy import event; print(json.dumps([event(x) for x in json.load(sys.stdin)]))", REPO / "accounts", payload))
         views = json.loads(call("import json; from view import withdrawal; print(json.dumps([withdrawal(x) for x in json.load(sys.stdin)]))", REPO / "portal", payload))
         exported = list(csv.DictReader(io.StringIO(call("import json; from export import export_accounts; print(export_accounts(json.load(sys.stdin)), end='')", REPO / "operations", payload))))
-        for account, (label, enabled), event, view, row in zip(cases, expected, events, views, exported):
+        for account, (label, enabled), allowed, event, view, row in zip(cases, expected, permitted, events, views, exported):
             with self.subTest(account=account):
+                self.assertIs(allowed, enabled)
                 self.assertEqual(event, dict(account_id=account['id'], can_withdraw=enabled))
                 self.assertIs(event['can_withdraw'], enabled)
                 self.assertIs(view['button_enabled'], enabled)
                 self.assertEqual((row['id'], row['balance']), (account['id'], str(account['balance'])))
                 if label is not None:
                     self.assertEqual((view['label'], row['withdrawal']), (label, label))
-        self.assertEqual((len(events), len(views), len(exported)), (len(cases),) * 3)
+        self.assertEqual((len(permitted), len(events), len(views), len(exported)), (len(cases),) * 4)
 
 
 CHECKS = {"simple": Simple, "currency": Currency, "shape": Shape, "slices": Slices,

@@ -4,10 +4,12 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import platform
 import subprocess
 import sys
+import tempfile
 
 from task_oracles import CHECKS
 from task_support import ROOT, digest, file_hashes, new_output, state, terminate, write_json
@@ -26,12 +28,12 @@ READ_ONLY = ("discounts", "discounts-clean", "claims")
 UNCHECKED = "No independent check exists for this case; judge its behavior against the fixture contract."
 
 
-def check(command, directory, path, allow_empty=False, timeout=30):
+def check(command, directory, path, allow_empty=False, timeout=30, env=None):
     result = {"command": command, "cwd": str(directory), "output": path.name}
     with path.open("xb") as output:
         process = None
         try:
-            process = subprocess.Popen(command, cwd=directory, stdout=output, stderr=subprocess.STDOUT, start_new_session=True)
+            process = subprocess.Popen(command, cwd=directory, stdout=output, stderr=subprocess.STDOUT, env=env, start_new_session=True)
             process.wait(timeout=timeout)
             result.update(exit_code=process.returncode, status="passed" if process.returncode == 0 else "failed")
         except (OSError, subprocess.TimeoutExpired) as error:
@@ -80,12 +82,16 @@ def grade(record, output=None):
         if receipt["case"] in READ_ONLY:
             result["checks"].append({"claim": "Read-only task left source and heads unchanged",
                                      "status": "passed" if current == receipt["initial_state"] else "failed"})
-        elif not unchecked:
-            result["checks"].append(check([sys.executable, "-I", "-B", str(ROOT / "evals/task_oracles.py"), receipt["case"], str(repo)],
-                                          repo, destination.with_name(prefix + "-oracle.txt")))
-        for index, name in enumerate(receipt["repositories"]):
-            result["checks"].append(check([sys.executable, "-B", "-m", "unittest", "discover", "-v"],
-                                          repo / name, destination.with_name(f"{prefix}-suite-{index}.txt"), allow_empty=True))
+        # Bytecode caches are outside the snapshot, so checks must not import them.
+        with tempfile.TemporaryDirectory(prefix="grade-bytecode-") as cache:
+            fresh = [sys.executable, "-B", "-X", "pycache_prefix=" + cache]
+            if receipt["case"] not in READ_ONLY and not unchecked:
+                result["checks"].append(check([*fresh, "-I", str(ROOT / "evals/task_oracles.py"), receipt["case"], str(repo)],
+                                              repo, destination.with_name(prefix + "-oracle.txt")))
+            for index, name in enumerate(receipt["repositories"]):
+                result["checks"].append(check([*fresh, "-m", "unittest", "discover", "-v"], repo / name,
+                                              destination.with_name(f"{prefix}-suite-{index}.txt"), allow_empty=True,
+                                              env={**os.environ, "PYTHONPYCACHEPREFIX": cache}))
         statuses = {row["status"] for row in result["checks"]}
         result["status"] = ("failed" if "failed" in statuses else "blocked" if "blocked" in statuses else
                             "manual_required" if result["manual_review"] else "passed")
