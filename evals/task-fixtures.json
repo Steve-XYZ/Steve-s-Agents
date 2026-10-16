@@ -115,5 +115,58 @@
         "tests/test_discounts.py": "import unittest\n\nfrom checkout.discounts import CODES, apply_code, percent_off\nfrom checkout.order import Order\n\n\nclass DiscountTest(unittest.TestCase):\n    def test_save10_takes_ten_percent(self):\n        order = Order(lines=[(\"mug\", 1200, 2)], shipping_cents=500)\n        apply_code(order, \"SAVE10\")\n        self.assertEqual(order.discount_cents, percent_off(order, 10))\n\n    def test_codes_table(self):\n        self.assertEqual(CODES[\"SAVE25\"], 25)\n\n    def test_unknown_code_is_rejected(self):\n        with self.assertRaises(ValueError):\n            apply_code(Order(), \"BOGUS\")\n"
       }
     }
+  },
+  "dispatch": {
+    "skill": "diagnosing-bugs",
+    "prompt": "Fix TICKET.md against CONTRACT.md. Do not commit or publish.",
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Keep work local. No external services or publication. Run affected unittest checks.\n",
+      "CONTRACT.md": "A tick attempts each delivery present when the tick started at most once. A temporary failure stays pending. A healthy delivery behind a failed one completes in that same tick. Completed deliveries disappear and are never sent twice. Items enqueued by the sender wait until the next tick. A non-temporary error propagates, preserving pending work. The sender raises TemporaryFailure only before accepting delivery.\n",
+      "TICKET.md": "Delivery b waits forever whenever delivery a temporarily fails. Two earlier fixes increased attempts and reset the retry counter; the symptom remains. Fix this without losing pending work or spinning. Do not commit or publish.\n",
+      "dispatcher.py": "class TemporaryFailure(Exception):\n    pass\n\nclass Dispatcher:\n    def __init__(self, sender):\n        self.pending = []\n        self.sender = sender\n        self.max_attempts = 4\n\n    def enqueue(self, item):\n        self.pending.append(item)\n\n    def tick(self):\n        attempts = 0\n        while self.pending and attempts < self.max_attempts:\n            item = self.pending[0]\n            attempts += 1\n            try:\n                self.sender(item)\n            except TemporaryFailure:\n                continue\n            self.pending.pop(0)\n",
+      "test_dispatcher.py": "import unittest\nfrom dispatcher import Dispatcher\n\nclass DeliveryChecks(unittest.TestCase):\n    def test_normal_delivery(self):\n        sent=[]\n        d=Dispatcher(sent.append)\n        d.enqueue('a'); d.enqueue('b'); d.tick(); d.tick()\n        self.assertEqual(sent,['a','b'])\n        self.assertEqual(d.pending,[])\n"
+    }
+  },
+  "workspace": {
+    "skill": "deliver-ticket",
+    "prompt": "Deliver TICKET.md against CONTRACT.md across this workspace. Do not commit or publish.",
+    "repositories": [
+      "accounts",
+      "operations",
+      "portal"
+    ],
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Keep work local. No external services or publication. Run affected unittest checks.\nThis folder groups three independent repositories: accounts, operations, and portal. Inspect each repository. Shared contract lives in CONTRACT.md.\n",
+      "TICKET.md": "Deliver the accepted withdrawal-state policy in CONTRACT.md. The ticket mentions accounts/API as the likely implementation location. Keep all user and operator paths consistent. Do not commit or publish.\n",
+      "CONTRACT.md": "Withdrawal policy changes from a boolean to a state: enabled, disabled, or review. Null and unknown states deny withdrawal; a missing state denies unless the legacy rule below applies. A frozen account always denies. Only enabled can withdraw. Review must be displayed as Pending review in the portal and exports, distinct from Disabled, and produce can_withdraw=false in events. Existing rows with withdrawals_enabled=true and no withdrawal_state retain Enabled until migrated; explicit withdrawal_state, including null, takes precedence. Preserve other export columns and account identifiers.\n",
+      "accounts/AGENTS.md": "Use Python 3 standard-library tools. Keep work local. No external services or publication. Run affected unittest checks.\n",
+      "accounts/policy.py": "def can_withdraw(account):\n    return bool(account.get('withdrawals_enabled',False)) and not account.get('frozen',False)\n\ndef event(account):\n    return {'account_id':account['id'],'can_withdraw':can_withdraw(account)}\n",
+      "accounts/test_policy.py": "import unittest\nfrom policy import can_withdraw\nclass PolicyChecks(unittest.TestCase):\n    def test_existing(self):\n        self.assertTrue(can_withdraw({'withdrawals_enabled':True}))\n        self.assertFalse(can_withdraw({'withdrawals_enabled':True,'frozen':True}))\n",
+      "operations/AGENTS.md": "Use Python 3 standard-library tools. Keep work local. No external services or publication. Run affected unittest checks.\n",
+      "operations/export.py": "import csv,io\n\ndef export_accounts(accounts):\n    out=io.StringIO(newline='')\n    writer=csv.writer(out,lineterminator='\\n');writer.writerow(['id','withdrawal','balance'])\n    for account in accounts:\n        writer.writerow([account['id'],'Enabled' if account.get('withdrawals_enabled') else 'Disabled',account['balance']])\n    return out.getvalue()\n",
+      "operations/test_export.py": "import unittest\nfrom export import export_accounts\nclass ExportChecks(unittest.TestCase):\n    def test_empty(self):self.assertEqual(export_accounts([]),'id,withdrawal,balance\\n')\n",
+      "portal/AGENTS.md": "Use Python 3 standard-library tools. Keep work local. No external services or publication. Run affected unittest checks.\n",
+      "portal/test_view.py": "import unittest\nfrom view import withdrawal\nclass ViewChecks(unittest.TestCase):\n    def test_existing(self):self.assertEqual(withdrawal({'withdrawals_enabled':True}),{'label':'Enabled','button_enabled':True})\n",
+      "portal/view.py": "def withdrawal(account):\n    enabled=bool(account.get('withdrawals_enabled')) and not account.get('frozen',False)\n    return {'label':'Enabled' if account.get('withdrawals_enabled') else 'Disabled','button_enabled':enabled}\n"
+    }
+  },
+  "discounts-clean": {
+    "skill": "code-review",
+    "prompt": "Review the latest commit on this branch against TICKET.md before it merges. Do not change any files.",
+    "files": {
+      "AGENTS.md": "Use Python 3 standard-library tools. Run python3 -m unittest discover -v for tests. Keep changes in this repository. No publication.\n",
+      "TICKET.md": "Add percentage discount codes at checkout. SAVE10 takes 10% and SAVE25 takes 25% off the item subtotal. Shipping is never discounted. Unknown codes are rejected.\n",
+      "checkout/__init__.py": "",
+      "checkout/order.py": "from dataclasses import dataclass, field\n\n\n@dataclass\nclass Order:\n    lines: list = field(default_factory=list)\n    shipping_cents: int = 0\n    discount_cents: int = 0\n\n    def subtotal_cents(self):\n        return sum(cents * quantity for _, cents, quantity in self.lines)\n\n    def total_cents(self):\n        return self.subtotal_cents() + self.shipping_cents - self.discount_cents\n",
+      "tests/__init__.py": "",
+      "tests/test_order.py": "import unittest\n\nfrom checkout.order import Order\n\n\nclass OrderTest(unittest.TestCase):\n    def test_total_adds_shipping(self):\n        order = Order(lines=[(\"mug\", 1200, 2)], shipping_cents=500)\n        self.assertEqual(order.total_cents(), 2900)\n"
+    },
+    "change": {
+      "message": "Add percentage discount codes",
+      "files": {
+        "checkout/discounts.py": "CODES = {\"SAVE10\": 10, \"SAVE25\": 25}\n\n\ndef percent_off(order, percent):\n    return order.subtotal_cents() * percent // 100\n\n\ndef apply_code(order, code):\n    percent = CODES.get(code.upper())\n    if percent is None:\n        raise ValueError(f\"unknown code {code}\")\n    order.discount_cents = percent_off(order, percent)\n    return order\n",
+        "tests/test_discounts.py": "import unittest\nfrom checkout.discounts import apply_code\nfrom checkout.order import Order\n\nclass DiscountChecks(unittest.TestCase):\n    def test_known_codes(self):\n        for code,shipping,discount,total in [('SAVE10',500,240,2660),('SAVE25',500,600,2300),('save10',0,240,2160),('save25',0,600,1800)]:\n            with self.subTest(code=code,shipping=shipping):\n                order=Order(lines=[('mug',1200,2)],shipping_cents=shipping)\n                self.assertIs(apply_code(order,code),order)\n                self.assertEqual(order.discount_cents,discount)\n                self.assertEqual(order.total_cents(),total)\n    def test_unknown_preserves_order(self):\n        order=Order(lines=[('mug',1200,2)],shipping_cents=500,discount_cents=100)\n        with self.assertRaises(ValueError):apply_code(order,'BOGUS')\n        self.assertEqual(order.discount_cents,100)\n"
+      }
+    }
   }
 }
