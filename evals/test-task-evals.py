@@ -11,6 +11,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest import mock
 
 
 EVALS = Path(__file__).resolve().parent
@@ -131,6 +132,27 @@ print(json.dumps(event))
         result = grader.grade(self.record)
         self.assertEqual(result["status"], "passed")
         self.assertEqual(result["checks"][1]["status"], "not_applicable")
+
+    def test_every_fixture_has_an_independent_check_or_is_read_only(self):
+        cases = json.loads((EVALS / "task-fixtures.json").read_text())
+        self.assertEqual(set(cases) - set(grader.CHECKS) - set(grader.READ_ONLY), set())
+
+    def test_case_without_a_check_needs_review_instead_of_failing(self):
+        repo = self.prepare("simple")
+        path = repo / "cli.py"
+        path.write_text(path.read_text().replace("recieve", "receive"))
+        with mock.patch.dict(grader.CHECKS):
+            del grader.CHECKS["simple"]
+            result = grader.grade(self.record)
+        self.assertEqual(result["status"], "manual_required")
+        self.assertIn(grader.UNCHECKED, result["manual_review"])
+        self.assertEqual([row["status"] for row in result["checks"]], ["not_applicable"])
+
+    def test_test_runner_caches_are_not_review_edits(self):
+        repo = self.prepare("discounts-clean")
+        (repo / ".pytest_cache/v/cache").mkdir(parents=True)
+        (repo / ".pytest_cache/v/cache/lastfailed").write_text("{}")
+        self.assertEqual(grader.grade(self.record)["status"], "manual_required")
 
     def test_disposable_destinations_and_record_separation(self):
         for task, record in [(self.task, self.task / "records"), (self.record / "work", self.record),

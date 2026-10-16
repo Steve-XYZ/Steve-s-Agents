@@ -28,7 +28,7 @@ def file_hashes(root):
         raise ValueError(f"Cannot snapshot a symlink: {root}")
     files = {}
     for directory, dirs, names in os.walk(root, followlinks=False):
-        dirs[:] = sorted(name for name in dirs if name not in (".git", "__pycache__"))
+        dirs[:] = sorted(name for name in dirs if name not in (".git", "__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"))
         for name in [*dirs, *sorted(names)]:
             path = Path(directory) / name
             if path.is_symlink():

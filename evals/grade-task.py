@@ -9,6 +9,7 @@ import platform
 import subprocess
 import sys
 
+from task_oracles import CHECKS
 from task_support import ROOT, digest, file_hashes, new_output, state, terminate, write_json
 
 
@@ -21,6 +22,8 @@ MANUAL = {
                "Reject the stale-provider allegation: the old GET preceded credit success."],
     "feedback": ["Adjudicate each supplied finding against current code, not reviewer confidence."],
 }
+READ_ONLY = ("discounts", "discounts-clean", "claims")
+UNCHECKED = "No independent check exists for this case; judge its behavior against the fixture contract."
 
 
 def check(command, directory, path, allow_empty=False, timeout=30):
@@ -49,7 +52,9 @@ def grade(record, output=None):
     if task == destination or task in destination.parents:
         raise ValueError("Keep grades outside the candidate task directory")
     fixture = json.loads((ROOT / "evals/task-fixtures.json").read_text())[receipt["case"]]
-    result = {"case": receipt["case"], "checks": [], "manual_review": MANUAL.get(receipt["case"], []),
+    unchecked = receipt["case"] not in READ_ONLY and receipt["case"] not in CHECKS
+    result = {"case": receipt["case"], "checks": [],
+              "manual_review": MANUAL.get(receipt["case"], []) + ([UNCHECKED] if unchecked else []),
               "execution_status": receipt["execution"]["status"],
               "environment": {"python": platform.python_version(), "platform": platform.platform()},
               "grader_sha256": digest({name: hashlib.sha256((ROOT / "evals" / name).read_bytes()).hexdigest()
@@ -72,10 +77,10 @@ def grade(record, output=None):
     else:
         repo = Path(receipt["task_dir"]) / "repo"
         prefix = destination.stem
-        if receipt["case"] in ("discounts", "discounts-clean", "claims"):
+        if receipt["case"] in READ_ONLY:
             result["checks"].append({"claim": "Read-only task left source and heads unchanged",
                                      "status": "passed" if current == receipt["initial_state"] else "failed"})
-        else:
+        elif not unchecked:
             result["checks"].append(check([sys.executable, "-I", "-B", str(ROOT / "evals/task_oracles.py"), receipt["case"], str(repo)],
                                           repo, destination.with_name(prefix + "-oracle.txt")))
         for index, name in enumerate(receipt["repositories"]):
