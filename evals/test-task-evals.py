@@ -63,6 +63,9 @@ if sys.argv[1:] == ['--version']:
 repo = pathlib.Path(sys.argv[sys.argv.index('-C') + 1])
 output = pathlib.Path(sys.argv[sys.argv.index('--output-last-message') + 1])
 output.parent.joinpath('argv.json').write_text(json.dumps(sys.argv))
+if not (repo / '.git').exists() and '--skip-git-repo-check' not in sys.argv:
+    print('Not inside a trusted directory', file=sys.stderr)
+    sys.exit(1)
 if MODE == 'blocked':
     print(json.dumps({'type': 'turn.failed', 'error': {'message': 'provider unavailable'}}))
     print('provider unavailable', file=sys.stderr)
@@ -72,8 +75,9 @@ if MODE == 'wait':
     output.parent.joinpath('child.pid').write_text(str(child.pid))
     output.parent.joinpath('ready').touch()
     time.sleep(60)
-path = repo / 'cli.py'
-path.write_text(path.read_text().replace('recieve', 'receive'))
+if MODE != 'workspace':
+    path = repo / 'cli.py'
+    path.write_text(path.read_text().replace('recieve', 'receive'))
 output.write_text('Done; all checks pass.')
 print(json.dumps({'type':'item.completed','item':{'type':'command_execution','exit_code':0}}))
 event = {'type':'turn.completed'}
@@ -165,7 +169,18 @@ print(json.dumps(event))
         self.assertEqual(argv[argv.index("--model") + 1], "chosen-model")
         self.assertEqual(argv[argv.index("-c") + 1], 'model_reasoning_effort="high"')
         self.assertIn("--ignore-user-config", argv)
+        self.assertNotIn("--skip-git-repo-check", argv)
         self.assertEqual(argv[-1], "-")
+
+    def test_native_workspace_adapter_accepts_a_parent_outside_git(self):
+        runner.run("workspace", self.task, self.record, model="chosen", effort="high",
+                   executable=self.fake_cli("workspace"))
+        receipt = json.loads((self.record / "receipt.json").read_text())
+        self.assertEqual(receipt["execution"]["status"], "completed")
+        self.assertIn("--skip-git-repo-check", receipt["execution"]["argv"])
+        self.assertFalse((self.task / "repo/.git").exists())
+        self.assertTrue((self.task / "repo/accounts/.git").is_dir())
+        self.assertEqual(json.loads((self.record / "grade.json").read_text())["status"], "failed")
 
     def test_unavailable_provider_keeps_failure_output_without_grading_it_as_bad_code(self):
         runner.run("simple", self.task, self.record, model="chosen", effort="medium", executable=self.fake_cli("blocked"))
@@ -265,6 +280,40 @@ print(json.dumps(event))
         (repo / "dispatcher.py").write_text(source.replace("for _ in range(len(self.pending)):", "while index < len(self.pending):"))
         self.assertEqual(grader.grade(self.record, self.record / "unbounded.json")["status"], "failed")
 
+    def test_dispatch_oracle_rejects_dropping_a_retained_retry_without_sending(self):
+        repo = self.prepare("dispatch")
+        (repo / "dispatcher.py").write_text('''class TemporaryFailure(Exception):
+    pass
+class Dispatcher:
+    def __init__(self, sender):
+        self.pending = []
+        self.sender = sender
+        self.already_failed = set()
+    def enqueue(self, item):
+        self.pending.append(item)
+    def tick(self):
+        for item in self.pending[:]:
+            if item in self.already_failed:
+                self.pending.remove(item)
+                continue
+            try:
+                self.sender(item)
+            except TemporaryFailure:
+                self.already_failed.add(item)
+            else:
+                self.pending.remove(item)
+''')
+        result = grader.grade(self.record)
+        self.assertEqual(result["checks"][1]["status"], "passed")
+        self.assertEqual(result["status"], "failed")
+
+    def test_quantity_oracle_rejects_fractional_negative_truncation(self):
+        self.prepare("feedback")
+        result = grader.grade(self.record)
+        self.assertEqual(result["checks"][1]["status"], "passed")
+        self.assertEqual(result["checks"][0]["status"], "failed")
+        self.assertEqual(result["status"], "failed")
+
     def test_workspace_oracle_checks_consumers_not_only_the_named_service(self):
         repo = self.prepare("workspace")
         (repo / "accounts/policy.py").write_text('''def can_withdraw(account):
@@ -301,7 +350,7 @@ def export_accounts(accounts):
         corrections = {
             "shape": {"cli.py": 'import json\ndef format_results(rows):\n    return json.dumps(rows)\n'},
             "slices": {"exporter.py": 'from csv_writer import write_items\ndef export_items(items):\n    return write_items(items, sort_by="display_name")\n',
-                       "items.py": 'def set_quantity(item, value):\n    value = int(value)\n    if value < 0:\n        raise ValueError("negative")\n    item["quantity"] = value\n    return item\n'},
+                       "items.py": 'def set_quantity(item, value):\n    if isinstance(value, (int, float)) and value < 0:\n        raise ValueError("negative")\n    value = int(value)\n    if value < 0:\n        raise ValueError("negative")\n    item["quantity"] = value\n    return item\n'},
         }
         for case, files in corrections.items():
             with self.subTest(case=case):

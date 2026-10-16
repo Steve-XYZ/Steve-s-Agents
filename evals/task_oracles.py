@@ -62,7 +62,7 @@ class Slices(unittest.TestCase):
     def test_rejection_before_mutation_and_preserved_conversion(self):
         call(r"""
 from items import set_quantity
-for value in (-1, '-2', 'invalid'):
+for value in (-1, -0.5, '-2', 'invalid'):
     item = {'display_name': 'x', 'quantity': 3}
     try:
         set_quantity(item, value)
@@ -126,8 +126,15 @@ for failures in ({'a'}, {'a', 'b'}, set()):
     dispatcher.tick()
     assert sorted(calls) == list('abcdef'), calls
     assert set(dispatcher.pending) == failures
-    failures.clear()
+    retained = sorted(failures)
+    calls.clear()
     dispatcher.tick()
+    assert sorted(calls) == retained, calls
+    assert sorted(dispatcher.pending) == retained
+    failures.clear()
+    calls.clear()
+    dispatcher.tick()
+    assert sorted(calls) == retained, calls
     assert dispatcher.pending == []
     before = list(calls)
     dispatcher.tick()

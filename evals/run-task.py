@@ -67,6 +67,8 @@ def execute(record, prompt, model, effort, timeout, executable):
                        "--sandbox", "workspace-write", "-C", str(prompt.parent / "repo"),
                        "--model", model, "-c", 'model_reasoning_effort="' + effort + '"',
                        "--output-last-message", str(record / "response.txt"), "-"]
+            if not (prompt.parent / "repo/.git").exists():
+                command.insert(2, "--skip-git-repo-check")
             result["argv"] = command
             with (record / "events.jsonl").open("wb") as events:
                 process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=events, stderr=errors, start_new_session=True)
