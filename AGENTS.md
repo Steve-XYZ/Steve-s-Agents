@@ -14,6 +14,7 @@ Run the relevant deterministic checks:
 python3 scripts/validate-skills.py
 python3 scripts/test-install-agent-links.py
 python3 scripts/test-workflow-helpers.py
+python3 evals/test-task-evals.py
 ```
 
 Use disposable fixtures for helper tests and workflow trials. Do not run fix prompts against live PRs. For substantial workflow changes, use fresh-context tasks with raw prompts and fixtures; keep expected outcomes and the author's conclusions out of the task context. State whether a run tested explicit invocation or actual host routing.

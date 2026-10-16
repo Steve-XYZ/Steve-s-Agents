@@ -6,6 +6,7 @@ Run the checks that do not spend model tokens first:
 python3 scripts/validate-skills.py
 python3 scripts/test-install-agent-links.py
 python3 scripts/test-workflow-helpers.py
+python3 evals/test-task-evals.py
 ```
 
 The validator checks this repository's single-line name/description fields, installed-name collisions, reference file existence, and routing fixture structure. It is not a general YAML parser, a semantic router, or evidence of model compliance. Use the harness's skill validator too when changing other frontmatter fields.
@@ -45,6 +46,51 @@ Create an isolated task outside this repository:
 python3 evals/make-task-fixture.py slices --output /tmp/orders-export
 ```
 
-The destination must not exist. The command prints `prompt.txt`; supply its contents to a fresh agent. Available tasks are the keys of `task-fixtures.json`: `simple`, `slices`, `shape`, `feedback`, `currency`, `claims`, `parcel`, and `discounts`. A task with a `change` entry gets a second commit, so a review task can review the latest commit. Pass `--skill <name>` to run the same task under another entry skill, for example a baseline under the old route. The feedback task preserves the first slices trial's escaped edge case and supplies review claims to adjudicate. Only the raw task, fixture files, and guidance catalog are copied. Expected outcomes and prior results stay here, outside the task context.
+The destination must not exist and must sit outside Git checkouts. The command prints `prompt.txt`; supply its contents to a fresh agent. Tasks are the keys of `task-fixtures.json`. In addition to the original delivery, shape, feedback, currency, claims, parcel and discount cases, `discounts-clean` is a corrected review control, `dispatch` covers starvation and retry workarounds, and `workspace` covers one policy across three independent repositories. A task with a `change` entry gets a second commit so a review task can review the latest commit.
+
+Pass `--skill <name>` for another entry skill, `--guidance-root /path/to/checkout` for another Steve's Agents catalog, or `--control` for an empty optional catalog and no explicit skill. Skill files and global defaults are copied without changing application commits. The prompt explicitly invokes only the entry skill; global-default loading and host routing remain separate questions. Only the raw task, fixture files and optional catalog enter the task directory. Grading code, expected outcomes, prior results and receipts stay outside it.
 
 The [September 21 trial record](results/2026-09-21/README.md) includes resulting patches, rerun output, and limits. The [October 6 record](results/2026-10-06/README.md) compares the `currency` and `claims` tasks before and after the restructure. Explicit invocation proves neither automatic selection nor comparative effectiveness.
+
+## Run and retain one task
+
+Start with an offline pilot. This creates an organic task and a separate record without launching a model:
+
+```sh
+python3 evals/run-task.py currency \
+  --task-dir /tmp/warehouse-report \
+  --record-dir /tmp/outcome-records/report-1 --prepare-only
+```
+
+Give `/tmp/warehouse-report/prompt.txt` to a fresh context in the intended host. Keep the response and any transcript export in the record directory, outside candidate context. Then grade the resulting files:
+
+```sh
+python3 evals/grade-task.py --record-dir /tmp/outcome-records/report-1
+```
+
+A Codex CLI run uses the same fixture with explicit model, effort and wall-clock limit:
+
+```sh
+python3 evals/run-task.py currency \
+  --task-dir /tmp/stock-report \
+  --record-dir /tmp/outcome-records/report-2 \
+  --model <exact-supported-model-id> --effort high --timeout 300
+```
+
+The adapter uses `codex exec`, `--ignore-user-config`, `--ephemeral`, JSONL output and `workspace-write`. `--codex /path/to/codex` selects an executable. It uses the existing CLI credentials and never provisions a key or changes installed settings. These controls do not create a hermetic host: installed global instructions, host capabilities and provider behavior can still matter. The prompt requests one context without delegation; that is an instruction, not enforcement or aggregate child-usage accounting. No Claude Code or T3 adapter is implemented; use the prepared-task path for those hosts and label what actually ran.
+
+`receipt.json` records fixture and prompt hashes, copied-guidance hash and source commit, initial and final source hashes including untracked files, repository heads, requested model/effort, CLI/Python/host versions, actual elapsed execution time, raw output hashes and execution status. `events.jsonl`, `stderr.txt` and any `response.txt` retain the CLI output. Inspect the exact source hash when the guidance checkout has uncommitted changes; its commit alone is not the supplied catalog identity.
+
+Execution states are `prepared`, `completed`, `blocked`, `timed_out` and `cancelled`. A successful CLI exit without a completed model turn is blocked. Timeout or cancellation terminates the process group and preserves its output. The wall limit covers CLI version detection and execution, plus up to a second for termination; fixture preparation and subsequent grading have separate bounded commands. No token or tool-call cap is implemented. Usage sums valid `turn.completed` counters only when every turn supplies them and the stream is well formed. Missing or invalid usage, resolved model identity, dollar cost and total tool calls stay null. Completed item counts are diagnostic observations, not a substitute for total tool usage. Cached input is a subset of input tokens, not extra input to add again.
+
+The runner exits 0 for a prepared task or completed model turn, and 2 for execution/setup gaps. Exit 0 does not mean the candidate passed. A provider/auth/network failure without a completed turn has no automatic correctness grade. Keep those cases separate from candidate defects.
+
+## Grade behavior independently
+
+`task_oracles.py` checks actual CLI/public-function behavior against literal contract expectations. It covers currency defaults under both USD and EUR configuration, unchanged CSV output, quantity nonmutation, escaping and generators, empty-result schema, tier boundaries, retry progress and work retention, and agreement across every workspace reader. The supplied unittest suite runs separately. Its pass cannot override an independent failure, and empty discovery is `not_applicable`.
+
+Review and claims tasks require manual assessment against the retained response, diff and evidence. The grader exposes the fixture rubric only after execution. It checks read-only source preservation but never declares a review correct from keywords, invocation counts or an agent's claim. Delivery hygiene, unnecessary changes, verification quality and human intervention also need an assessor; a passing behavioral oracle does not score those dimensions.
+
+Grades report `passed`, `failed`, `manual_required`, `blocked` or `stale`. Source or raw-output changes after a completed receipt, changed fixture definitions, or source changes during validation cannot receive a current-state pass. A prepared/manual task can be graded, but its execution metrics remain unassessed. Each grade includes its source state, grader hash, interpreter/host identity, commands, exit codes and raw outputs. Existing grades are preserved; use `--output /tmp/outcome-records/report-1/recheck.json` for a new result. Grader exit codes are 0 for automated checks passed, 1 for a demonstrated failure and 2 for an assessment gap. Neither 0 nor an empty manual rubric certifies engineering quality beyond the implemented checks.
+
+For comparisons, use separate fresh task/record pairs, pinned catalogs, the same explicit model and effort, the same host/tools and common limits. Alternate or randomize arm order; repeat where variability could change the decision and retain holdouts. Keep no-guidance and clean controls. A native full-system comparison must also account for all child execution and any token/tool budgets the host can enforce. The runner's explicit single-context task does not establish native routing, orchestration effectiveness or a productivity gain. Do not label missing measurements as zero or compare costs from report length.

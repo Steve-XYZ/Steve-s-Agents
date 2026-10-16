@@ -75,9 +75,10 @@ Run repository checks before spending model tokens:
 python3 scripts/validate-skills.py
 python3 scripts/test-install-agent-links.py
 python3 scripts/test-workflow-helpers.py
+python3 evals/test-task-evals.py
 ```
 
-The [evaluation cases](evals/README.md) distinguish structural checks from live routing and behavior. Passing the local validator does not prove skill selection.
+The [evaluation cases](evals/README.md) distinguish structural checks from live routing and behavior. A small Codex runner records disposable tasks and independent outcome checks, with manual review for findings. Passing the local validator does not prove skill selection.
 
 For repeated reviews, `scripts/review-package.py --repo <project> --base <sha>` captures an exact committed diff in a new temporary directory without changing the project. The [review procedure](shared/code-review/references/review-evidence.md) defines evidence reuse, optional output import with `--evidence`, fix-round scope, and approval requirements. `scripts/pr-state.py` reads a head-bound PR/check snapshot without waiting, posting, or deciding merge readiness.
 
