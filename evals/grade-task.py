@@ -30,6 +30,7 @@ UNCHECKED = "No independent check exists for this case; judge its behavior again
 
 def remove_bytecode_caches(root):
     for directory, dirs, _ in os.walk(root):
+        dirs[:] = [name for name in dirs if name != ".git"]
         for name in [name for name in dirs if name == "__pycache__"]:
             path = Path(directory) / name
             if path.is_symlink():

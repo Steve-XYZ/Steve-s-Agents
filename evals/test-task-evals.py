@@ -184,6 +184,12 @@ class Isolated(unittest.TestCase):
         self.assertEqual([row["status"] for row in result["checks"]], ["failed", "failed"])
         self.assertIn("ERROR: test_nonempty (test_isolated", (self.record / "grade-suite-0.txt").read_text())
 
+    def test_bytecode_cleanup_leaves_git_metadata_alone(self):
+        repo = self.prepare("discounts-clean")
+        runner.git(repo, "branch", "__pycache__/saved")
+        self.assertEqual(grader.grade(self.record)["status"], "manual_required")
+        self.assertEqual(runner.git(repo, "branch", "--list", "__pycache__/saved"), "__pycache__/saved")
+
     def test_grade_writes_do_not_follow_a_planted_temporary_file(self):
         self.prepare("simple")
         unrelated = self.root / "unrelated.txt"
