@@ -51,7 +51,7 @@ Base the rating on the workflow's evidence about plausible failure consequences,
 | --- | --- |
 | Low | Limited consequences and straightforward recovery, with evidence bounding the impact. |
 | Medium | Meaningful behavior changes with bounded impact and a practical recovery path. |
-| High | Material danger to stored data, security, money movement (payments, refunds, or balance mutations), shared consumers, or effects that are difficult to reverse or recover. |
+| High | Material danger to stored data, security, money movement (such as payments, refunds, or balance mutations), shared consumers, or effects that are difficult to reverse or recover. |
 
 If missing impact or recovery evidence prevents a supported rating, write `Risk: Unassessed` and name the missing evidence. Unknown does not mean Low. Do not invent facts to complete the rubric.
 
