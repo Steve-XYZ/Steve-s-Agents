@@ -931,7 +931,7 @@
   },
   {
     "task": "release-notes-116",
-    "variant": "control",
+    "variant": "holdout",
     "grade_status": "manual_required",
     "source_check": "passed",
     "word_count": 533,
