@@ -23,8 +23,10 @@ MANUAL = {
                "Attribute 504 cents becoming 5.40 to the client.",
                "Reject the stale-provider allegation: the old GET preceded credit success."],
     "feedback": ["Adjudicate each supplied finding against current code, not reviewer confidence."],
+    "merge-danger": ["Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."],
+    "merge-danger-controls": ["Read ../drafts.json and assess the documentation gate and nonblocking cleanup findings independently of risk; preserve the supplied verdicts."],
 }
-READ_ONLY = ("discounts", "discounts-clean", "claims")
+READ_ONLY = ("discounts", "discounts-clean", "claims", "merge-danger", "merge-danger-controls")
 UNCHECKED = "No independent check exists for this case; judge its behavior against the fixture contract."
 
 

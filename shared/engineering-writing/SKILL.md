@@ -43,9 +43,21 @@ Never reply with "Fixed", "Done", or "Addressed" alone. Do not add a Merge Dange
 
 ## Merge Danger
 
-Place this section last in PR descriptions and full review summaries. Identify the affected behavior or data, whether reverting restores the previous state, and any recovery requirement or unverified risk.
+Place this section last in PR descriptions and full review summaries. Begin with `Risk: Low`, `Risk: Medium`, or `Risk: High`, using the rubric below. Follow the rating with its concrete reason, affected behavior or data, whether reverting restores the previous state, and any recovery requirement or unverified risk.
 
-Use a short paragraph for routine changes; expand for material risks. Explain merge consequences and recovery rather than repeating findings. Do not infer safety from diff size or passing tests. If reversibility or recovery is unknown, say what remains unverified; do not invent a risk rating or guarantee.
+Choose the highest level supported by the workflow's evidence. Consider plausible failure consequences, affected consumers, reversibility, recovery, and material verification gaps. These are qualitative judgments, not probabilities or scores out of ten.
+
+| Rating | Meaning |
+| --- | --- |
+| Low | Limited consequences and straightforward recovery, with evidence bounding the impact. |
+| Medium | Meaningful behavior changes with bounded impact and a practical recovery path. |
+| High | Material danger to stored data, security, money, shared consumers, or effects that are difficult to reverse or recover. |
+
+If missing impact or recovery evidence prevents a supported rating, write `Risk: Unassessed` and name the missing evidence. Unknown does not mean Low. Do not invent facts to complete the rubric.
+
+Add `Do not merge` immediately after the rating when a known Blocker or an unmet required merge gate prevents merging. State what must be fixed or verified to clear the hold. Keep the calling workflow's verdict and finding classifications unchanged. High does not automatically mean blocked; Low does not grant approval or waive any gate. A rating never authorizes a merge.
+
+Use a short paragraph for routine changes; expand for material risks. Explain merge consequences and recovery rather than repeating findings. Do not infer safety from diff size, passing tests, or the author's assurance. If reversibility or recovery is unknown, say what remains unverified; do not invent a guarantee. Keep ratings and merge holds out of individual inline comments and review replies, which retain their existing finding severity and disposition.
 
 Weak:
 
@@ -53,6 +65,8 @@ Weak:
 
 Better:
 
-> Merge Danger: The migration deletes stored approval records. Reverting the code cannot recover them. Recovery needs a usable backup and a tested restore procedure. Neither has been verified.
+> Risk: Low. Only CLI help wording changes; runtime behavior and stored data are unchanged. The exact-output check passes. Reverting restores the previous wording.
+
+> Risk: High. Do not merge. The migration deletes stored approval records, and its required restore check has not run. Reverting code cannot recover deleted rows. Verify a usable backup and the restore procedure before merging.
 
 Before publishing, check that the action, severity, evidence, and uncertainty remain clear. Remove sentences that add no useful information.
