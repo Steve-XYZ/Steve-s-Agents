@@ -69,3 +69,28 @@ After evaluation, one sentence of the skill was reworded for clarity. "Choose th
 A subsequent GPT 6.1 Sol review with high reasoning at `7339e3b2e62037b5bca8e4b80e22142d6dcd8b09` found no Blocker or Should fix findings and one wording nit: keeping all “merge holds” out of replies could conflict with preserving a supplied blocking disposition. No captured draft demonstrated that suppression. The final sentence now prohibits adding a separate rating, hold, or footer while expressly preserving existing blocking conditions. Skill validation and `git diff --check` passed after this correction. This is an inspected clarification of the existing preservation contract; no drafts were rerun against it, and the original comparison does not establish its behavioral effect.
 
 CodeRabbit later noted that the combined delivery-with-PR and review-with-GitHub-draft routing expectations still checked only footer placement. Both now also require the evidence-backed rating and conditional merge hold. This aligns their manual acceptance criteria with the writing skill; the combined routes remain unassessed in a live host.
+
+## Delivery follow-up on the Unassessed rate
+
+The comparison above supplied curated records that already stated impact and recovery. A reviewer asked whether real delivery work gives the writing step enough evidence, or whether it produces frequent `Risk: Unassessed` footers or invented recovery facts instead.
+
+Nine fresh contexts each ran one existing `deliver-ticket` fixture with guidance pinned at `7339e3b2e62037b5bca8e4b80e22142d6dcd8b09`. That snapshot includes the rating-selection rewording but predates the reply clarification in `4a38f77`, which does not touch PR descriptions. Each task was prepared with `run-task.py --prepare-only`, and one sentence was appended to the generated prompt: "Also draft the GitHub PR description for this change in <task>/PR.md. Do not publish it." Nothing else in the prompt mentioned Merge Danger, ratings, or expected outcomes.
+
+| Fixture | Runs | Change | Rating | Do not merge |
+| --- | --- | --- | --- | --- |
+| `simple` | 3 | One CLI help string | Low, 3/3 | 0/3 |
+| `parcel` | 3 | Tier comparison `<` to `<=`; lowers boundary prices and accepts 5000 g parcels | Medium, 3/3 | 0/3 |
+| `workspace` | 3 | Withdrawal state across three repositories with legacy stored flags | High, 3/3 | 3/3, pending independent review and contract decisions |
+
+No draft used `Risk: Unassessed`. The assessor checked each recovery statement against the fixture contract and the agent's own diff and found no invented rollback test, flag, backup, or deployment fact. All three `workspace` drafts identified a recovery limit that `CONTRACT.md` does not state: once rows carry `withdrawal_state`, reverted code ignores it and re-opens withdrawal for review or disabled rows whose legacy flag is still true. The one loose inference is a `workspace` draft calling the repositories "separately deployed services"; the fixture says "independent repositories."
+
+In delivery, the writer made the change itself, so impact is known, and for code-only changes "reverting restores it" follows from the diff. This run therefore shows that the rule adds no Unassessed noise to ordinary delivery. It does not show how the rule behaves when a change depends on deployment, migration, or provider state the agent cannot see.
+
+Two observations bear on the rubric rather than this rule's form:
+
+- All three `parcel` drafts rated a customer price change Medium without discussing the High row's "money." Medium is defensible because prices fall to the published rate card at boundary weights and a revert works, but the rubric text and the agents' reading differ.
+- All three `parcel` drafts state in the body that no independent review has happened, and two agents' reports say the change should not merge without one. None adds `Do not merge`, because each was unsure whether `deliver-ticket`'s money-movement review rule covers price calculation. That is consistent with "unmet required merge gate"; the ambiguity sits in `deliver-ticket`.
+
+Limits: one model, nine samples across three fixtures, explicit invocation rather than host routing, and an assessor who knew the expected ratings. No baseline arm ran, because the baseline guidance forbids a rating. The runs used the host's subagent facility; an attempt to launch separate CLI processes was blocked by the host's permission policy. Subagent context therefore included this catalog's root `AGENTS.md`, which mentions trials, and organization-level instructions. Transcripts show no reads of receipts, notes, or `evals/`. The `code-review` path, where the writer works from another author's evidence, remains untested and is the likelier source of Unassessed footers or invented facts.
+
+[Delivery runs](merge-danger-rating/delivery-runs.json) retain each prompt, receipt hashes, full PR draft, extracted Merge Danger section, diff against the imported fixture, and host-reported subagent tokens, duration, and tool-use counts. Exact model identity and dollar cost were not exposed.
