@@ -25,8 +25,9 @@ MANUAL = {
     "feedback": ["Adjudicate each supplied finding against current code, not reviewer confidence."],
     "merge-danger": ["Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."],
     "merge-danger-controls": ["Read ../drafts.json and assess the documentation gate and nonblocking cleanup findings independently of risk; preserve the supplied verdicts."],
+    "merge-danger-boundaries": ["Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."],
 }
-READ_ONLY = ("discounts", "discounts-clean", "claims", "merge-danger", "merge-danger-controls")
+READ_ONLY = ("discounts", "discounts-clean", "claims", "merge-danger", "merge-danger-controls", "merge-danger-boundaries")
 UNCHECKED = "No independent check exists for this case; judge its behavior against the fixture contract."
 
 

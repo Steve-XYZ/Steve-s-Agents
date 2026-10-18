@@ -46,11 +46,13 @@ Create an isolated task outside this repository:
 python3 evals/make-task-fixture.py slices --output /tmp/orders-export
 ```
 
-The destination must not exist and must sit outside Git checkouts. The command prints `prompt.txt`; supply its contents to a fresh agent. Tasks are the keys of `task-fixtures.json`. In addition to the original delivery, shape, feedback, currency, claims, parcel and discount cases, `discounts-clean` is a corrected review control, `dispatch` covers starvation and retry workarounds, and `workspace` covers one policy across three independent repositories. `merge-danger` and `merge-danger-controls` draft GitHub artifacts from captured engineering records; their ratings and evidence require manual assessment. A task with a `change` entry gets a second commit so a review task can review the latest commit.
+The destination must not exist and must sit outside Git checkouts. The command prints `prompt.txt`; supply its contents to a fresh agent. Tasks are the keys of `task-fixtures.json`. In addition to the original delivery, shape, feedback, currency, claims, parcel and discount cases, `discounts-clean` is a corrected review control, `dispatch` covers starvation and retry workarounds, and `workspace` covers one policy across three independent repositories. `merge-danger`, `merge-danger-controls`, and `merge-danger-boundaries` draft GitHub artifacts from captured engineering records; their ratings and evidence require manual assessment. A task with a `change` entry gets a second commit so a review task can review the latest commit.
 
 Pass `--skill <name>` for another entry skill, `--guidance-root /path/to/checkout` for another Steve's Agents catalog, or `--control` for an empty optional catalog and no explicit skill. Skill files and global defaults are copied without changing application commits. The prompt explicitly invokes only the entry skill; global-default loading and host routing remain separate questions. Only the raw task, fixture files and optional catalog enter the task directory. Grading code, expected outcomes, prior results and receipts stay outside it.
 
 The [September 21 trial record](results/2026-09-21/README.md) includes resulting patches, rerun output, and limits. The [October 6 record](results/2026-10-06/README.md) compares the `currency` and `claims` tasks before and after the restructure. Explicit invocation proves neither automatic selection nor comparative effectiveness.
+
+The [October 18 Merge Danger record](results/2026-10-18/merge-danger-rating.md) compares explicit ratings, merge holds, preserved verdicts, and recovery evidence, including the financial-scope and approval-gate follow-up.
 
 ## Run and retain one task
 

@@ -1,0 +1,1409 @@
+{
+  "baseline_commit": "d3920e52045fac8b359abc85094e61be6b019605",
+  "baseline_skill_sha256": "9820ba48cc2da67c9292703ecaea32d22bc64841df19c54808dc50b609d482c5",
+  "clarified_skill_sha256": "77aa3bcbaf86f09c960b65f4c91d6f3cf131aed2a32014cd3e72b22b98467d2d",
+  "baseline_body_words": 750,
+  "clarified_body_words": 772,
+  "harness": "native collaboration fresh fork_turns=none contexts; explicit skill invocation; no inner delegation",
+  "model": "inherited parent model; no overrides; exact identity and reasoning effort unreported",
+  "execution_receipts": "prepare-only; completed native drafting is retained separately from CLI execution metadata",
+  "assessment": "Parent inspected all 80 drafts against the records, unblinded. Observed prefixes/word counts are an inventory, not a correctness oracle.",
+  "usage_tokens": null,
+  "active_elapsed_seconds": null,
+  "cost_usd": null,
+  "fixture": {
+    "skill": "engineering-writing",
+    "prompt": "Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md.",
+    "files": {
+      "AGENTS.md": "This repository contains captured engineering records for drafting. Use the supplied facts. Do not run an application or invent verification. Source files stay read-only. Drafts and activity records belong one directory above this checkout. No publication or delegation.\n",
+      "RECORDS.json": "[\n  {\n    \"id\": \"parcel\",\n    \"change\": \"Correct shipping_cents so each weight tier includes its upper limit, as the published rate card requires. Quotes for 1000 g fall from 700 to 450 cents; 2000 g from 1100 to 700 cents; 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged. The inspected repository contains a pure integer-returning quote function and no payment, refund, balance update, storage, or provider call. No external consumer has been exercised.\",\n    \"verification\": \"Contract-derived boundary tests failed against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates have passed.\",\n    \"recovery\": \"Reverting restores the old quote results and 5000 g refusal. It cannot alter any charges an external caller may already have made; no such caller or transaction was observed in this repository.\",\n    \"review\": {\n      \"verdict\": \"Approve\",\n      \"blockers\": 0,\n      \"should_fix\": 0,\n      \"nits\": 0,\n      \"findings\": []\n    }\n  },\n  {\n    \"id\": \"refund\",\n    \"change\": \"Persist a refund attempt identifier before sending a provider refund and reuse it after a lost response. The changed worker issues real refunds and updates account balances. A duplicate request can otherwise refund the same order twice.\",\n    \"verification\": \"Concurrent retry and provider-success/lost-response schedules pass against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates have passed. These are supplied records, not checks for the writer to rerun.\",\n    \"recovery\": \"Reverting the worker cannot recall a provider refund already issued or restore its balance entry. Reconciliation must locate the provider transaction and use the exercised compensation procedure.\",\n    \"review\": {\n      \"verdict\": \"Approve\",\n      \"blockers\": 0,\n      \"should_fix\": 0,\n      \"nits\": 0,\n      \"findings\": []\n    }\n  },\n  {\n    \"id\": \"owner\",\n    \"change\": \"Correct one spelling error in the documentation example for the help command. No runtime, parser, stored data, configuration, or public API change.\",\n    \"verification\": \"The exact text assertion and required link check pass. Repository policy separately requires approval from the documentation owner before merge, and that approval has not been recorded. The supplied code-review ledger below is complete.\",\n    \"recovery\": \"Reverting restores the previous wording. There is no stored data or external effect to recover.\",\n    \"review\": {\n      \"verdict\": \"Approve\",\n      \"blockers\": 0,\n      \"should_fix\": 0,\n      \"nits\": 0,\n      \"findings\": []\n    }\n  },\n  {\n    \"id\": \"help\",\n    \"change\": \"Correct one spelling error in the help command documentation example. No runtime, parser, stored data, configuration, or public API change.\",\n    \"verification\": \"The exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\",\n    \"recovery\": \"Reverting restores the previous wording. There is no stored data or external effect to recover.\",\n    \"review\": {\n      \"verdict\": \"Approve\",\n      \"blockers\": 0,\n      \"should_fix\": 0,\n      \"nits\": 0,\n      \"findings\": []\n    }\n  }\n]\n",
+      "ARTIFACTS.json": "[\n  {\n    \"key\": \"parcel.pr\",\n    \"kind\": \"PR description\",\n    \"record_id\": \"parcel\"\n  },\n  {\n    \"key\": \"parcel.review\",\n    \"kind\": \"Full GitHub review summary\",\n    \"record_id\": \"parcel\"\n  },\n  {\n    \"key\": \"refund.pr\",\n    \"kind\": \"PR description\",\n    \"record_id\": \"refund\"\n  },\n  {\n    \"key\": \"refund.review\",\n    \"kind\": \"Full GitHub review summary\",\n    \"record_id\": \"refund\"\n  },\n  {\n    \"key\": \"owner.pr\",\n    \"kind\": \"PR description\",\n    \"record_id\": \"owner\"\n  },\n  {\n    \"key\": \"owner.review\",\n    \"kind\": \"Full GitHub review summary\",\n    \"record_id\": \"owner\"\n  },\n  {\n    \"key\": \"help.pr\",\n    \"kind\": \"PR description\",\n    \"record_id\": \"help\"\n  },\n  {\n    \"key\": \"help.review\",\n    \"kind\": \"Full GitHub review summary\",\n    \"record_id\": \"help\"\n  }\n]\n"
+    }
+  },
+  "summary": {
+    "baseline": {
+      "contexts": 5,
+      "full_artifacts": 40,
+      "ratings_observed": {
+        "parcel.pr": [
+          "Medium",
+          "Medium",
+          "Medium",
+          "Medium",
+          "Medium"
+        ],
+        "parcel.review": [
+          "Medium",
+          "Medium",
+          "Medium",
+          "Medium",
+          "Medium"
+        ],
+        "refund.pr": [
+          "High",
+          "High",
+          "High",
+          "High",
+          "High"
+        ],
+        "refund.review": [
+          "High",
+          "High",
+          "High",
+          "High",
+          "High"
+        ],
+        "owner.pr": [
+          "Low",
+          "Low",
+          "Low",
+          "Low",
+          "Low"
+        ],
+        "owner.review": [
+          "Low",
+          "Low",
+          "Low",
+          "Low",
+          "Low"
+        ],
+        "help.pr": [
+          "Low",
+          "Low",
+          "Low",
+          "Low",
+          "Low"
+        ],
+        "help.review": [
+          "Low",
+          "Low",
+          "Low",
+          "Low",
+          "Low"
+        ]
+      },
+      "hold_artifacts": 10,
+      "output_words": [
+        1009,
+        964,
+        1015,
+        1070,
+        1034
+      ],
+      "median_output_words": 1015
+    },
+    "clarified": {
+      "contexts": 5,
+      "full_artifacts": 40,
+      "ratings_observed": {
+        "parcel.pr": [
+          "Medium",
+          "Medium",
+          "Medium",
+          "Medium",
+          "Medium"
+        ],
+        "parcel.review": [
+          "Medium",
+          "Medium",
+          "Medium",
+          "Medium",
+          "Medium"
+        ],
+        "refund.pr": [
+          "High",
+          "High",
+          "High",
+          "High",
+          "High"
+        ],
+        "refund.review": [
+          "High",
+          "High",
+          "High",
+          "High",
+          "High"
+        ],
+        "owner.pr": [
+          "Low",
+          "Low",
+          "Low",
+          "Low",
+          "Low"
+        ],
+        "owner.review": [
+          "Low",
+          "Low",
+          "Low",
+          "Low",
+          "Low"
+        ],
+        "help.pr": [
+          "Low",
+          "Low",
+          "Low",
+          "Low",
+          "Low"
+        ],
+        "help.review": [
+          "Low",
+          "Low",
+          "Low",
+          "Low",
+          "Low"
+        ]
+      },
+      "hold_artifacts": 10,
+      "output_words": [
+        978,
+        998,
+        993,
+        987,
+        1047
+      ],
+      "median_output_words": 993
+    }
+  },
+  "runs": [
+    {
+      "task": "operations-notes-201",
+      "variant": "baseline",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-201/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-201/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-201/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Correct `shipping_cents` so each weight tier includes its upper limit, as the published rate card requires. Quotes at 1000 g fall from 700 to 450 cents, quotes at 2000 g fall from 1100 to 700 cents, and 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nThe supplied verification records report that contract-derived boundary tests failed against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after, and all repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The change affects boundary quotes and acceptance at 5000 g. The inspected repository contains a pure integer-returning quote function with no payment, refund, balance update, storage, or provider call, which bounds the observed impact. Reverting restores the old quotes and 5000 g refusal. It cannot alter charges an external caller may already have made; no such caller or transaction was observed, and external consumer behavior remains unverified.",
+        "parcel.review": "Approve. 0 Blockers, 0 Should-fix findings, and 0 Nits.\n\nThe supplied review records contain no findings. The change matches the published rate card at the upper limits: 1000 g costs 450 cents instead of 700, 2000 g costs 700 cents instead of 1100, and 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nRecorded validation shows that contract-derived boundary tests fail against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. Boundary quote amounts and 5000 g acceptance change, but the inspected repository limits the demonstrated effect to a pure integer-returning quote function. It contains no payment, refund, balance update, storage, or provider call. Reverting restores the old results and refusal at 5000 g. Charges an external caller may already have made would remain; no such caller or transaction was observed, and consumer behavior remains unverified.",
+        "refund.pr": "Persist a refund attempt identifier before sending a provider refund, then reuse it after a lost response. This prevents a retry from refunding the same order twice. The changed worker issues real refunds and updates account balances.\n\nThe supplied records report that concurrent retry and provider-success/lost-response schedules pass against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. The worker moves real money and updates account balances, so a failure can leave provider transactions and balance entries that a code revert cannot undo. Reverting cannot recall an issued refund or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and the compensation procedure exercised for the current build in the supplied integration environment.",
+        "refund.review": "Approve. 0 Blockers, 0 Should-fix findings, and 0 Nits.\n\nThe supplied review records contain no findings. Persisting the refund attempt identifier before the provider call and reusing it after a lost response prevents duplicate refunds during retries. The worker issues real refunds and updates account balances.\n\nRecorded validation covers concurrent retries and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. Provider refunds and account balance changes have financial consequences that survive a code revert. Reverting cannot recall an issued refund or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and the compensation procedure exercised for the current build in the supplied integration environment. The completed gates support the approval; they do not make those effects reversible.",
+        "owner.pr": "Correct one spelling error in the documentation example for the help command. Runtime behavior, parsing, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification records report that the exact text assertion and required link check pass. Repository policy also requires documentation-owner approval before merge, and that approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The change affects documentation wording only, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval to clear the merge hold.",
+        "owner.review": "Approve. 0 Blockers, 0 Should-fix findings, and 0 Nits.\n\nThe supplied code-review ledger is complete and contains no findings. The change corrects one spelling error in the documentation example for the help command, with no runtime, parser, stored data, configuration, or public API change. Recorded validation shows that the exact text assertion and required link check pass. The separate repository requirement for documentation-owner approval remains unmet because that approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The consequences are limited to documentation wording, and reverting restores the previous wording. No stored data or external effect needs recovery. Record the required documentation-owner approval to clear the merge hold; the code-review verdict remains Approve.",
+        "help.pr": "Correct one spelling error in the help command documentation example. Runtime behavior, parsing, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The change affects documentation wording only. Reverting restores the previous wording, and there is no stored data or external effect to recover.",
+        "help.review": "Approve. 0 Blockers, 0 Should-fix findings, and 0 Nits.\n\nThe supplied review records contain no findings. The change corrects one spelling error in the help command documentation example, with no runtime, parser, stored data, configuration, or public API change. Recorded validation shows that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The consequences are limited to documentation wording. Reverting restores the previous wording, and there is no stored data or external effect to recover."
+      },
+      "drafts_sha256": "2cf95c358fea6f246c00248ed946d3cb0317d44a852ae6ef721489793442f4d1",
+      "response": "Created all 8 requested Markdown drafts in /workspace/scratch/operations-notes-201/drafts.json. Read/command record: /workspace/scratch/operations-notes-201/activity.md. Validated the JSON and requested keys; repository files remain unchanged.\n",
+      "activity_report": "# Read and command record\n\n- Ran `pwd` and an initial `rg --files -g AGENTS.md -g prompt.txt /workspace` to locate local assignment files.\n- Read `prompt.txt`, `repo/AGENTS.md`, `guidance/shared/engineering-writing/SKILL.md`, and its required `guidance/shared/unslop/SKILL.md`.\n- Listed files under this assignment's `repo` and `guidance` directories with `rg --files`.\n- Read `repo/ARTIFACTS.json` and `repo/RECORDS.json`. Used those supplied records as the engineering evidence for all eight drafts.\n- Ran Python to write `drafts.json` and verify its JSON round trip, exact requested key set, review verdicts and counts, final Merge Danger sections, and the documentation-owner merge hold. Compared repository file hashes before and after drafting; they were unchanged.\n- Ran Python to write this activity record and `response.txt`, then checked that all three output files exist and the draft count is eight.\n\nNo application, tests, integration checks, or review workflows were run. Verification claims in the drafts come from the supplied records. Repository files were not modified. No commit, push, publication, or delegation occurred.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-201",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:55:39.798146+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "7d1927002cce9757d1e3f481c9477dfcf90453f0d86f014ca1c7db8f6a8a98a4",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "03adb6f6010d91c09c463d66a85fdc58f96b2c7bcae81921d3bf5100bade488a",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-201/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 1009
+      }
+    },
+    {
+      "task": "operations-notes-202",
+      "variant": "baseline",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-202/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-202/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-202/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Correct `shipping_cents` so each weight tier includes its upper limit, as required by the published rate card. A 1000 g quote falls from 700 to 450 cents, a 2000 g quote falls from 1100 to 700 cents, and 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nThe supplied validation records show that contract-derived boundary tests failed against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The changed quote results have bounded impact in the inspected repository, which contains a pure integer-returning quote function and no payment, refund, balance update, storage, or provider call. External caller behavior remains unverified. Reverting restores the old quotes and 5000 g refusal, but cannot alter charges an external caller may already have made. No such caller or transaction was observed in this repository.",
+        "parcel.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied review reports no findings. The change makes the three tier limits inclusive under the published rate card. The supplied validation records show that contract-derived boundary tests fail with the old comparison and pass with the change, while neighboring-weight and surcharge pins pass before and after. All repository-required merge gates passed. External consumers have not been exercised.\n\n## Merge Danger\n\nRisk: Medium. Quotes change at 1000 g, 2000 g, and 5000 g. The inspected repository bounds the change to a pure integer-returning quote function, with no payment, refund, balance update, storage, or provider call. External caller behavior remains unverified. Reverting restores the old results and 5000 g refusal, but cannot alter charges an external caller may already have made. No such caller or transaction was observed in this repository.",
+        "refund.pr": "Persist a refund attempt identifier before sending a provider refund and reuse it after a lost response. This prevents a retry from refunding the same order twice in a worker that issues real refunds and updates account balances.\n\nThe supplied validation records show that concurrent retry and provider-success/lost-response schedules pass against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates passed.\n\n## Merge Danger\n\nRisk: High. This worker issues real provider refunds and changes account balances. Reverting cannot recall a refund already issued or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and use the compensation procedure exercised for the current build. The supplied review and required merge gates passed; the financial effects still require this recovery procedure.",
+        "refund.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied independent review reports no findings. Persisting and reusing the refund attempt identifier addresses duplicate refunds after a lost provider response. The supplied concurrent retry and provider-success/lost-response schedules pass against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. All required merge gates passed.\n\n## Merge Danger\n\nRisk: High. The affected worker issues real refunds and updates account balances, so its financial effects survive a code revert. Reverting cannot recall an issued provider refund or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and use the exercised compensation procedure. The supplied evidence supports approval and completion of the required merge gates, while these irreversible financial effects keep the risk High.",
+        "owner.pr": "Correct one spelling error in the documentation example for the help command. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied validation records show that the exact text assertion and required link check pass. Repository policy also requires documentation-owner approval before merge, and that approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The change affects documentation wording only, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval to clear the merge hold.",
+        "owner.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied code-review ledger is complete and reports no findings. The change corrects one spelling error in the help command documentation example, with no runtime, parser, stored data, configuration, or public API change. The supplied exact text assertion and required link check pass. Documentation-owner approval is a separate required merge gate and has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. Only documentation wording changes, and reverting restores the previous wording without stored data or external effects to recover. The review verdict remains Approve, but the required documentation-owner approval must be recorded before merge.",
+        "help.pr": "Correct one spelling error in the help command documentation example. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied validation records show that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. Only documentation wording changes. Reverting restores the previous wording, and there is no stored data or external effect to recover. The supplied exact text assertion, link check, and required merge approvals are complete.",
+        "help.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied review reports no findings. The change corrects one spelling error in the help command documentation example, with no runtime, parser, stored data, configuration, or public API change. The supplied exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The change affects documentation wording only. Reverting restores the previous wording, and there is no stored data or external effect to recover. The supplied checks and all required merge gates are complete."
+      },
+      "drafts_sha256": "bcc6da3378cf901d61cc9e5b4533bc72811bdf164bd6c171a2c87d7a794957a6",
+      "response": "Created eight GitHub artifact drafts in drafts.json and a concise read/command record in activity.md. Validated JSON and requested key coverage; supplied engineering checks were not rerun. Repository files remain unchanged.\n",
+      "activity_report": "# Activity record\n\nRead the assignment in `prompt.txt`, local `repo/AGENTS.md`, the supplied `guidance/shared/engineering-writing/SKILL.md`, its required `guidance/shared/unslop/SKILL.md`, and `repo/ARTIFACTS.json` and `repo/RECORDS.json`.\n\nCommands used `pwd` and `rg --files` for file discovery, `cat` for the supplied instructions and evidence, and Python to write and validate `drafts.json`. No application or supplied engineering checks were run. Validation covered JSON parsing, all eight requested artifact keys, the recorded review verdicts and counts, the documentation-owner merge hold, and final Merge Danger sections.\n\nWrote `drafts.json`, this `activity.md`, and `response.txt` beside the read-only checkout. Repository source files were not modified. No commit, push, publication, or delegation occurred.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-202",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:55:39.847063+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "7d1927002cce9757d1e3f481c9477dfcf90453f0d86f014ca1c7db8f6a8a98a4",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "9f05af0c44466ffcc995fe352a142a763ca3ba8d41f14d3edf9e9a0f53931720",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-202/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 964
+      }
+    },
+    {
+      "task": "operations-notes-203",
+      "variant": "baseline",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-203/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-203/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-203/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Correct `shipping_cents` so each weight tier includes its upper limit, matching the published rate card. The 1000 g quote changes from 700 to 450 cents, the 2000 g quote from 1100 to 700 cents, and 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nThe supplied verification records report that contract-derived boundary tests fail with the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after, and all repository-required merge gates have passed. The inspected repository contains a pure integer-returning quote function with no payment, refund, balance update, storage, or provider call. No external consumer has been exercised.\n\n### Merge Danger\n\nRisk: Medium. The change affects quotes at tier boundaries, with impact bounded by the inspected function and boundary checks. Reverting restores the old quote results and 5000 g refusal. External consumer behavior remains unverified, and a revert cannot alter any charges an external caller may already have made. No such caller or transaction was observed in this repository.",
+        "parcel.review": "Approve. 0 Blockers, 0 Should Fix, 0 Nits.\n\nThe supplied review records no findings. Inclusive tier limits match the published rate card: 1000 g changes from 700 to 450 cents, 2000 g from 1100 to 700 cents, and 5000 g becomes an accepted 1100-cent quote. Other weights and surcharges are unchanged.\n\nThe supplied verification records report that contract-derived boundary tests fail against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after, and all repository-required merge gates have passed. Inspection found only a pure integer-returning quote function, with no payment, refund, balance update, storage, or provider call. No external consumer has been exercised.\n\n### Merge Danger\n\nRisk: Medium. The quote behavior changes at tier boundaries, and the inspected function and checks bound the repository impact. Reverting restores the prior quote results and 5000 g refusal. External consumer behavior remains unverified. Reverting cannot alter charges an external caller may already have made, although no such caller or transaction was observed in this repository.",
+        "refund.pr": "Persist a refund attempt identifier before sending a provider refund, then reuse it after a lost response. This prevents a retry from refunding the same order twice in a worker that issues real refunds and updates account balances.\n\nThe supplied records report passing concurrent-retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. They also report that the current-build provider reconciliation and compensation procedure was exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n### Merge Danger\n\nRisk: High. The worker moves real money and updates balances, so a failure can cause financial effects that a code revert cannot undo. Reverting cannot recall an issued provider refund or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and use the compensation procedure exercised in the supplied integration environment.",
+        "refund.review": "Approve. 0 Blockers, 0 Should Fix, 0 Nits.\n\nThe supplied review records no findings. Persisting the refund attempt identifier before the provider request and reusing it after a lost response addresses the duplicate-refund failure in a worker that issues real refunds and updates balances.\n\nThe supplied verification records report passing concurrent-retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure was exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n### Merge Danger\n\nRisk: High. Real provider refunds and balance updates have financial consequences that persist after a code revert. Reverting cannot recall an issued refund or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and apply the compensation procedure exercised in the supplied integration environment. The passed checks and merge gates do not make those effects reversible.",
+        "owner.pr": "Correct one spelling error in the documentation example for the help command. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied records report that the exact text assertion and required link check pass. Repository policy also requires documentation-owner approval before merge, and that approval has not been recorded.\n\n### Merge Danger\n\nRisk: Low. Do not merge. The change affects documentation wording only, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval before merging.",
+        "owner.review": "Approve. 0 Blockers, 0 Should Fix, 0 Nits.\n\nThe complete supplied code-review ledger records no findings for the spelling correction in the help-command documentation example. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied records report that the exact text assertion and required link check pass. The review verdict remains Approve, but the separate repository requirement for documentation-owner approval is unmet. That approval has not been recorded.\n\n### Merge Danger\n\nRisk: Low. Do not merge. Only documentation wording changes, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval to clear the merge hold.",
+        "help.pr": "Correct one spelling error in the help-command documentation example. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n### Merge Danger\n\nRisk: Low. The change affects documentation wording only. Reverting restores the previous wording, and there is no stored data or external effect to recover. All required merge gates are complete.",
+        "help.review": "Approve. 0 Blockers, 0 Should Fix, 0 Nits.\n\nThe supplied review records no findings for the spelling correction in the help-command documentation example. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n### Merge Danger\n\nRisk: Low. Only documentation wording changes. Reverting restores the previous wording, and there is no stored data or external effect to recover. The recorded verification and completed merge gates support merging under the supplied Approve verdict."
+      },
+      "drafts_sha256": "5300374815b0b0cd69b8e106ded89b8a8b54737fcacbd63b09115baca20a0565",
+      "response": "Drafted all 8 requested GitHub artifacts in drafts.json and recorded reads and commands in activity.md. Preserved the supplied Approve verdicts, zero finding counts, verification gaps, and required owner-approval merge hold. Repository files remained unchanged; nothing was published.\n\nOutputs:\n/workspace/scratch/operations-notes-203/drafts.json\n/workspace/scratch/operations-notes-203/activity.md\n/workspace/scratch/operations-notes-203/response.txt\n",
+      "activity_report": "# Activity record\n\n- Read the assignment in `prompt.txt` and repository `AGENTS.md`.\n- Read `ARTIFACTS.json`, `RECORDS.json`, and the supplied engineering-writing and unslop skills from this task's guidance directory.\n- Used `pwd`, `rg --files`, and `cat` for discovery and reads. Used Python to write `drafts.json` and check its requested keys, review verdicts and counts, final Merge Danger sections, and owner-approval hold.\n- Compared repository file hashes around drafting; repository files remained unchanged.\n- Drafted all eight requested artifacts from supplied evidence. Verification outcomes in the drafts are attributed to the supplied records. No application, supplied checks, commit, push, publication, or delegation was performed.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-203",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:55:39.897231+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "7d1927002cce9757d1e3f481c9477dfcf90453f0d86f014ca1c7db8f6a8a98a4",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "d592716f8670fe99d3ab1ad194a69e288fee1606d1edea405fb3ad07d2f2f88b",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-203/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 1015
+      }
+    },
+    {
+      "task": "operations-notes-204",
+      "variant": "baseline",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-204/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-204/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-204/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Correct `shipping_cents` so each weight tier includes its upper limit, as the published rate card requires. The 1000 g quote falls from 700 to 450 cents, the 2000 g quote falls from 1100 to 700 cents, and 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nThe inspected repository contains a pure integer-returning quote function with no payment, refund, balance update, storage, or provider call.\n\n## Verification\n\nThe supplied records report that contract-derived boundary tests failed against the old comparison and pass after this change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates passed. The supplied review verdict is Approve, with 0 Blockers, 0 Should Fix findings, and 0 Nits. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The change alters quotes at three tier boundaries, with impact bounded by the supplied function inspection and boundary checks. External caller behavior remains unverified. Reverting restores the old quote results and 5000 g refusal, but cannot alter charges an external caller may already have made. No such caller or transaction was observed in this repository.",
+        "parcel.review": "Approve. 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\nThe supplied review reports no findings. The change makes the upper limits inclusive as the published rate card requires. Its observed effect is limited to integer quote results at 1000 g, 2000 g, and 5000 g. The inspected repository has no payment, refund, balance update, storage, or provider call.\n\nThe supplied validation records show that contract-derived boundary tests failed against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after, and all repository-required merge gates passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. Quotes change at three tier boundaries, while downstream use of those quotes remains unverified. Reverting restores the previous quote results and 5000 g refusal. It cannot alter charges an external caller may already have made, though no such caller or transaction was observed in this repository.",
+        "refund.pr": "Persist a refund attempt identifier before sending a provider refund and reuse it after a lost response. This prevents a retry from refunding the same order twice. The changed worker issues real refunds and updates account balances.\n\n## Verification\n\nThe supplied records report passing concurrent-retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates passed. The supplied review verdict is Approve, with 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\n## Merge Danger\n\nRisk: High. This worker moves real money and changes account balances. Reverting cannot recall a provider refund already issued or restore its balance entry. Recovery requires locating the provider transaction through reconciliation and using the compensation procedure exercised in the supplied integration environment. Independent review and all required merge gates have passed.",
+        "refund.review": "Approve. 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\nThe supplied review reports no findings. Persisting the refund attempt identifier before the provider call and reusing it after a lost response prevents the same order from being refunded twice.\n\nThe supplied validation records show passing concurrent-retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. They also record an exercise of the current-build provider reconciliation and compensation procedure in the supplied integration environment. Independent review and all required merge gates passed.\n\n## Merge Danger\n\nRisk: High. The changed worker issues real provider refunds and updates account balances, so mistakes have financial consequences that a code revert cannot undo. Reverting cannot recall an issued refund or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and the exercised compensation procedure. The supplied evidence records completed recovery verification and merge gates.",
+        "owner.pr": "Correct one spelling error in the documentation example for the help command. Runtime behavior, parsing, stored data, configuration, and the public API are unchanged.\n\n## Verification\n\nThe supplied records report that the exact text assertion and required link check pass. The supplied review verdict is Approve, with 0 Blockers, 0 Should Fix findings, and 0 Nits; its code-review ledger is complete. Repository policy separately requires documentation-owner approval before merge, and that approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. This changes only documentation wording, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval before merging.",
+        "owner.review": "Approve. 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\nThe supplied code-review ledger is complete and contains no findings. This corrects one spelling error in the help command documentation example, with no runtime, parser, stored data, configuration, or public API change.\n\nThe supplied records report that the exact text assertion and required link check pass. Documentation-owner approval is a separate required merge gate, and it has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The effect is limited to documentation wording. Reverting restores the previous wording, with no stored data or external effect to recover. Record documentation-owner approval to clear the outstanding merge gate; the supplied code-review verdict remains Approve.",
+        "help.pr": "Correct one spelling error in the help command documentation example. Runtime behavior, parsing, stored data, configuration, and the public API are unchanged.\n\n## Verification\n\nThe supplied records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete. The supplied review verdict is Approve, with 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\n## Merge Danger\n\nRisk: Low. This changes only documentation wording. The text and link checks bound the impact, and all required merge gates are complete. Reverting restores the previous wording, with no stored data or external effect to recover.",
+        "help.review": "Approve. 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\nThe supplied review reports no findings. The spelling correction affects only the help command documentation example, with no runtime, parser, stored data, configuration, or public API change.\n\nThe supplied records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The change is limited to documentation wording, with the required text and link checks passing and all merge gates complete. Reverting restores the previous wording. There is no stored data or external effect to recover."
+      },
+      "drafts_sha256": "da847161cd496ef44545c68d0d4e1a707c2b5819cb0d3f52672e048bd1be99ba",
+      "response": "Created all 8 requested drafts in /workspace/scratch/operations-notes-204/drafts.json and the read/command record in /workspace/scratch/operations-notes-204/activity.md. Output checks passed; repository files are unchanged. Supplied checks were not rerun, and nothing was published.\n",
+      "activity_report": "# Activity record\n\n- Read `prompt.txt`, then repository `AGENTS.md`, `ARTIFACTS.json`, and `RECORDS.json` with `cat`.\n- Used `pwd` and `rg --files` to locate instruction files, `rg --files` to list the supplied guidance, and `ls -la` to inspect the repository directory. Read only `guidance/shared/engineering-writing/SKILL.md` and its required `guidance/shared/unslop/SKILL.md` as writing guidance.\n- Ran `git status --short` and `sha256sum AGENTS.md ARTIFACTS.json RECORDS.json` to record the clean source state.\n- Used Python to write `../drafts.json` with all eight requested Markdown drafts from the supplied records. Preserved Approve verdicts and zero finding counts. Applied Medium risk to the quote function, High risk to real refunds, and Low risk to both wording changes. The missing documentation-owner approval retains a merge hold without changing the code-review verdict or counts.\n- Used Python to parse the output and check exact requested keys, nonempty drafts, review openings, verdicts and counts, final Merge Danger sections, risk ratings, and the owner-only merge hold. Rechecked the source SHA-256 hashes and ran `git status --short`; hashes matched and status remained clean.\n- Wrote `../activity.md` and `../response.txt`. Repository files stayed read-only. Application checks and supplied verification were not rerun; every verification claim in the drafts is attributed to the supplied records. No commit, push, publication, or delegation occurred.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-204",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:55:39.945644+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "7d1927002cce9757d1e3f481c9477dfcf90453f0d86f014ca1c7db8f6a8a98a4",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "fd99100c90247c4feb422b717a0bc75274113a996136bd9676c7f701b70c3255",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-204/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 1070
+      }
+    },
+    {
+      "task": "operations-notes-205",
+      "variant": "baseline",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-205/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-205/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-205/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Correct `shipping_cents` so each weight tier includes its upper limit, as the published rate card requires. The quote for 1000 g falls from 700 to 450 cents, the quote for 2000 g falls from 1100 to 700 cents, and 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nThe supplied verification records show that contract-derived boundary tests failed against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The change affects shipping quotes at three boundaries. The inspected repository contains a pure integer-returning quote function with no payment, refund, balance update, storage, or provider call. Reverting restores the previous quotes and 5000 g refusal, but cannot alter charges an external caller may already have made. No such caller or transaction was observed, and external-consumer behavior remains unverified.",
+        "parcel.review": "Approve. 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\nThe supplied record shows that the corrected upper-limit comparisons match the published rate card. Quotes change from 700 to 450 cents at 1000 g and from 1100 to 700 cents at 2000 g. A 5000 g parcel now receives a quote of 1100 cents instead of refusal. Other weights and surcharges are unchanged.\n\nSupplied validation shows that contract-derived boundary tests failed against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after, and all repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The changed quotes have bounded effects within the inspected repository, which contains only a pure integer-returning quote function and no payment, refund, balance update, storage, or provider call. Reverting restores the old quotes and 5000 g refusal. External-consumer behavior is unverified, and a revert cannot alter charges an external caller may already have made. No such caller or transaction was observed.",
+        "refund.pr": "Persist a refund attempt identifier before sending a provider refund, then reuse it after a lost response. This prevents a retry from refunding the same order twice. The worker issues real refunds and updates account balances.\n\nThe supplied verification records show that concurrent retry and provider-success/lost-response schedules pass against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure was exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. This worker moves money and updates account balances. A failure can cause duplicate refunds, and reverting the worker cannot recall a provider refund or restore its balance entry. Recovery must locate the provider transaction through reconciliation and use the compensation procedure exercised in the supplied integration environment. The supplied approval and completed gates do not remove those irreversible financial consequences.",
+        "refund.review": "Approve. 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\nPersisting the refund attempt identifier before the provider call and reusing it after a lost response addresses the duplicate-refund retry path. The worker issues real refunds and updates account balances.\n\nSupplied validation covers concurrent retries and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure was exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. Failures in this worker can affect real refunds and account balances. Reverting cannot recall a provider refund already issued or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and the exercised compensation procedure. Approval and completed merge gates leave this financial recovery requirement in place.",
+        "owner.pr": "Correct one spelling error in the documentation example for the help command. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification records report that the exact text assertion and required link check pass. The code-review verdict is Approve, with 0 Blockers, 0 Should Fix findings, and 0 Nits. Repository policy separately requires documentation-owner approval before merge; that approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. This wording correction has no runtime, stored-data, or external effect, and reverting restores the previous wording. No data recovery is needed. Record the required documentation-owner approval before merging; the approved code review does not satisfy that separate gate.",
+        "owner.review": "Approve. 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\nThe change corrects one spelling error in the help-command documentation example. It does not change runtime behavior, the parser, stored data, configuration, or the public API.\n\nThe supplied verification records report that the exact text assertion and required link check pass. Documentation-owner approval remains unrecorded, and repository policy requires it before merge. This is an unmet merge gate, separate from the complete code-review ledger.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The change affects documentation wording only, and reverting restores the previous wording. There is no stored data or external effect to recover. Record documentation-owner approval to clear the required merge gate.",
+        "help.pr": "Correct one spelling error in the help command documentation example. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The correction affects documentation wording only. Reverting restores the previous wording, and there is no stored data or external effect to recover. The supplied checks bound the change to the corrected text and valid links, and all required merge gates are complete.",
+        "help.review": "Approve. 0 Blockers, 0 Should Fix findings, and 0 Nits.\n\nThe spelling correction affects only the help command documentation example. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The change affects documentation wording only. Reverting restores the previous wording, and there is no stored data or external effect to recover. The supplied text and link checks pass, and all required merge gates are complete."
+      },
+      "drafts_sha256": "f5aa88113fe459cc1049fc1e2ebee35614d13ba1c017b6c9fff421d6b23f3d54",
+      "response": "Created all eight requested GitHub drafts in /workspace/scratch/operations-notes-205/drafts.json. The read/command record is /workspace/scratch/operations-notes-205/activity.md. Supplied engineering checks were not rerun; repository files are unchanged.\n",
+      "activity_report": "# Activity record\n\n- Read `prompt.txt`, then `repo/AGENTS.md`, `repo/ARTIFACTS.json`, and `repo/RECORDS.json`.\n- Read guidance only under the supplied `guidance` directory: `shared/engineering-writing/SKILL.md`, its required `shared/unslop/SKILL.md`, `shared/global-guidance/ENGINEERING.md`, and `shared/verify-work/SKILL.md`.\n- Used `pwd`, `ls -la`, `rg --files`, and `cat` to locate and read the assignment, repository instructions, evidence, and guidance. Ancestor AGENTS.md probes found no additional instruction files.\n- Used Python to draft `drafts.json` as a JSON object with all eight requested keys. Preserved the supplied review approvals and zero-finding counts. Retained the missing documentation-owner approval as a separate merge gate.\n- Used Python to read back the JSON and check exact requested-key coverage, nonempty Markdown, review verdicts and counts, final Merge Danger sections, supplied-evidence attribution, merge holds, material evidence gaps, and punctuation. All checks passed. These were artifact checks, not application checks.\n- Compared SHA-256 hashes for all 31 repository files, including Git metadata, before and after drafting. They matched. Removed the temporary comparison snapshot.\n- Did not run, rerun, or independently validate any supplied engineering check. Did not modify repository files, commit, push, publish, or delegate.\n- Read back `activity.md` and `response.txt` and confirmed all three requested output files exist.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-205",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:55:39.992331+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "7d1927002cce9757d1e3f481c9477dfcf90453f0d86f014ca1c7db8f6a8a98a4",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "3350816dd1aaa02165359958443f77bff7eb3f5f2b4873251614b1c9b6c617a8",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-205/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "0856363434ac77932051c0488488e65e21dfedad"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 1034
+      }
+    },
+    {
+      "task": "operations-notes-211",
+      "variant": "clarified",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-211/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-211/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-211/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Correct `shipping_cents` so each weight tier includes its upper limit, as the published rate card requires.\n\n- A 1000 g quote falls from 700 to 450 cents.\n- A 2000 g quote falls from 1100 to 700 cents.\n- A 5000 g parcel is accepted at 1100 cents instead of refused.\n\nOther weights and surcharges are unchanged.\n\nThe supplied verification records show that contract-derived boundary tests failed against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The change alters quote amounts and acceptance at the tier boundaries. The inspected repository contains a pure integer-returning quote function with no payment, refund, balance update, storage, or provider call. Reverting restores the old quote results and 5000 g refusal, but cannot alter charges an external caller may already have made. No such caller or transaction was observed in this repository; external consumer behavior remains unverified.",
+        "parcel.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied review reports no findings. The boundary correction matches the published rate card: 1000 g quotes fall from 700 to 450 cents, 2000 g quotes fall from 1100 to 700 cents, and 5000 g is accepted at 1100 cents. Other weights and surcharges are unchanged.\n\nRecorded validation includes contract-derived boundary tests that fail against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. Quote amounts and boundary acceptance change, with impact in the inspected repository bounded to a pure integer-returning function. It has no payment, refund, balance update, storage, or provider call. Reverting restores the old quotes and 5000 g refusal. It cannot undo any charges an external caller may already have made; no such caller or transaction was observed, and external consumer behavior remains unverified.",
+        "refund.pr": "Persist a refund attempt identifier before sending a provider refund and reuse it after a lost response. Without that reuse, a duplicate request can refund the same order twice.\n\nThe supplied verification records show that concurrent retry and provider-success/lost-response schedules pass against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. The changed worker issues real refunds and updates account balances. Reverting cannot recall a provider refund already issued or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and the exercised compensation procedure. The supplied evidence covers the retry schedules and recovery procedure, but these financial effects still require compensation rather than a code revert.",
+        "refund.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied independent review reports no findings. Persisting the attempt identifier before the provider call and reusing it after a lost response addresses the duplicate-refund path.\n\nRecorded validation covers concurrent retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. This worker moves money through real provider refunds and updates account balances. Reverting cannot recall an issued refund or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and the exercised compensation procedure. The successful recorded checks support approval without making those effects reversible by a code revert.",
+        "owner.pr": "Correct one spelling error in the documentation example for the help command. Runtime behavior, parsing, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification records show that the exact text assertion and required link check pass. Repository policy also requires documentation-owner approval before merge; that approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The change affects documentation wording only. Reverting restores the previous wording, with no stored data or external effect to recover. Record the required documentation-owner approval before merging.",
+        "owner.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe complete supplied code-review ledger contains no findings. The change corrects one spelling error in the help command documentation example and leaves runtime behavior, parsing, stored data, configuration, and the public API unchanged.\n\nRecorded validation shows that the exact text assertion and required link check pass. Repository policy separately requires documentation-owner approval before merge, and that approval has not been recorded. The code-review verdict remains Approve.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The change affects documentation wording only, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval to clear the merge hold.",
+        "help.pr": "Correct one spelling error in the help command documentation example. Runtime behavior, parsing, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification records show that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The change affects documentation wording only. Reverting restores the previous wording, with no stored data or external effect to recover. The required checks and documentation-owner approval are complete.",
+        "help.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied review reports no findings. The spelling correction affects the help command documentation example, with no runtime, parser, stored data, configuration, or public API change.\n\nRecorded validation shows that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. Only documentation wording changes. Reverting restores the previous wording, with no stored data or external effect to recover. The supplied evidence bounds the impact and confirms completion of the required checks and owner approval."
+      },
+      "drafts_sha256": "e01f316a07d6c9714a5793905e09a2cf39770510110f7d6ff95bb71e53603f6d",
+      "response": "Created all eight requested GitHub drafts in /workspace/scratch/operations-notes-211/drafts.json. Preserved the supplied review verdicts, counts, verification gaps, and required merge hold. Activity record: /workspace/scratch/operations-notes-211/activity.md. Repository files remain unchanged; no application checks or publication were performed.\n",
+      "activity_report": "# Activity record\n\nRead the local prompt, repository `AGENTS.md`, `ARTIFACTS.json`, and `RECORDS.json`. Read writing guidance only from the supplied guidance directory: `shared/engineering-writing/SKILL.md` and its required `shared/unslop/SKILL.md`.\n\nCommands used `cat` to read those files, `rg --files` to discover repository instructions and supplied guidance, and file-existence checks for ancestor `AGENTS.md` files. No ancestor instruction files were found.\n\nUsed Python to write `drafts.json` and check JSON parsing, exact coverage of the eight requested keys, nonempty Markdown, the final Merge Danger sections, recorded review verdicts and counts, and the documentation-owner merge holds. Compared repository file hashes before and after output generation; they were unchanged. Wrote this activity record and a concise completion response outside the repository.\n\nAll application verification described in the drafts comes from the supplied records. No application checks were run. Repository files were not modified, and no commit, push, publication, or delegation occurred.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-211",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:57:52.534133+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "5a5ae7fb35cc39ec9be36361c1255d9fbe7c63faf4105083beeb7dd3a27d9933",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "2ab956f0ff0f584fec161f82df09054338dcfe1483eed69580bdc92f04c12b0e",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-211/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 978
+      }
+    },
+    {
+      "task": "operations-notes-212",
+      "variant": "clarified",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-212/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-212/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-212/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Corrects `shipping_cents` so each weight tier includes its upper limit, as the published rate card requires. A 1000 g quote falls from 700 to 450 cents, a 2000 g quote falls from 1100 to 700 cents, and 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nThe supplied verification record reports that contract-derived boundary tests fail with the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The change affects boundary quotes and acceptance at 5000 g. The inspected repository bounds the change to a pure integer-returning quote function, with no payment, refund, balance update, storage, or provider call. Reverting restores the old quotes and 5000 g refusal. External consumer behavior remains unverified, and reverting cannot alter charges an external caller may already have made. No such caller or transaction was observed in this repository.",
+        "parcel.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied review records no findings. The change makes weight tiers include their upper limits to match the rate card. Quotes change from 700 to 450 cents at 1000 g and from 1100 to 700 cents at 2000 g. A 5000 g parcel now receives an 1100-cent quote instead of being refused. Other weights and surcharges are unchanged.\n\nSupplied validation shows that contract-derived boundary tests fail against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after, and all repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. Boundary quote values and 5000 g acceptance change. The inspected repository contains a pure integer-returning function and no payment, refund, balance update, storage, or provider call. Reverting restores the previous quote results and 5000 g refusal. It cannot alter charges an external caller may already have made. No such caller or transaction was observed here, and external consumer behavior remains unverified.",
+        "refund.pr": "Persists a refund attempt identifier before sending a provider refund and reuses it after a lost response. This prevents a retry from refunding the same order twice. The changed worker issues real refunds and updates account balances.\n\nThe supplied verification record reports passing concurrent retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. This worker moves money and changes account balances. Reverting cannot recall an issued provider refund or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and use the compensation procedure exercised in the supplied integration environment. The supplied evidence records completed review and merge gates; the High rating reflects the consequences and recovery requirements of real refunds.",
+        "refund.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied review records no findings. Persisting the refund attempt identifier before the provider call and reusing it after a lost response addresses the duplicate-refund path in a worker that issues real refunds and updates account balances.\n\nSupplied validation covers concurrent retries and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. The affected worker issues real refunds and mutates balances, so a failure can have financial effects that a code revert cannot undo. Reverting cannot recall a provider refund already issued or restore its balance entry. Reconciliation must locate the provider transaction and use the exercised compensation procedure. Completed validation and merge gates do not remove these recovery requirements.",
+        "owner.pr": "Corrects one spelling error in the documentation example for the help command. There is no runtime, parser, stored data, configuration, or public API change.\n\nThe supplied verification record reports that the exact text assertion and required link check pass. Repository policy also requires documentation-owner approval before merge, and that approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The change affects documentation wording only, and reverting restores the previous wording. There is no stored data or external effect to recover. Obtain and record the required documentation-owner approval before merging.",
+        "owner.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied code-review ledger is complete and records no findings. The change corrects one spelling error in the help command documentation example, with no runtime, parser, stored data, configuration, or public API change.\n\nThe supplied verification record reports passing exact text and required link checks. The separate repository requirement for documentation-owner approval remains unmet. That approval has not been recorded, so the code-review verdict does not clear the merge gate.\n\n## Merge Danger\n\nRisk: Low. Do not merge. Only documentation wording changes; reverting restores the previous wording, with no stored data or external effect to recover. Obtain and record documentation-owner approval to clear the remaining required merge gate.",
+        "help.pr": "Corrects one spelling error in the help command documentation example. There is no runtime, parser, stored data, configuration, or public API change.\n\nThe supplied verification record reports passing exact text and required link checks. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The change affects documentation wording only. Reverting restores the previous wording, with no stored data or external effect to recover.",
+        "help.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied review records no findings. The change corrects one spelling error in the help command documentation example. Runtime behavior, parsing, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification record reports passing exact text and required link checks. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. Only documentation wording changes. Reverting restores the previous wording; there is no stored data or external effect to recover."
+      },
+      "drafts_sha256": "f8f3a7028412763c53fe609aa8ac1c1db0b42dd1d5862b806b1c55ec984b7563",
+      "response": "Drafted all 8 requested GitHub artifacts in `/workspace/scratch/operations-notes-212/drafts.json` and validated the JSON structure and requested keys. Preserved the supplied review verdicts, counts, verification gaps, and documentation-owner merge hold.\n\nRead/command record: `/workspace/scratch/operations-notes-212/activity.md`.\n\nNo repository changes or publication occurred.\n",
+      "activity_report": "# Activity record\n\n- Read `prompt.txt` and followed its local drafting scope.\n- Used `pwd` and `rg --files` to locate the repository instructions, requested artifacts, records, and supplied guidance. Checked ancestor `AGENTS.md` locations; none were present.\n- Read `repo/AGENTS.md`, `repo/ARTIFACTS.json`, and `repo/RECORDS.json`.\n- Read only the supplied `guidance/shared/engineering-writing/SKILL.md` and its required `guidance/shared/unslop/SKILL.md` for writing guidance.\n- Used Python to write `drafts.json` and this activity record outside the repository, then parsed the JSON and checked the requested keys, review verdicts/counts, final Merge Danger sections, ratings, and merge holds.\n- Drafts attribute verification to the supplied records. No application, tests, integration procedures, or merge gates were run. No repository files were modified; no commit, push, publication, or delegation occurred.\n- Used Python to write the concise completion response to `response.txt`.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-212",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:57:52.580399+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "5a5ae7fb35cc39ec9be36361c1255d9fbe7c63faf4105083beeb7dd3a27d9933",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "afc176b0b81812f5122c3388340268fba1348963185cb91796f022518fb8d3e9",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-212/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 998
+      }
+    },
+    {
+      "task": "operations-notes-213",
+      "variant": "clarified",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-213/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-213/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-213/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Correct `shipping_cents` so each weight tier includes its upper limit, as the published rate card requires. The 1000 g quote changes from 700 to 450 cents, the 2000 g quote from 1100 to 700 cents, and 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nThe inspected repository contains a pure integer-returning quote function, with no payment, refund, balance update, storage, or provider call. Supplied verification records show that contract-derived boundary tests fail with the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after, and all repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. This changes quotes at three weight boundaries, with impact bounded in the inspected repository to returned integers. External consumer behavior remains unverified. Reverting restores the old quotes and the 5000 g refusal, but cannot alter charges an external caller may already have made. No such caller or transaction was observed in this repository.",
+        "parcel.review": "Approve. 0 blockers, 0 should-fix findings, 0 nits.\n\nThe supplied review records no findings. The change aligns the tier limits with the published rate card. Quotes change from 700 to 450 cents at 1000 g and from 1100 to 700 cents at 2000 g; 5000 g becomes accepted at 1100 cents. Other weights and surcharges are unchanged.\n\nSupplied verification records show that contract-derived boundary tests fail against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates have passed. The inspected code only returns an integer and contains no payment, refund, balance update, storage, or provider call. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The changed quote results are meaningful, but the inspected runtime path has no stored or external effects. External consumer behavior remains unverified. Reverting restores the previous quotes and 5000 g refusal. It cannot change charges an external caller may already have made, although no such caller or transaction was observed in this repository.",
+        "refund.pr": "Persist a refund attempt identifier before sending a provider refund, then reuse it after a lost response. This prevents a retry from refunding the same order twice. The changed worker issues real refunds and updates account balances.\n\nSupplied verification records show that concurrent retries and provider-success/lost-response schedules produce one refund and one balance update per order against a controlled provider substitute. The current-build provider reconciliation and compensation procedure was exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. The worker moves real money and changes account balances, so a failure can leave an issued refund or balance entry that a code revert cannot undo. Recovery requires locating the provider transaction through reconciliation and using the compensation procedure exercised in the supplied integration environment. The recorded checks and completed merge gates support the change, but do not make these effects reversible.",
+        "refund.review": "Approve. 0 blockers, 0 should-fix findings, 0 nits.\n\nThe supplied review records no findings. Persisting the refund attempt identifier before the provider call and reusing it after a lost response addresses the duplicate-refund path. The changed worker issues real refunds and updates account balances.\n\nSupplied verification records show one refund and one balance update per order for concurrent retries and provider-success/lost-response schedules against a controlled provider substitute. The current-build provider reconciliation and compensation procedure was exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. Refunds and balance mutations can have lasting financial consequences even when the retry checks pass. Reverting the worker cannot recall a provider refund already issued or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and the compensation procedure exercised in the supplied integration environment. The supplied record contains no unmet merge gate.",
+        "owner.pr": "Correct one spelling error in the documentation example for the help command. There is no runtime, parser, stored data, configuration, or public API change.\n\nSupplied verification records show that the exact text assertion and required link check pass. Required documentation-owner approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. Only documentation wording changes, and reverting restores the previous wording without stored data or external effects to recover. Repository policy requires documentation-owner approval before merge; record that approval to clear the hold.",
+        "owner.review": "Approve. 0 blockers, 0 should-fix findings, 0 nits.\n\nThe supplied code-review ledger is complete and records no findings. The change corrects one spelling error in the help command documentation example, with no runtime, parser, stored data, configuration, or public API change. Supplied verification records show that the exact text assertion and required link check pass.\n\nRequired documentation-owner approval has not been recorded. The code-review verdict remains Approve, but this separate merge gate is unmet.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The effect is limited to documentation wording, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval before merging.",
+        "help.pr": "Correct one spelling error in the help command documentation example. There is no runtime, parser, stored data, configuration, or public API change.\n\nSupplied verification records show that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The change only affects documentation wording. Reverting restores the previous wording, with no stored data or external effect to recover.",
+        "help.review": "Approve. 0 blockers, 0 should-fix findings, 0 nits.\n\nThe supplied review records no findings. The change corrects one spelling error in the help command documentation example, with no runtime, parser, stored data, configuration, or public API change. Supplied verification records show that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. Only documentation wording changes, and reverting restores the previous wording. There is no stored data or external effect to recover."
+      },
+      "drafts_sha256": "05e5b4ed586ac5d4570b0629334bb746eb81188a6d4788633db60ba7ddf55540",
+      "response": "Created all eight requested drafts in /workspace/scratch/operations-notes-213/drafts.json. Read/command record: /workspace/scratch/operations-notes-213/activity.md. Preserved supplied verdicts, counts, verification gaps, recovery limits, and the required documentation-owner approval hold. No repository changes or publication.\n",
+      "activity_report": "# Activity record\n\n- Read `/workspace/scratch/operations-notes-213/prompt.txt` with `cat` after using `pwd` and `rg --files` to locate instruction files.\n- Read `repo/AGENTS.md`, `repo/ARTIFACTS.json`, `repo/RECORDS.json`, and `guidance/shared/engineering-writing/SKILL.md` with `cat`.\n- Listed the assignment's repository and guidance files with `rg --files`; read the required `guidance/shared/unslop/SKILL.md` with `cat`.\n- Used Python to write `drafts.json` with all eight requested Markdown artifacts, and checked exact requested keys, nonempty string values, final Merge Danger sections, supplied review verdicts and counts, and the documentation-owner merge hold.\n- Wrote this activity record and `response.txt` outside the repository. Repository source files were not modified. No application checks were run; every check result in the drafts is attributed to the supplied records. No commits, pushes, publication, or delegation occurred.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-213",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:57:52.626310+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "5a5ae7fb35cc39ec9be36361c1255d9fbe7c63faf4105083beeb7dd3a27d9933",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "d9f117797fd5c1318bdc22cd0a98c9cdfc4a0d457dd7ed5cecdb6e64f364639c",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-213/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 993
+      }
+    },
+    {
+      "task": "operations-notes-214",
+      "variant": "clarified",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-214/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-214/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-214/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Correct `shipping_cents` so every weight tier includes its upper limit, as the published rate card requires. Quotes for 1000 g fall from 700 to 450 cents, and quotes for 2000 g fall from 1100 to 700 cents. A 5000 g parcel is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nThe supplied verification records show that contract-derived boundary tests fail against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The change affects quoted prices and acceptance at tier limits. The inspected repository bounds the direct effect to a pure integer-returning quote function, with no payment, refund, balance update, storage, or provider call. Reverting restores the old quotes and 5000 g refusal. External consumer behavior remains unverified, and reverting cannot alter charges an external caller may already have made. No such caller or transaction was observed in this repository.",
+        "parcel.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied review records contain no findings. The change aligns tier limits with the published rate card: 1000 g quotes fall from 700 to 450 cents, 2000 g quotes fall from 1100 to 700 cents, and 5000 g parcels become accepted at 1100 cents. Other weights and surcharges are unchanged.\n\nSupplied validation shows that contract-derived boundary tests fail against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after, and all repository-required merge gates have passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. Callers receive changed quotes and acceptance results at tier limits. The inspected function only returns an integer and has no payment, refund, balance update, storage, or provider call. Reverting restores the previous quotes and 5000 g refusal. External consumer behavior remains unverified. A revert cannot alter any charges an external caller may already have made, though no such caller or transaction was observed in this repository.",
+        "refund.pr": "Persist a refund attempt identifier before sending a provider refund, then reuse it after a lost response. This prevents retries from refunding the same order twice. The worker issues real refunds and updates account balances.\n\nThe supplied verification records report passing concurrent-retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure was exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. The worker moves money and changes account balances, so duplicate or incorrect processing has financial consequences. Passing retry schedules and an exercised recovery procedure support the change, but do not make issued refunds reversible. Reverting the worker cannot recall a provider refund or restore its balance entry. Recovery requires locating the provider transaction through reconciliation and using the exercised compensation procedure.",
+        "refund.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied independent review contains no findings. Persisting the refund attempt identifier before the provider call and reusing it after a lost response addresses the duplicate-refund path in a worker that issues real refunds and updates balances.\n\nSupplied validation reports passing concurrent-retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure was exercised in the supplied integration environment. Independent review and all required merge gates have passed.\n\n## Merge Danger\n\nRisk: High. This worker issues real refunds and mutates account balances. A revert cannot recall a provider refund already issued or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and the exercised compensation procedure. The supplied validation and completed merge gates support approval; the financial effects still require that recovery path.",
+        "owner.pr": "Correct one spelling error in the documentation example for the help command. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification records report that the exact text assertion and required link check pass. Repository policy also requires documentation-owner approval before merge, and that approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The change only affects documentation wording, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval before merging.",
+        "owner.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied code-review ledger is complete and contains no findings. The change corrects one spelling error in the help command documentation example, with no runtime, parser, stored data, configuration, or public API change.\n\nSupplied validation reports that the exact text assertion and required link check pass. The separate required documentation-owner approval has not been recorded. The code-review verdict does not clear that merge gate.\n\n## Merge Danger\n\nRisk: Low. Do not merge. Only documentation wording changes, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval before merging.",
+        "help.pr": "Correct one spelling error in the help command documentation example. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\nThe supplied verification records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. Only documentation wording changes. Reverting restores the previous wording, and there is no stored data or external effect to recover.",
+        "help.review": "Approve. 0 Blockers, 0 Should-fix findings, 0 Nits.\n\nThe supplied review records contain no findings. The change corrects one spelling error in the help command documentation example, with no runtime, parser, stored data, configuration, or public API change.\n\nSupplied validation reports that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. Only documentation wording changes. Reverting restores the previous wording, and there is no stored data or external effect to recover."
+      },
+      "drafts_sha256": "434d8241eea36e9aed33f2c1a9cbaa0cfbb9cac8f81e6156a16a95c1e08ee9ce",
+      "response": "Created all eight requested Markdown drafts in drafts.json and the read/command record in activity.md. Validated the JSON keys and required review and Merge Danger structure. No repository files changed or supplied checks rerun.\n\n/workspace/scratch/operations-notes-214/drafts.json\n/workspace/scratch/operations-notes-214/activity.md\n/workspace/scratch/operations-notes-214/response.txt\n",
+      "activity_report": "# Activity record\n\nRead the assignment at `prompt.txt`, then `repo/AGENTS.md`, `repo/ARTIFACTS.json`, and `repo/RECORDS.json`. Applied only the local `guidance/shared/engineering-writing/SKILL.md` and its required `guidance/shared/unslop/SKILL.md`.\n\nCommands used `pwd` and `rg --files` to locate instructions, `cat` to read the assignment and source records, `rg --files` to locate the supplied guidance, and Python to write the drafts and completion record and validate the output structure. The initial instruction search listed paths elsewhere in `/workspace`; no guidance or records outside this assignment were read.\n\nDrafted all eight requested artifacts in `drafts.json`. Preserved the Approve verdicts, zero finding counts, supplied validation evidence, documentation-owner approval gap, and recovery limits. Verification statements are attributed to the supplied records. No application or supplied check was run. Repository files were not modified. Nothing was committed, pushed, published, or delegated.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-214",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:57:52.671399+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "5a5ae7fb35cc39ec9be36361c1255d9fbe7c63faf4105083beeb7dd3a27d9933",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "ee28abe5b290253f2e1183600381d74834eaf5c2bedcba434306cdd92c9b50da",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-214/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 987
+      }
+    },
+    {
+      "task": "operations-notes-215",
+      "variant": "clarified",
+      "prompt": "Use $engineering-writing at /workspace/scratch/operations-notes-215/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/operations-notes-215/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/operations-notes-215/guidance. Work in this one context; do not delegate.\n",
+      "drafts": {
+        "parcel.pr": "Correct `shipping_cents` so each weight tier includes its upper limit, as the published rate card requires. A 1000 g quote changes from 700 to 450 cents, a 2000 g quote changes from 1100 to 700 cents, and 5000 g is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged.\n\nThe inspected repository contains a pure function that returns an integer. It has no payment, refund, balance update, storage, or provider call.\n\n## Verification\n\nThe supplied records show that contract-derived boundary tests fail against the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after. All repository-required merge gates passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The change alters shipping quotes at the three tier limits, with impact bounded in the inspected repository to the returned quote. Reverting restores the old quotes and the 5000 g refusal. It cannot alter charges an external caller may already have made. No such caller or transaction was observed, and external consumer behavior remains unverified.",
+        "parcel.review": "Approve. 0 Blockers, 0 Should-fix findings, and 0 Nits.\n\nThe change makes the upper limits inclusive, as the published rate card requires. Quotes change from 700 to 450 cents at 1000 g and from 1100 to 700 cents at 2000 g. A 5000 g parcel is accepted at 1100 cents instead of refused. Other weights and surcharges are unchanged. The inspected code is a pure integer-returning quote function with no payment, refund, balance update, storage, or provider call.\n\nThe supplied validation records show that contract-derived boundary tests fail with the old comparison and pass after the change. Neighboring-weight and surcharge pins pass before and after, and all repository-required merge gates passed. No external consumer has been exercised.\n\n## Merge Danger\n\nRisk: Medium. The three changed boundary quotes are meaningful behavior changes, bounded locally to the function's return value. Reverting restores the prior quotes and the 5000 g refusal, but cannot change charges an external caller may already have made. No external caller or transaction was observed in this repository. External consumer behavior remains unverified.",
+        "refund.pr": "Persist a refund attempt identifier before sending a provider refund, then reuse it after a lost response. This prevents retries from refunding the same order twice. The changed worker issues real refunds and updates account balances.\n\n## Verification\n\nThe supplied records report passing concurrent-retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. The current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates passed.\n\n## Merge Danger\n\nRisk: High. This worker moves money and updates account balances. Reverting cannot recall an issued provider refund or restore its balance entry. Recovery requires reconciliation to locate the provider transaction and the compensation procedure exercised in the supplied integration environment. The recorded checks and completed gates support approval, but the financial effects still require that recovery procedure.",
+        "refund.review": "Approve. 0 Blockers, 0 Should-fix findings, and 0 Nits.\n\nPersisting the attempt identifier before the provider request and reusing it after a lost response prevents a retry from refunding the same order twice. The worker issues real refunds and updates account balances.\n\nThe supplied records show passing concurrent-retry and provider-success/lost-response schedules against a controlled provider substitute, with one refund and one balance update per order. They also record that the current-build provider reconciliation and compensation procedure were exercised in the supplied integration environment. Independent review and all required merge gates passed.\n\n## Merge Danger\n\nRisk: High. A failure in this worker can affect issued refunds and account balances. Reverting cannot recall a provider refund or restore its balance entry. Recovery requires locating the provider transaction through reconciliation and using the exercised compensation procedure. The required gates are complete; the high rating reflects the financial consequences and recovery requirements.",
+        "owner.pr": "Correct one spelling error in the documentation example for the help command. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\n## Verification\n\nThe supplied records report that the exact text assertion and required link check pass. Repository policy also requires documentation-owner approval before merge, and that approval has not been recorded.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The change only corrects documentation wording, and reverting restores the previous wording. There is no stored data or external effect to recover. Record the required documentation-owner approval to clear the merge hold.",
+        "owner.review": "Approve. 0 Blockers, 0 Should-fix findings, and 0 Nits. The supplied code-review ledger is complete. Required documentation-owner approval remains unrecorded, so the merge gate is still unmet.\n\nThe change corrects one spelling error in the documentation example for the help command. It changes no runtime behavior, parser behavior, stored data, configuration, or public API. The supplied records report that the exact text assertion and required link check pass.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The consequences are limited to documentation wording, and reverting restores the previous wording without data or external effects to recover. Record documentation-owner approval, as repository policy requires, before merging. This outstanding gate does not change the supplied Approve verdict or add a review finding.",
+        "help.pr": "Correct one spelling error in the help command documentation example. Runtime behavior, the parser, stored data, configuration, and the public API are unchanged.\n\n## Verification\n\nThe supplied records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The change only corrects documentation wording. Reverting restores the previous wording, and there is no stored data or external effect to recover. The recorded text and link checks bound the impact, and all required merge gates are complete.",
+        "help.review": "Approve. 0 Blockers, 0 Should-fix findings, and 0 Nits.\n\nThe change corrects one spelling error in the help command documentation example. It changes no runtime behavior, parser behavior, stored data, configuration, or public API. The supplied records report that the exact text assertion and required link check pass. All required merge gates, including documentation-owner approval, are complete.\n\n## Merge Danger\n\nRisk: Low. The consequences are limited to documentation wording, and reverting restores the previous wording. There is no stored data or external effect to recover. The recorded text and link checks bound the impact, and all required merge gates are complete."
+      },
+      "drafts_sha256": "9e257831c39104d29d381cea28da49f7cb767f06a00b5ae4e6c4bffbec0cce7e",
+      "response": "Completed all eight requested drafts in /workspace/scratch/operations-notes-215/drafts.json. Read/command record: /workspace/scratch/operations-notes-215/activity.md. Drafts preserve the supplied reviews and verification gaps; no repository files were changed or artifacts published.\n",
+      "activity_report": "# Activity record\n\n- Read the assignment in `prompt.txt` and repository instructions in `repo/AGENTS.md`.\n- Used `rg --files` to locate instruction and assignment files, then to list files in this assignment's repository and supplied guidance directory.\n- Read only the supplied `engineering-writing/SKILL.md` and its required `unslop/SKILL.md` for writing guidance.\n- Read `repo/ARTIFACTS.json` and `repo/RECORDS.json`. Drafted all eight requested artifacts from those records.\n- Used Python to write `drafts.json`, then checked JSON parsing, exact artifact-key coverage, review verdict/count preservation, and final Merge Danger sections. These were draft checks only. No application or supplied verification checks were run.\n- Repository files remained read-only. No commit, push, publication, or delegation occurred.\n",
+      "preparation_receipt": {
+        "version": 1,
+        "case": "merge-danger-boundaries",
+        "task_dir": "/workspace/scratch/operations-notes-215",
+        "repositories": [
+          "."
+        ],
+        "started_utc": "2026-10-18T04:57:52.715882+00:00",
+        "fixture_sha256": "1628870e43648e2c46c8207a4cfec12ad8b285d7c9d62544a0affa3e681ec27f",
+        "initial_state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "guidance": {
+          "commit": "d3920e52045fac8b359abc85094e61be6b019605",
+          "snapshot_sha256": "5a5ae7fb35cc39ec9be36361c1255d9fbe7c63faf4105083beeb7dd3a27d9933",
+          "mode": "explicit-skill",
+          "entry": "engineering-writing"
+        },
+        "prompt_sha256": "773cc8313683a507057311ecea89f111ff572f627ad8d40fb648af44a1e89650",
+        "host": {
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+          "python": "3.12.14"
+        },
+        "requested": {
+          "harness": "manual",
+          "model": null,
+          "effort": null,
+          "sandbox": "workspace-write",
+          "delegation": "instructed_single_context"
+        },
+        "limits": {
+          "wall_seconds": 300,
+          "tokens": null,
+          "tool_calls": null
+        },
+        "execution": {
+          "status": "prepared"
+        }
+      },
+      "source_grade": {
+        "case": "merge-danger-boundaries",
+        "checks": [
+          {
+            "claim": "Read-only task left source and heads unchanged",
+            "status": "passed"
+          },
+          {
+            "command": [
+              "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-v"
+            ],
+            "cwd": "/workspace/scratch/operations-notes-215/repo",
+            "output": "grade-suite-0.txt",
+            "exit_code": 5,
+            "status": "not_applicable"
+          }
+        ],
+        "manual_review": [
+          "Read ../drafts.json and assess quote versus refund consequences, recovery limits, supplied approvals, owner gates, and the clean control against the raw records. Assess clarity manually; labels alone do not establish correctness."
+        ],
+        "execution_status": "prepared",
+        "environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+        },
+        "grader_sha256": "d4436ed898ebef311e420afbe18c8af955b250f7fb991a178211b5b60351eb77",
+        "state": {
+          "files": {
+            "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+            "ARTIFACTS.json": "3a29bb2af19620f2fe891d59c14078f09c4603272e8abd4adb74d3068ab8faa5",
+            "RECORDS.json": "5a2b3f083866e783194052d520ec090325541c79cdce223463917d37a242be75"
+          },
+          "heads": {
+            ".": "e50689afb4cd4c1162bcfe23d145aa0198f4c045"
+          }
+        },
+        "status": "manual_required"
+      },
+      "observed": {
+        "ratings": {
+          "parcel.pr": "Medium",
+          "parcel.review": "Medium",
+          "refund.pr": "High",
+          "refund.review": "High",
+          "owner.pr": "Low",
+          "owner.review": "Low",
+          "help.pr": "Low",
+          "help.review": "Low"
+        },
+        "holds": [
+          "owner.pr",
+          "owner.review"
+        ],
+        "words": 1047
+      }
+    }
+  ]
+}

@@ -7,7 +7,7 @@ description: Use when drafting or revising GitHub PR descriptions, full review s
 
 Use `unslop` if it is not already in context; reuse it without rereading. It owns the language rules.
 
-This skill controls presentation. The calling workflow owns the facts, findings, severity, evidence, and verdict. Preserve its classifications and required evidence fields. Never trade technical accuracy or material uncertainty for brevity. Drafting an artifact does not authorize publishing it.
+This skill controls presentation and derives the Merge Danger risk rating from the calling workflow's evidence. The calling workflow owns the facts, findings, finding severity, evidence, verdict, and required merge gates. Preserve its classifications and required evidence fields. Never trade technical accuracy or material uncertainty for brevity. Drafting an artifact does not authorize publishing it.
 
 ## PR descriptions
 
@@ -51,7 +51,7 @@ Base the rating on the workflow's evidence about plausible failure consequences,
 | --- | --- |
 | Low | Limited consequences and straightforward recovery, with evidence bounding the impact. |
 | Medium | Meaningful behavior changes with bounded impact and a practical recovery path. |
-| High | Material danger to stored data, security, money, shared consumers, or effects that are difficult to reverse or recover. |
+| High | Material danger to stored data, security, money movement (payments, refunds, or balance mutations), shared consumers, or effects that are difficult to reverse or recover. |
 
 If missing impact or recovery evidence prevents a supported rating, write `Risk: Unassessed` and name the missing evidence. Unknown does not mean Low. Do not invent facts to complete the rubric.
 
