@@ -1,0 +1,969 @@
+[
+  {
+    "task": "release-notes-101",
+    "variant": "baseline",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1243,
+    "artifacts": {
+      "help.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures stay unchanged.",
+        "footer": "This changes displayed help text only. Reverting restores the previous wording, with no stored data or external effect to recover."
+      },
+      "help.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Only the displayed help wording changes. Reverting restores the prior text, and there is no stored data or external effect to recover."
+      },
+      "preferences.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Add a dashboard default-sort preference for Birch users. Two existing views read the stored preference, while other tenants keep the current default. This introduces no shared wire format, authorization, payment, or migration changes.",
+        "footer": "A mistaken setting changes the order of dashboard rows for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "preferences.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "The preference affects dashboard row ordering in two existing views for Birch users. The tenant flag disables the new reader. The tested rollback restores the prior setting without losing existing preferences."
+      },
+      "retention.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of rows.",
+        "footer": "This job deletes stored audit records across all tenants. Reverting the code stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "retention.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Merging enables intentional deletion of millions of expired audit records across all tenants. A code revert stops subsequent purges but does not restore deleted rows. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "approvals.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Keep the selected month in the payment approval screen. The current change still allows a payment approval to be stored against the wrong month.",
+        "footer": "Users can submit a payment approval against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised. The failed-fetch path also leaves the screen loading indefinitely."
+      },
+      "approvals.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit.",
+        "footer": "An approval can persist against the wrong month, and a failed fetch can leave the screen loading indefinitely. Reverting the UI prevents subsequent use of the payment bug but cannot undo a submitted approval. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "maintenance.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Replace the scheduled record-maintenance entry point. The supplied record names files but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order. The resulting runtime and stored-state behavior remain unverified.",
+        "footer": "The affected state and provider effects of running the replacement job in its deployed configuration are unknown. Whether a code revert can recover that state is also unknown. The required assessment must establish impact and recovery before the job can be considered ready."
+      },
+      "maintenance.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.",
+        "footer": "The reviewer cannot establish what state the replacement job affects or whether a code revert can recover it. Recovery requirements remain unknown until the required impact and recovery assessment is supplied."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`. The supplied current-head reproduction loads March rows, switches to April, and approves a March row; because the old rows remain actionable, the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The passing suite does not resolve this Blocker. The supplied current-head reproduction loads March rows, switches to April, and approves a March row; the API persists its amount against April. That month-switch path has no regression test yet. Bind submission to the row month or clear stale rows, then add a test that fails for the reproduced sequence. The finding remains open; no fix or verification of a fix is recorded.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-104",
+    "variant": "baseline",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1235,
+    "artifacts": {
+      "help.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Corrects `recieve` to `receive` in the CLI help text. The production-file diff changes only that string. Parsing, runtime behavior, persistence, configuration, and public command signatures are unchanged.",
+        "footer": "This changes displayed help text. Reverting restores the previous wording; there is no stored data or external effect to recover."
+      },
+      "help.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits/follow-ups.",
+        "footer": "Only the displayed help text changes. Reverting restores the previous wording, with no stored data or external effect to recover."
+      },
+      "preferences.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Adds a default-sort preference for the Birch dashboard. Two existing views read the stored preference, while other tenants keep their current default. There are no shared wire-format, authorization, payment, or migration changes.",
+        "footer": "A mistaken setting changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "preferences.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits/follow-ups.",
+        "footer": "A mistaken preference changes row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "retention.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purges expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of rows.",
+        "footer": "This job intentionally deletes stored audit records across all tenants. Reverting the code stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "retention.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits/follow-ups.",
+        "footer": "The purge intentionally deletes millions of audit records across all tenants. A code revert stops future purges but does not restore deleted rows. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "approvals.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Keeps the selected month in the payment approval screen. The current change also leaves a demonstrated payment-approval defect open.",
+        "footer": "The change can persist a payment approval against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo a submitted approval. Operators would need to identify affected records and use the correction process, which has not been exercised."
+      },
+      "approvals.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.",
+        "footer": "An approval can persist against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo a submitted payment approval. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "maintenance.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Replaces the scheduled record-maintenance entry point. The supplied change record lists file names but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.",
+        "footer": "The replacement job's affected state and recoverability remain unverified. Whether reverting the code can recover that state is unknown. The required impact and recovery assessment must establish those consequences before the readiness gate can close."
+      },
+      "maintenance.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits/follow-ups.",
+        "footer": "The job's effects on state and its recovery requirements remain unverified. Whether a code revert can recover the affected state is unknown. The compile result does not establish readiness; the required impact and recovery assessment remains outstanding."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`: The supplied current-head reproduction loads March rows, switches to April while those rows remain actionable, and approves a March row; the API persists its amount against April. Bind submission to the row's month or clear stale rows, and add a failing month-switch regression test.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The Blocker remains open. The supplied current-head reproduction loads March rows, selects April, and approves a March row; the API persists its amount against April. Existing tests and CI pass, but the month-switch path has no regression test, so those results do not disprove the defect. Bind submission to the row's month or clear stale rows, then add a regression test that fails on the current behavior and passes with the correction. No fix or successful verification of a fix is recorded.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-107",
+    "variant": "baseline",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1224,
+    "artifacts": {
+      "help.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures are unchanged.",
+        "footer": "Merging changes the displayed help text. Reverting restores the previous spelling. There is no stored data or external effect to recover."
+      },
+      "help.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix, 0 Nits.",
+        "footer": "The change affects displayed help text only. Reverting restores the previous spelling, with no stored data or external effect to recover."
+      },
+      "preferences.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Add a dashboard default-sort preference for Birch users. Two existing views read the stored preference; other tenants keep their current default. There are no shared wire format, authorization, payment, or migration changes.",
+        "footer": "A mistaken setting changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "preferences.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix, 0 Nits.",
+        "footer": "An incorrect preference changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the previous setting without losing existing preferences."
+      },
+      "retention.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of rows.",
+        "footer": "Merging enables deletion of audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "retention.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix, 0 Nits.",
+        "footer": "The job intentionally deletes millions of audit records. Reverting stops subsequent purges but cannot restore deleted rows. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "approvals.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Keep the selected month in the payment approval screen. The current change leaves prior-month rows actionable after a month switch, so it still needs correction before merge.",
+        "footer": "Users can submit a payment approval against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "approvals.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix, 1 Nit/follow-up.",
+        "footer": "Merging permits payment approvals to persist against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process; that process has not been exercised."
+      },
+      "maintenance.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Replace the scheduled record-maintenance entry point. The supplied record identifies changed files but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.",
+        "footer": "The effects of running the replacement job in its deployed configuration remain unverified. The evidence does not establish affected state, whether a code revert can recover it, or what recovery would require. The required impact and recovery assessment remains an open readiness gate."
+      },
+      "maintenance.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix, 0 Nits.",
+        "footer": "The replacement job's effects on deployed state are unknown. Whether reverting the code can recover that state, and what restoration would require, remain unverified. The required impact and recovery assessment is still missing."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`: Switching the selected month leaves old rows actionable. The supplied current-head reproduction loads March, selects April, and approves a March row, and the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The passing suite does not resolve this Blocker. The supplied direct reproduction on the current head loads March rows, switches to April, and approves a March row; the API persists its amount against April. The month-switch path has no regression test yet. Bind submission to the row month or clear stale rows, then add a test that fails for this sequence before the correction and passes afterward. The finding remains open.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-110",
+    "variant": "baseline",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1306,
+    "artifacts": {
+      "help.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Corrects `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures stay the same.",
+        "footer": "This changes displayed help text only. Reverting restores the previous text, with no stored data or external effect to recover."
+      },
+      "help.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.",
+        "footer": "Only the displayed help text changes. Reverting restores the previous text, with no stored data or external effect to recover."
+      },
+      "preferences.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Adds a dashboard default-sort preference for the Birch tenant. Two existing views read the saved preference; other tenants retain the current default. The change does not alter shared wire formats, authorization, payments, or migrations.",
+        "footer": "A mistaken setting changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "preferences.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.",
+        "footer": "A mistaken preference changes row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "retention.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purges expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize this deletion, which intentionally removes millions of rows.",
+        "footer": "This job deletes stored audit records across all tenants. Reverting the code stops future purges but cannot recreate deleted rows. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "retention.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.",
+        "footer": "Deleted audit rows do not return when the code is reverted; a revert only stops future purges. An erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "approvals.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Keeps the selected month in the payment approval screen. Current-head reproduction exposes an open defect in that flow: load March rows, switch to April, and approve a March row, and the API persists its amount against April.",
+        "footer": "The demonstrated month-switch path can persist a payment approval against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo a submitted approval. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "approvals.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up finding.",
+        "footer": "Approving an old row after switching months persists the approval against the newly selected month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted payment approvals. Operators must identify affected records and use the correction process; that process has not been exercised."
+      },
+      "maintenance.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Replaces the scheduled record-maintenance entry point. The supplied change record lists files but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.",
+        "footer": "The deployed job's affected state and recoverability remain unverified. Whether a code revert can recover that state is unknown. The missing impact and recovery assessment must establish the job's effects and the required recovery procedure."
+      },
+      "maintenance.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix finding, 0 Nit/follow-up findings.",
+        "footer": "The job's effects on deployed state and the recovery requirements are unknown. Whether reverting the code can recover affected state has not been established; the required impact and recovery assessment is still missing."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`: The current-head reproduction loads March rows, selects April, and approves a March row; because the old rows remain actionable, the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The passing suite does not cover the demonstrated failure. On the current head, loading March rows, switching to April, and approving a March row persists its amount against April. The Blocker at `admin/Approvals.tsx:84` remains open, and the month-switch path still has no regression test. Bind submission to the row month or clear stale rows, then add a test that fails on the current behavior and verifies the correction.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-113",
+    "variant": "baseline",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1310,
+    "artifacts": {
+      "help.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string, with no parser, runtime, persistence, configuration, or public command signature changes.",
+        "footer": "This changes the displayed help text. Reverting restores the previous wording. There is no stored data or external effect to recover."
+      },
+      "help.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Only the displayed help text changes. Reverting restores the previous wording, with no stored data or external effect to recover."
+      },
+      "preferences.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Add a dashboard default-sort preference for the Birch tenant so its users can save the row order used by two existing views. Other tenants retain the current default. The change does not alter shared wire formats, authorization, payments, or migrations.",
+        "footer": "A mistaken setting changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "preferences.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "A mistaken setting changes dashboard row order for Birch users. The tenant flag can disable the new reader. The tested rollback restores the prior setting without losing existing preferences."
+      },
+      "retention.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purge audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of rows.",
+        "footer": "Merging enables intentional deletion of audit records across all tenants. Reverting the code stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "retention.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "The job permanently deletes audit records from the live store. Reverting stops future purges but does not recover deleted rows. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "approvals.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Keep the selected month in the payment approval screen. The current change leaves a payment approval defect open when the user switches months.",
+        "footer": "Users can submit an approval against the wrong month. Reverting the UI prevents subsequent use of this bug but cannot undo a submitted approval. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "approvals.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.",
+        "footer": "The change permits payment approvals against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "maintenance.pr": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Replace the scheduled record-maintenance entry point. The supplied change record lists file names but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.",
+        "footer": "The replacement runs as a scheduled job, but the supplied evidence does not establish what state it affects in its deployed configuration. Whether a code revert can recover affected state is unknown. Recovery requirements remain unverified, and the readiness gate remains open until the required impact and recovery assessment is supplied."
+      },
+      "maintenance.review": {
+        "rating": null,
+        "hold": false,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.",
+        "footer": "The job's affected state and operational consequences remain unknown. Whether reverting the code can recover that state is also unknown. The required assessment must establish impact and recovery before the job can be considered ready."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`: The current-head reproduction loads March, selects April while March rows remain actionable, and approves a March row, which persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The Blocker remains open. The supplied current-head reproduction loads March rows, switches to April, and approves an old row; the API persists its amount against April. Existing tests and CI pass, but the month-switch path has no regression test yet. Bind submission to the row month or clear stale rows, then add a test that fails for this reproduction and verify the corrected behavior.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-102",
+    "variant": "candidate",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1475,
+    "artifacts": {
+      "help.pr": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Correct `recieve` to `receive` in the CLI help text. This fixes the displayed spelling without changing the parser, runtime behavior, persistence, configuration, or public command signatures.",
+        "footer": "Risk: Low. The change affects only help wording, with no stored data or external effects. Reverting restores the previous text; no data recovery is needed."
+      },
+      "help.review": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.",
+        "footer": "Risk: Low. Only the displayed spelling changes. Parser behavior, runtime behavior, persistence, configuration, and public command signatures are unchanged. Reverting restores the previous wording, with no stored data or external effects to recover."
+      },
+      "preferences.pr": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Add a dashboard default-sort preference for the Birch tenant so its users can save their preferred row order. Two existing views read the stored preference; other tenants keep their current default. There are no shared wire-format, authorization, payment, or migration changes.",
+        "footer": "Risk: Medium. A mistaken setting changes dashboard row order for Birch users in the two consuming views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "preferences.review": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.",
+        "footer": "Risk: Medium. The stored preference changes dashboard row order for Birch users, with impact bounded to the two consuming views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences. There are no shared wire-format, authorization, payment, or migration changes."
+      },
+      "retention.pr": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of stored rows.",
+        "footer": "Risk: High. This job intentionally deletes millions of audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime. The required gates have passed, and the supplied review approves the change."
+      },
+      "retention.review": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.",
+        "footer": "Risk: High. The authorized purge intentionally deletes millions of stored audit rows. Reverting stops future purges but does not recover deleted records. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime. Approval reflects the supplied authorization and recovery evidence; the deletion consequences remain substantial."
+      },
+      "approvals.pr": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Keep the selected month in the payment approval screen. The current change also leaves rows from the previous month actionable after a month switch, which can persist an approval against the wrong month.",
+        "footer": "Risk: High. Do not merge. The current change can persist payment approvals against the wrong month. Clear the Blocker by binding submission to the row month or clearing stale rows, and add a regression test that fails on the current month-switch path and passes with the correction. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "approvals.review": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up finding.",
+        "footer": "Risk: High. Do not merge. The reproduced Blocker affects persisted payment approvals. Bind submission to the row month or clear stale rows, and add a regression test that fails on the current month-switch path and passes with the correction before clearing the hold. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which remains unexercised."
+      },
+      "maintenance.pr": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Replace the scheduled record-maintenance entry point. The supplied record lists file names but does not establish why the replacement is needed or what state the deployed job affects.",
+        "footer": "Risk: Unassessed. Do not merge. Supply the required current impact and recovery assessment before clearing the readiness gate. The affected state, consumers, write and provider effects, and deployment requirements are unknown. Whether reverting code can recover the affected state, or whether restoration is needed, remains unverified. A successful compile does not supply this evidence."
+      },
+      "maintenance.review": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix finding, 0 Nit/follow-up findings.",
+        "footer": "Risk: Unassessed. Do not merge. Repository policy requires a current impact and recovery assessment before this job is ready. Supply the missing evidence about affected state and consumers, deployed behavior, and recovery to clear that gate. Whether a code revert restores the affected state or a separate restoration procedure is needed remains unknown."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`: The selected month changes while rows from the old month remain actionable; the supplied current-head reproduction loads March, selects April, and approves a March row, whose amount the API persists against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The passing suite does not cover the reproduced failure. The supplied current-head reproduction loads March rows, switches to April, and approves a March row; the API persists its amount against April. The month-switch path has no regression test yet, and the Blocker remains open. Bind submission to the row month or clear stale rows, then add a test that fails on the current behavior and passes with the correction. No fix has been demonstrated.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-105",
+    "variant": "candidate",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1331,
+    "artifacts": {
+      "help.pr": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; the parser, runtime behavior, persistence, configuration, and public command signatures are unchanged.",
+        "footer": "Risk: Low. The change affects help wording only, with no stored data or external effects. Reverting restores the previous text; no recovery work is needed."
+      },
+      "help.review": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Risk: Low. Only CLI help wording changes, with no runtime, stored-data, or external effects. Reverting restores the previous wording; no recovery work is needed."
+      },
+      "preferences.pr": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Add a dashboard default-sort preference for Birch users so their chosen order persists across reloads. Two existing views read the stored preference; other tenants retain the current default. There are no shared wire-format, authorization, payment, or migration changes.",
+        "footer": "Risk: Medium. An incorrect preference changes dashboard row order for Birch users in two views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "preferences.review": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Risk: Medium. Birch users can see dashboard rows in an unintended order. The tenant flag can disable the new reader, and the tested rollback restores the prior setting without preference loss. The supplied evidence bounds the change to this tenant and these views."
+      },
+      "retention.pr": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize this deletion, which intentionally removes millions of rows.",
+        "footer": "Risk: High. This job permanently deletes stored audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime. The authorized deletion and completed gates support readiness; they do not remove the recovery cost."
+      },
+      "retention.review": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Risk: High. The job intentionally deletes millions of stored audit records across all tenants. Reverting only stops future purges. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime. Approval reflects the authorized scope and verified recovery, while the deletion remains costly to reverse."
+      },
+      "approvals.pr": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Keep the selected month in the payment approval screen. The supplied current-head reproduction shows an unresolved payment defect: load March rows, select April, and approve an old row, and the API persists its amount against April. Bind submission to the row month or clear stale rows, then add a failing month-switch regression test.",
+        "footer": "Risk: High. Do not merge. Stale rows can submit payment approvals against the wrong month. Clear the Blocker and verify the month-switch regression before merging. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "approvals.review": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.",
+        "footer": "Risk: High. Do not merge. The demonstrated path writes a payment approval against the wrong month. Fix the Blocker and verify the month-switch regression before merging. A UI revert prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the unexercised correction process."
+      },
+      "maintenance.pr": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Replace the scheduled record-maintenance entry point. The supplied change record lists files but does not establish affected call paths, tenant configuration, write behavior, provider effects, or deployment order.",
+        "footer": "Risk: Unassessed. Do not merge. The evidence does not establish the job's affected behavior or state, provider effects, or recovery requirements. Whether reverting can recover affected state is unknown. Supply the required current impact and recovery assessment, including deployed configuration and deployment order, before considering the job ready."
+      },
+      "maintenance.review": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.",
+        "footer": "Risk: Unassessed. Do not merge. Missing impact and recovery evidence prevents a supported risk rating. The affected state, external effects, and recoverability remain unknown; a successful compile does not resolve those gaps. Complete the repository's required current impact and recovery assessment before considering the job ready."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`: The selected month changes while old rows remain actionable. The current-head reproduction loads March rows, selects April, and approves a March row; the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The passing suite does not cover the month-switch path. The current-head reproduction loads March rows, selects April, and approves a March row; the API persists its amount against April. The Blocker remains open. Bind submission to the row month or clear stale rows, and add a regression test that fails for this sequence before the fix and passes afterward. No fix or regression coverage has been supplied yet.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-108",
+    "variant": "candidate",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1318,
+    "artifacts": {
+      "help.pr": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parsing, runtime behavior, persistence, configuration, and public command signatures stay unchanged.",
+        "footer": "Risk: Low. The change affects only help wording, with no stored data or external effect to recover. Reverting restores the previous text."
+      },
+      "help.review": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Risk: Low. Only CLI help wording changes. Reverting restores the previous text, and there is no stored data or external effect to recover."
+      },
+      "preferences.pr": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Add a dashboard default-sort preference for the Birch tenant. Two existing views read the stored choice; other tenants keep the current default. The change introduces no shared wire format, authorization, payment, or migration changes.",
+        "footer": "Risk: Medium. A mistaken setting changes dashboard row order for Birch users in two views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "preferences.review": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Risk: Medium. An incorrect preference changes dashboard row order for Birch users. The tenant flag can disable the new reader, and the tested rollback restores the previous setting without losing existing preferences."
+      },
+      "retention.pr": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion of millions of rows.",
+        "footer": "Risk: High. The job intentionally deletes stored audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime. The required technical and policy gates have passed."
+      },
+      "retention.review": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Risk: High. The purge intentionally deletes millions of stored audit records. A code revert stops future purges but cannot restore deleted rows. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "approvals.pr": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Keep the selected month in the payment approval screen.",
+        "footer": "Risk: High. Do not merge. The current head can persist a payment approval against the wrong month. Fix the stale-row submission and verify the month-switch regression before clearing the hold. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "approvals.review": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.",
+        "footer": "Risk: High. Do not merge. Approvals can persist against the wrong month despite passing tests. Fix the Blocker and verify the month-switch regression before clearing the hold. Reverting prevents subsequent use of the bug but cannot undo submitted approvals; operators must identify affected records and use the unexercised correction process."
+      },
+      "maintenance.pr": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Replace the scheduled record-maintenance entry point. The supplied record names files but does not establish the affected call path, deployed tenant configuration, write behavior, provider effects, deployment order, or recovery procedure.",
+        "footer": "Risk: Unassessed. Do not merge. Supply the required impact and recovery assessment to clear the readiness gate. The missing call path, configuration, write behavior, provider effects, and deployment evidence prevent an assessment of affected state and consequences. Whether reverting code can recover that state is unknown; rollback and restore evidence are missing."
+      },
+      "maintenance.review": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.",
+        "footer": "Risk: Unassessed. Do not merge. The required current impact and recovery assessment is missing, so affected state and failure consequences remain unknown. Whether a code revert can recover that state is also unknown. Supply the assessment and recovery evidence to clear the readiness gate; the review verdict remains Comment."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`: Changing the selected month leaves the previous month's rows actionable. The supplied current-head reproduction loads March, selects April, and approves a March row; the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The passing suite does not cover the month-switch path. The supplied reproduction on the current head loads March rows, switches to April, and approves an old row; the API persists its amount against April. The Blocker remains open. Bind submission to the row month or clear stale rows, then add a regression test that fails for this sequence and verify the correction. No fix has been demonstrated.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-111",
+    "variant": "candidate",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1406,
+    "artifacts": {
+      "help.pr": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures are unchanged.",
+        "footer": "Risk: Low. The change affects help wording only, with no stored data or external effects to recover. Reverting restores the previous text."
+      },
+      "help.review": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, and 0 Nit/follow-up findings.",
+        "footer": "Risk: Low. Only help wording changes, and there is no stored data or external effect to recover. Reverting restores the previous text."
+      },
+      "preferences.pr": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Add a dashboard default-sort preference for Birch users so their saved choice controls row order in two existing views. Other tenants keep the current default. The change does not alter shared wire formats, authorization, payments, or migrations.",
+        "footer": "Risk: Medium. A mistaken stored setting changes dashboard row order for Birch users in two views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "preferences.review": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, and 0 Nit/follow-up findings.",
+        "footer": "Risk: Medium. An incorrect preference changes row order for Birch users in both readers. The tenant flag can disable the new reader, and the exercised rollback restores the prior setting without losing existing preferences."
+      },
+      "retention.pr": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purge audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize this deletion of millions of rows.",
+        "footer": "Risk: High. The job intentionally deletes stored audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime; the passed gates and restore rehearsal support readiness but do not remove those consequences."
+      },
+      "retention.review": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, and 0 Nit/follow-up findings.",
+        "footer": "Risk: High. This authorized job deletes millions of stored audit records. Reverting stops subsequent purges but cannot restore deleted rows. An erroneous deletion requires the exercised archive restoration procedure and operational downtime. The supplied evidence supports approval with these recovery costs understood."
+      },
+      "approvals.pr": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Keep the selected month in the payment approval screen. The current change leaves old-month rows actionable after a month switch, so it is not ready to merge.",
+        "footer": "Risk: High. Do not merge. The reproduced bug persists payment approvals against the wrong month. Bind submission to the row's month or clear stale rows, and add a regression test that fails on the current month-switch behavior and passes with the fix. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "approvals.review": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up finding.",
+        "footer": "Risk: High. Do not merge. Payment approvals can persist against the wrong month despite the green suite. Correct the row/month binding or clear stale rows, and add a regression test that fails on the current behavior and passes with the fix. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which remains unexercised."
+      },
+      "maintenance.pr": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Replace the scheduled record-maintenance entry point. The supplied change record names files but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.",
+        "footer": "Risk: Unassessed. Do not merge. The affected state and recoverability are unknown, so the compile result cannot support an impact rating. Supply the required assessment of the call path, deployed tenant configuration, writes, provider effects, deployment order, and rollback or restore behavior to clear the readiness gate. Whether reverting code recovers affected state remains unverified."
+      },
+      "maintenance.review": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix finding, and 0 Nit/follow-up findings.",
+        "footer": "Risk: Unassessed. Do not merge. Missing impact and recovery evidence prevents a supported rating. The required assessment must establish the job's deployed behavior, affected state, and recovery procedure before the readiness gate can clear. Whether a code revert restores affected state is unknown."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`: The current-head reproduction loads March rows, selects April, and approves a still-actionable March row; the API persists its amount against April because submission uses the selected month while old rows remain actionable. Bind submission to the row's month or clear stale rows, and add a regression test that fails on this behavior and passes with the fix.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The Blocker remains open. The supplied current-head reproduction loads March rows, selects April, and approves an old row; the API persists its amount against April. The passing suite has no month-switch regression test, so it does not disprove this result. Bind submission to the row's month or clear stale rows, then add a test that fails on the current behavior and passes with the fix. No fix or verification of a fix is recorded.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-114",
+    "variant": "candidate",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 1386,
+    "artifacts": {
+      "help.pr": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Correct `recieve` to `receive` in the CLI help text. The production diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures stay the same.",
+        "footer": "Risk: Low. The change affects help wording only, with no stored data or external effects to recover. Reverting restores the previous text."
+      },
+      "help.review": {
+        "rating": "Low",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Risk: Low. Only help wording changes; runtime behavior and stored data are unaffected. Reverting restores the previous text, with no external effects to recover."
+      },
+      "preferences.pr": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Add a stored dashboard default-sort preference for the Birch tenant so its users can retain their chosen row order. Two existing views read the preference. Other tenants retain the current default; shared wire formats, authorization, payments, and migrations do not change.",
+        "footer": "Risk: Medium. A mistaken preference changes dashboard row order for Birch users in two views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences. No material recovery gap is reported."
+      },
+      "preferences.review": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Risk: Medium. Birch users can see an unintended dashboard row order if the stored preference is wrong. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences."
+      },
+      "retention.pr": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize this deletion, which intentionally affects millions of rows.",
+        "footer": "Risk: High. This job intentionally deletes stored audit data across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime. The supplied evidence includes a complete restore and no open required gates."
+      },
+      "retention.review": {
+        "rating": "High",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.",
+        "footer": "Risk: High. The approved job intentionally deletes millions of stored audit records. A code revert stops later purges but cannot recover deleted rows. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime."
+      },
+      "approvals.pr": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Keep the selected month in the payment approval screen. The current change also allows rows from the previous month to remain actionable after a month switch, so a payment approval can persist against the wrong month.",
+        "footer": "Risk: High. Do not merge. The current UI can persist a payment approval against the wrong month. Fix the Blocker and add the failing month-switch regression test before clearing the hold. Reverting prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised."
+      },
+      "approvals.review": {
+        "rating": "High",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.",
+        "footer": "Risk: High. Do not merge. Wrong-month payment approvals affect persisted financial records despite the green suite. Fix the Blocker and add the failing month-switch test before clearing the hold. Reverting prevents later use of the bug but cannot undo submitted approvals; operators must identify affected records and use the unexercised correction process."
+      },
+      "maintenance.pr": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Replace the scheduled record-maintenance entry point. The supplied change record lists files but does not establish the affected call path, tenant configuration, write behavior, provider effects, deployment order, or rollback and restore behavior.",
+        "footer": "Risk: Unassessed. Do not merge. Supply the required current impact and recovery assessment before treating the job as ready. The affected runtime paths, tenants, writes, provider effects, deployment order, and recovery procedure remain unverified. Whether reverting code can recover the affected state is unknown."
+      },
+      "maintenance.review": {
+        "rating": "Unassessed",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.",
+        "footer": "Risk: Unassessed. Do not merge. The missing impact and recovery evidence prevents a supported risk rating and leaves the required readiness gate unmet. Supply the current assessment before clearing the hold. Whether a code revert can recover affected state remains unknown."
+      },
+      "approvals.inline": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "[Blocker] `admin/Approvals.tsx:84`: Load March rows, select April, and approve a March row; the old rows remain actionable, and the current-head reproduction shows the API persisting that row's amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test.",
+        "footer": ""
+      },
+      "approvals.reply": {
+        "rating": null,
+        "hold": false,
+        "footer_last": false,
+        "lead": "The Blocker remains open. The current-head reproduction loads March rows, switches to April, and approves a March row; the API persists its amount against April. The existing suite and CI pass, but the month-switch path has no regression test, so those results do not disprove the defect. Bind submission to the row month or clear stale rows, then add a test that fails for this reproduction and verify the correction.",
+        "footer": ""
+      }
+    }
+  },
+  {
+    "task": "release-notes-116",
+    "variant": "holdout",
+    "grade_status": "manual_required",
+    "source_check": "passed",
+    "word_count": 533,
+    "artifacts": {
+      "links.pr": {
+        "rating": "Low",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Correct documentation punctuation and replace one link in `docs/usage.md`. The change has no runtime, parser, persistence, configuration, or public API impact.",
+        "footer": "Risk: Low. Do not merge. The impact is limited to documentation, including an unavailable link destination. Reverting restores the previous documentation, with no runtime or stored data to recover. The required docs-link check must pass to clear the merge hold."
+      },
+      "links.review": {
+        "rating": "Low",
+        "hold": true,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix, 0 Nits.",
+        "footer": "Risk: Low. Do not merge. The change affects documentation only, so the known failure is limited to an unavailable link destination. Reverting restores the previous documentation; no runtime or stored data needs recovery. Correct the URL and pass the required docs-link gate before merging."
+      },
+      "ordering.pr": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Add a saved dashboard default-sort preference for the Birch tenant. Two existing views read the stored preference, while other tenants retain the current default. There are no shared wire format, authorization, payment, or migration changes.",
+        "footer": "Risk: Medium. A mistaken setting changes dashboard row order for Birch users in two views. The tenant flag can disable the new reader, and the tested rollback restores the prior setting without losing existing preferences. The duplicated policy leaves future drift risk; recorded behavior checks and required gates pass."
+      },
+      "ordering.review": {
+        "rating": "Medium",
+        "hold": false,
+        "footer_last": true,
+        "lead": "Comment. 0 Blockers, 1 Should fix, 0 Nits.",
+        "footer": "Risk: Medium. A mistaken preference affects dashboard row order for Birch users in two existing views. Other tenants retain their current default, and the change does not affect shared wire formats, authorization, payments, or migrations. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences. Future policy drift remains possible while the readers duplicate the decision."
+      }
+    }
+  }
+]

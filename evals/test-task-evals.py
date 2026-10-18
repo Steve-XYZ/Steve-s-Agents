@@ -139,6 +139,16 @@ print(json.dumps(event))
         (repo / "checkout/discounts.py").write_text("raise RuntimeError('edited')\n")
         self.assertEqual(grader.grade(self.record, self.record / "edited.json")["status"], "failed")
 
+    def test_writing_drafts_need_manual_assessment_and_preserve_supplied_records(self):
+        repo = self.prepare("merge-danger")
+        (self.task / "drafts.json").write_text('{"help.pr": "Low. All checks pass."}')
+        result = grader.grade(self.record)
+        self.assertEqual(result["status"], "manual_required")
+        self.assertEqual(result["checks"][0]["status"], "passed")
+        self.assertTrue(result["manual_review"])
+        (repo / "RECORDS.json").write_text("[]")
+        self.assertEqual(grader.grade(self.record, self.record / "edited.json")["status"], "failed")
+
     def test_existing_no_test_control_is_graded_by_cli_behavior(self):
         repo = self.prepare("simple")
         path = repo / "cli.py"

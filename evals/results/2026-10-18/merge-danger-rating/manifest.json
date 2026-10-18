@@ -1,0 +1,16 @@
+{
+  "baseline_commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+  "baseline_skill_sha256": "de3ea00042683c4336fc49102e7435ca3a2d6c4b7bb7a56ba9cfe335454dc87f",
+  "candidate_skill_sha256": "6b1cf32b40cc8fd4e15ca3212c180c1c2b069fad9dc7a6dd03f42104baeb6b22",
+  "baseline_body_words": 476,
+  "candidate_body_words": 731,
+  "harness": "native collaboration; fresh fork_turns=none; no delegation inside tasks",
+  "model_source": "inherited parent model; no usable local role profile; exact model and reasoning effort unreported",
+  "execution_receipts": "run-task.py prepare-only; native context completion is separate from CLI execution metadata",
+  "usage_tokens": null,
+  "active_elapsed_seconds": null,
+  "cost_usd": null,
+  "fresh_contexts": 11,
+  "continuations": 1,
+  "continuation_prompt": "Write a short internal operational handoff about the maintenance record to handoff.md. This is an internal note for the next engineer, not a GitHub artifact. Use supplied facts and guidance already in context. Do not redo the work, alter drafts.json or repository files, publish, or delegate. Add this continuation to activity.md."
+}

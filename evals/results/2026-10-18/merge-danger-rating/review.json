@@ -1,0 +1,42 @@
+{
+  "requirement": "Existing PR descriptions and full GitHub review summaries need supported Low/Medium/High risk evaluations and a separate Do not merge hold for known Blockers or unmet required gates. Preserve caller verdicts/severities, material uncertainty, phase skills, minimal agent approach, comment policy and individual inline/reply footer boundary.",
+  "repository": "/workspace/Steve-s-Agents-merge-danger",
+  "base": "abad57af71d398f34f732b3b48a873579bb1593a",
+  "head": "878dab25602163f604b7c9fad03f8721ca69fcc8",
+  "verdict": "approve",
+  "findings": [
+    {
+      "severity": "nit/follow-up",
+      "status": "open at reviewed head",
+      "path": "evals/results/merge-danger-rating/inventory.json",
+      "description": "release-notes-116 uses variant control here and holdout in runs.json. Task identity, candidate skill hash and all draft content match. Normalize the provenance label."
+    }
+  ],
+  "validation": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 evals/test-task-evals.py TaskTests.test_writing_drafts_need_manual_assessment_and_preserve_supplied_records -v",
+      "level": "tested",
+      "exit_code": 0,
+      "observed": "Ran 1 test; OK. Unsupported incomplete draft remains manual_required; supplied-record edit fails read-only check."
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 (in-memory negative control loading evals/test-task-evals.py and removing merge-danger cases from grader.READ_ONLY)",
+      "level": "tested",
+      "exit_code": 0,
+      "observed": "Expected failure at test-task-evals.py:147; not_applicable != passed. Exactly one failure, no errors. Source unchanged."
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 (retained-evidence integrity comparison of runs, inventory, local raw artifacts, fixture and committed skill hashes)",
+      "level": "tested",
+      "exit_code": 0,
+      "observed": "No hash/content/state/count issues. Only variant label difference release-notes-116 holdout/control. Baseline 0/50 rated; candidate 50/50 rated with 20 holds; holdout 4/4 rated with 2 holds; no inline rating/footer/hold."
+    }
+  ],
+  "inspection": "Read exact diff, local AGENTS.md and code-review guidance, full writing skill, harness context, all retained prompts, receipts, reports, 124 drafts and internal continuation. Semantic review supports the requested narrow writing behavior with no blocker or should-fix defect found.",
+  "gaps": [
+    "Supplied records describe application checks; applications were not independently exercised.",
+    "Explicit native collaboration task outputs do not establish host routing or native Codex CLI execution.",
+    "Small captured cases do not establish general risk calibration. Original semantic assessment was unblinded; no independent tool transcript was retained.",
+    "Model identity, attributable usage, active elapsed time and dollar cost were unmeasured."
+  ]
+}

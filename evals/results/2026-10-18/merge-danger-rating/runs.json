@@ -1,0 +1,1216 @@
+[
+  {
+    "task": "release-notes-101",
+    "variant": "baseline",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-101/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-101/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-101/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures stay unchanged.\n\nThe supplied verification records that the exact `--help` output assertion failed before the edit and passes afterward. Existing CLI tests and required CI gates also pass.\n\n## Merge Danger\n\nThis changes displayed help text only. Reverting restores the previous wording, with no stored data or external effect to recover.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe supplied evidence confirms that the production-file diff changes only the help string. The exact `--help` assertion failed before the edit and passes afterward; existing CLI tests and required CI gates pass. No material verification gap is recorded.\n\n## Merge Danger\n\nOnly the displayed help wording changes. Reverting restores the prior text, and there is no stored data or external effect to recover.",
+      "preferences.pr": "Add a dashboard default-sort preference for Birch users. Two existing views read the stored preference, while other tenants keep the current default. This introduces no shared wire format, authorization, payment, or migration changes.\n\nThe supplied verification covers target and non-target tenant flows, save and reload, invalid-option rejection, and UI recovery after a failed save. Those checks and required gates pass on the current build. A production-like rollback restored the old setting without losing existing preferences.\n\n## Merge Danger\n\nA mistaken setting changes the order of dashboard rows for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe supplied verification covers Birch and other tenants, save and reload, invalid-option rejection, and failed-save UI recovery on the current build. Required gates pass. A production-like rollback restored the old setting without losing existing preferences. No material verification gap is recorded.\n\n## Merge Danger\n\nThe preference affects dashboard row ordering in two existing views for Birch users. The tenant flag disables the new reader. The tested rollback restores the prior setting without losing existing preferences.",
+      "retention.pr": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of rows.\n\nThe supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. An encrypted pre-purge archive and a complete restore were independently exercised. All required technical and policy gates have passed.\n\n## Merge Danger\n\nThis job deletes stored audit records across all tenants. Reverting the code stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe deletion is explicitly authorized by the data owner and retention policy. The supplied production-like rehearsal verified the exact row predicate and tenant coverage, bounded batches, concurrent reads, and interruption and restart. The encrypted pre-purge archive and complete restore were independently exercised, and all required technical and policy gates passed. No material verification gap is recorded.\n\n## Merge Danger\n\nMerging enables intentional deletion of millions of expired audit records across all tenants. A code revert stops subsequent purges but does not restore deleted rows. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "approvals.pr": "Keep the selected month in the payment approval screen. The current change still allows a payment approval to be stored against the wrong month.\n\nExisting tests and CI pass, but the supplied current-head reproduction loads March rows, switches to April, and approves an old row. The API persists its amount against April because the old rows remain actionable after the selected month changes. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test. That path has no regression test yet.\n\nThe supplied evidence also shows that a failed fetch leaves the spinner active. End loading on failure and exercise that branch.\n\n## Merge Danger\n\nUsers can submit a payment approval against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised. The failed-fetch path also leaves the screen loading indefinitely.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit.\n\n- [Blocker] `admin/Approvals.tsx:84`. After March rows load, selecting April leaves those rows actionable. The supplied current-head reproduction confirms that approving one persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.\n- [Should fix] `admin/Approvals.tsx:46`. A rejected approvals fetch leaves loading active, so the spinner never stops. End loading on failure and exercise that branch.\n- [Nit/follow-up] `admin/Approvals.tsx:22`. Consider renaming `data` to `approvalRows` to make the local view model's purpose clear. This is optional.\n\nThe supplied record reports that all existing tests and CI pass. The direct current-head reproduction demonstrates the payment defect despite those results, and the month-switch path has no regression test yet.\n\n## Merge Danger\n\nAn approval can persist against the wrong month, and a failed fetch can leave the screen loading indefinitely. Reverting the UI prevents subsequent use of the payment bug but cannot undo a submitted approval. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "maintenance.pr": "Replace the scheduled record-maintenance entry point. The supplied record names files but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order. The resulting runtime and stored-state behavior remain unverified.\n\nThe author supplied a successful compile. No runtime or stored-value observation, rollback evidence, or restore evidence is available. Repository policy requires a current impact and recovery assessment before this job is ready; that assessment is missing, so the readiness gate remains open.\n\n## Merge Danger\n\nThe affected state and provider effects of running the replacement job in its deployed configuration are unknown. Whether a code revert can recover that state is also unknown. The required assessment must establish impact and recovery before the job can be considered ready.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.\n\n[Should fix] `jobs/RecordMaintenance.cs:18`. The replacement entry point lacks the required impact and recovery assessment. When the scheduled job runs in its deployed configuration, the supplied evidence does not establish its affected call path, tenant configuration, write behavior, provider effects, deployment order, or recoverability. Supply that assessment; the readiness gate remains open.\n\nThe author supplied a successful compile. No runtime or stored-value observation is available, and rollback and restore evidence are missing.\n\n## Merge Danger\n\nThe reviewer cannot establish what state the replacement job affects or whether a code revert can recover it. Recovery requirements remain unknown until the required impact and recovery assessment is supplied.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`. The supplied current-head reproduction loads March rows, switches to April, and approves a March row; because the old rows remain actionable, the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test.",
+      "approvals.reply": "The passing suite does not resolve this Blocker. The supplied current-head reproduction loads March rows, switches to April, and approves a March row; the API persists its amount against April. That month-switch path has no regression test yet. Bind submission to the row month or clear stale rows, then add a test that fails for the reproduced sequence. The finding remains open; no fix or verification of a fix is recorded."
+    },
+    "drafts_sha256": "a42df4799f121c03e91ad868b23019a84d41f9decff58fc58f83ea10d970064e",
+    "response": "Created drafts.json with all 12 requested GitHub artifacts and activity.md with the read/command record. Validated JSON and key coverage. Repository files remain unchanged; nothing was published.\n",
+    "activity_report": "# Activity\n\n- Read `prompt.txt`, `repo/AGENTS.md`, `repo/ARTIFACTS.json`, and `repo/RECORDS.json`.\n- Read the supplied `guidance/shared/engineering-writing/SKILL.md` and its required `guidance/shared/unslop/SKILL.md`.\n- Used `pwd`, `rg --files`, and `cat` to locate and read the supplied material. Used `apply_patch` to create `drafts.json` and this record outside the repository.\n- Drafted all 12 requested artifacts from the supplied evidence. Preserved review verdicts, finding counts, severity, and material gaps. Attributed verification to the supplied records.\n- Validated the JSON and requested key coverage with a local Python structure check. No application checks were run. Repository files were not changed, and nothing was committed, pushed, published, or delegated.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-101",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:26:55.855553+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "1b35962014fe62f4120b85db0142362cc1bd46d351c1dc083a439f33a6cd37c0",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "bf387c4ecc17cae705c6eaa6af5ad49d16b72375ccc5ab54522b4a7d0cc1299b",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-101/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "status": "manual_required"
+    }
+  },
+  {
+    "task": "release-notes-104",
+    "variant": "baseline",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-104/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-104/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-104/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Corrects `recieve` to `receive` in the CLI help text. The production-file diff changes only that string. Parsing, runtime behavior, persistence, configuration, and public command signatures are unchanged.\n\nThe supplied verification records that the exact `--help` output assertion failed before the edit and passes now. Existing CLI tests and required CI gates pass.\n\n### Merge Danger\n\nThis changes displayed help text. Reverting restores the previous wording; there is no stored data or external effect to recover.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits/follow-ups.\n\nThe supplied record shows that the production-file diff changes only the help-text typo. The exact `--help` output assertion failed before the edit and passes now; existing CLI tests and required CI gates pass. No findings remain.\n\n### Merge Danger\n\nOnly the displayed help text changes. Reverting restores the previous wording, with no stored data or external effect to recover.",
+      "preferences.pr": "Adds a default-sort preference for the Birch dashboard. Two existing views read the stored preference, while other tenants keep their current default. There are no shared wire-format, authorization, payment, or migration changes.\n\nThe supplied verification records passing target and non-target tenant flows, save/reload, invalid-option rejection, and failed-save UI recovery on the current build. Required gates pass. A rollback in a production-like environment restored the old setting without losing existing preferences.\n\n### Merge Danger\n\nA mistaken setting changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits/follow-ups.\n\nThe preference affects Birch dashboard sorting in two existing views. Other tenants retain the current default. The supplied verification covers target and non-target tenant flows, save/reload, invalid-option rejection, and failed-save UI recovery on the current build. Required gates pass, and a production-like rollback restored the old setting without losing existing preferences. No findings remain.\n\n### Merge Danger\n\nA mistaken preference changes row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "retention.pr": "Purges expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of rows.\n\nThe supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. An encrypted pre-purge archive and a complete restore were independently exercised. All required technical and policy gates have passed.\n\n### Merge Danger\n\nThis job intentionally deletes stored audit records across all tenants. Reverting the code stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits/follow-ups.\n\nThe data owner and retention policy authorize the purge of audit records older than the approved limit across all tenants. The supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. The encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed. No findings remain.\n\n### Merge Danger\n\nThe purge intentionally deletes millions of audit records across all tenants. A code revert stops future purges but does not restore deleted rows. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "approvals.pr": "Keeps the selected month in the payment approval screen. The current change also leaves a demonstrated payment-approval defect open.\n\nExisting tests and CI pass, but the supplied current-head reproduction loads March rows, switches to April, and approves an old row. The API persists its amount against April. Submission must use the row's month or stale rows must be cleared, and the month-switch path still needs a failing regression test.\n\nThe failed-fetch path also leaves the spinner active and needs loading-state cleanup with coverage. Renaming the temporary `data` variable to `approvalRows` is an optional follow-up. The supplied review requests changes with 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up.\n\n### Merge Danger\n\nThe change can persist a payment approval against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo a submitted approval. Operators would need to identify affected records and use the correction process, which has not been exercised.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.\n\n- [Blocker] `admin/Approvals.tsx:84`: A current-head reproduction demonstrates that a March row can be approved against April after switching months. Bind submission to the row's month or clear stale rows, and add a failing month-switch regression test.\n- [Should fix] `admin/Approvals.tsx:46`: A rejected approvals fetch leaves loading active, so the spinner never stops. End loading on failure and exercise that branch.\n- [Nit/follow-up] `admin/Approvals.tsx:22`: Consider `approvalRows` for the temporary `data` variable so its purpose is clear.\n\nThe supplied evidence records passing existing tests and CI alongside the direct reproduction of the persisted wrong-month approval and the failed-fetch spinner defect. The month-switch path has no regression test yet. Passing checks do not resolve these findings.\n\n### Merge Danger\n\nAn approval can persist against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo a submitted payment approval. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "maintenance.pr": "Replaces the scheduled record-maintenance entry point. The supplied change record lists file names but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.\n\nThe author supplied a successful compile. There is no runtime or stored-value observation, and no rollback or restore evidence. Repository policy requires a current impact and recovery assessment before the job is ready; that assessment is still missing.\n\n### Merge Danger\n\nThe replacement job's affected state and recoverability remain unverified. Whether reverting the code can recover that state is unknown. The required impact and recovery assessment must establish those consequences before the readiness gate can close.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits/follow-ups.\n\n[Should fix] `jobs/RecordMaintenance.cs:18`: Supply the required current impact and recovery assessment for the replacement job. The supplied record does not establish the affected call path, tenant configuration, write behavior, provider effects, deployment order, or rollback and restore behavior when the scheduled entry point runs in its deployed configuration. The reviewer cannot establish the affected state or recoverability, so the readiness gate remains open.\n\nThe author supplied a successful compile. No runtime or stored-value observation is available, and the required assessment is missing.\n\n### Merge Danger\n\nThe job's effects on state and its recovery requirements remain unverified. Whether a code revert can recover the affected state is unknown. The compile result does not establish readiness; the required impact and recovery assessment remains outstanding.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`: The supplied current-head reproduction loads March rows, switches to April while those rows remain actionable, and approves a March row; the API persists its amount against April. Bind submission to the row's month or clear stale rows, and add a failing month-switch regression test.",
+      "approvals.reply": "The Blocker remains open. The supplied current-head reproduction loads March rows, selects April, and approves a March row; the API persists its amount against April. Existing tests and CI pass, but the month-switch path has no regression test, so those results do not disprove the defect. Bind submission to the row's month or clear stale rows, then add a regression test that fails on the current behavior and passes with the correction. No fix or successful verification of a fix is recorded."
+    },
+    "drafts_sha256": "83c897dc3d1459e2ab3c45d643be9d4161fe24232b11b1e69f39c8e6525e8822",
+    "response": "Created [drafts.json](/workspace/scratch/release-notes-104/drafts.json) with all 12 requested drafts and [activity.md](/workspace/scratch/release-notes-104/activity.md).\n\nValidated JSON and artifact coverage. Preserved the supplied verdicts, finding counts, severity, and material gaps. Repository files remain unchanged.\n",
+    "activity_report": "# Activity\n\n- Read `prompt.txt`, `repo/AGENTS.md`, `repo/ARTIFACTS.json`, and `repo/RECORDS.json`.\n- Read the supplied `guidance/shared/engineering-writing/SKILL.md` and its required `guidance/shared/unslop/SKILL.md`.\n- Used `pwd` and `rg --files` within this task directory to locate the supplied instructions and records, then `cat` to read them.\n- Used Python to write `drafts.json` with all 12 requested Markdown artifacts. Checked the prose against the supplied verdicts, finding counts, severity, evidence, recovery limits, and material gaps.\n- Used Python to validate JSON parsing, exact requested-key coverage, nonempty drafts, required Merge Danger sections, and guidance punctuation constraints.\n- Wrote this activity record and `response.txt`. Repository files were read only. No application, build, tests, publication, commits, pushes, or delegation were performed. Verification described in the drafts comes from the supplied records.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-104",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:26:55.883012+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "1b35962014fe62f4120b85db0142362cc1bd46d351c1dc083a439f33a6cd37c0",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "ec155f75a63bf8611816ba13257a87e50367614db0bdce2339403d9bf0007b5f",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-104/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "status": "manual_required"
+    }
+  },
+  {
+    "task": "release-notes-107",
+    "variant": "baseline",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-107/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-107/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-107/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures are unchanged.\n\nThe supplied verification records that the exact `--help` output assertion failed before the edit and passes now. Existing CLI tests and required CI gates pass.\n\n## Merge Danger\n\nMerging changes the displayed help text. Reverting restores the previous spelling. There is no stored data or external effect to recover.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix, 0 Nits.\n\nThe supplied evidence confirms that the production-file diff changes only the help string. The exact `--help` output assertion failed before the edit and passes now; existing CLI tests and required CI gates pass. No findings or material validation gaps are recorded.\n\n## Merge Danger\n\nThe change affects displayed help text only. Reverting restores the previous spelling, with no stored data or external effect to recover.",
+      "preferences.pr": "Add a dashboard default-sort preference for Birch users. Two existing views read the stored preference; other tenants keep their current default. There are no shared wire format, authorization, payment, or migration changes.\n\nThe supplied verification records passing target and non-target tenant flows, save/reload, invalid-option rejection, failed-save UI recovery, and required gates on the current build. A production-like rollback restored the old setting without losing existing preferences.\n\n## Merge Danger\n\nA mistaken setting changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix, 0 Nits.\n\nThe supplied evidence covers the two views that read Birch's stored default-sort preference and confirms that other tenants retain their current default. Target and non-target tenant flows, save/reload, invalid-option rejection, failed-save UI recovery, and required gates pass on the current build. A production-like rollback restored the old setting without losing existing preferences. No findings or material validation gaps are recorded.\n\n## Merge Danger\n\nAn incorrect preference changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the previous setting without losing existing preferences.",
+      "retention.pr": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of rows.\n\nThe supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, interruption, and restart. An encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed.\n\n## Merge Danger\n\nMerging enables deletion of audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix, 0 Nits.\n\nThe supplied evidence establishes that the data owner and retention policy authorize deletion of expired audit records across all tenants. The production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, interruption, and restart. An encrypted pre-purge archive and complete restore were independently exercised, and all required technical and policy gates have passed. No findings or material validation gaps are recorded.\n\n## Merge Danger\n\nThe job intentionally deletes millions of audit records. Reverting stops subsequent purges but cannot restore deleted rows. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "approvals.pr": "Keep the selected month in the payment approval screen. The current change leaves prior-month rows actionable after a month switch, so it still needs correction before merge.\n\nThe supplied verification records passing existing tests and CI, but a direct current-head reproduction loads March rows, switches to April, and approves an old row; the API persists its amount against April. A failed fetch also leaves the spinner active. The month-switch path has no regression test yet. Bind submission to the row month or clear stale rows, add a failing month-switch test, and end loading on fetch failure with coverage for that branch.\n\n## Merge Danger\n\nUsers can submit a payment approval against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix, 1 Nit/follow-up.\n\n- [Blocker] `admin/Approvals.tsx:84`: A month switch can persist a payment approval against the wrong month because prior-month rows remain actionable. Bind submission to the row month or clear stale rows, and add a failing month-switch test.\n- [Should fix] `admin/Approvals.tsx:46`: A rejected approvals fetch leaves the spinner running indefinitely. End loading on failure and exercise that branch.\n- [Nit/follow-up] `admin/Approvals.tsx:22`: The local view model's temporary name `data` obscures the row purpose. Consider `approvalRows`; this naming change is optional.\n\nThe supplied verification records that all existing tests and CI pass. A direct current-head reproduction loads March rows, selects April, and approves a March row; the API persists its amount against April. The month-switch path has no regression test yet.\n\n## Merge Danger\n\nMerging permits payment approvals to persist against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process; that process has not been exercised.",
+      "maintenance.pr": "Replace the scheduled record-maintenance entry point. The supplied record identifies changed files but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.\n\nThe author supplied a successful compile. No runtime or stored-value observation is available, and rollback/restore evidence is missing. Repository policy requires a current impact and recovery assessment before this job is ready; that assessment still needs to be supplied.\n\n## Merge Danger\n\nThe effects of running the replacement job in its deployed configuration remain unverified. The evidence does not establish affected state, whether a code revert can recover it, or what recovery would require. The required impact and recovery assessment remains an open readiness gate.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix, 0 Nits.\n\n[Should fix] `jobs/RecordMaintenance.cs:18`: The replacement job lacks the impact and recovery evidence required by repository policy. When the scheduled entry point runs in its deployed configuration, the supplied record does not establish its affected call path, tenant configuration, write behavior, provider effects, or deployment order. Supply the current impact and recovery assessment; the readiness gate remains open.\n\nThe author supplied a successful compile. There is no runtime or stored-value observation, and no rollback/restore evidence. These gaps prevent an assessment of affected state and recoverability.\n\n## Merge Danger\n\nThe replacement job's effects on deployed state are unknown. Whether reverting the code can recover that state, and what restoration would require, remain unverified. The required impact and recovery assessment is still missing.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`: Switching the selected month leaves old rows actionable. The supplied current-head reproduction loads March, selects April, and approves a March row, and the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.",
+      "approvals.reply": "The passing suite does not resolve this Blocker. The supplied direct reproduction on the current head loads March rows, switches to April, and approves a March row; the API persists its amount against April. The month-switch path has no regression test yet. Bind submission to the row month or clear stale rows, then add a test that fails for this sequence before the correction and passes afterward. The finding remains open."
+    },
+    "drafts_sha256": "e3ca3ef34e160c4125a11acb33af82c4b5b6fc5cca3b2da5774d8177262abdf6",
+    "response": "Drafted all 12 requested artifacts in drafts.json and recorded reads and commands in activity.md. Repository files were unchanged; no application checks or publication were performed.\n",
+    "activity_report": "Read `/workspace/scratch/release-notes-107/prompt.txt`, repository `AGENTS.md`, `ARTIFACTS.json`, and `RECORDS.json`. Read the supplied `engineering-writing/SKILL.md` and its required `unslop/SKILL.md` under this task's guidance directory.\n\nCommands used `cat` to read those files, `pwd` and `rg --files` to locate task inputs and supplied guidance, and `apply_patch` to write `../drafts.json` and this activity record. Drafted all 12 requested artifacts from the supplied records. No application checks were run; verification claims in the drafts are attributed to the supplied evidence. Repository files were not changed. Nothing was committed, pushed, published, or delegated.\n\nA Python command revised draft wording and validated JSON parsing, exact coverage of all 12 requested keys, nonempty string values, and Merge Danger placement. This was an artifact-format check, not application verification.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-107",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:26:55.908918+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "1b35962014fe62f4120b85db0142362cc1bd46d351c1dc083a439f33a6cd37c0",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "dd54913e6131ef3b77263ab249306695f7e18e468bbda5a7a106677a88ac5ef3",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-107/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "status": "manual_required"
+    }
+  },
+  {
+    "task": "release-notes-110",
+    "variant": "baseline",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-110/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-110/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-110/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Corrects `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures stay the same.\n\nThe supplied verification records that the exact `--help` output assertion failed before the edit and passes afterward. Existing CLI tests and required CI gates also pass.\n\n### Merge Danger\n\nThis changes displayed help text only. Reverting restores the previous text, with no stored data or external effect to recover.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.\n\nThe supplied production-file diff changes only the spelling in the CLI help text. The recorded exact `--help` assertion failed before the edit and passes afterward; existing CLI tests and required CI gates pass. There are no parser, runtime, persistence, configuration, or public command signature changes.\n\n### Merge Danger\n\nOnly the displayed help text changes. Reverting restores the previous text, with no stored data or external effect to recover.",
+      "preferences.pr": "Adds a dashboard default-sort preference for the Birch tenant. Two existing views read the saved preference; other tenants retain the current default. The change does not alter shared wire formats, authorization, payments, or migrations.\n\nThe supplied verification covers target and non-target tenant flows, save and reload, invalid-option rejection, and UI recovery after a failed save on the current build. Required gates pass. A production-like rollback restored the old setting without losing existing preferences.\n\n### Merge Danger\n\nA mistaken setting changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.\n\nThe preference affects Birch dashboard row order through two existing views. Other tenants keep their current default, with no shared wire format, authorization, payment, or migration changes.\n\nSupplied current-build checks pass for target and non-target tenant flows, save and reload, invalid-option rejection, and failed-save UI recovery. Required gates pass. The recorded production-like rollback restored the old setting without losing existing preferences.\n\n### Merge Danger\n\nA mistaken preference changes row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "retention.pr": "Purges expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize this deletion, which intentionally removes millions of rows.\n\nThe supplied production-like rehearsal verified the exact row predicate and tenant coverage, bounded batches, concurrent reads, and interruption and restart. An encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed.\n\n### Merge Danger\n\nThis job deletes stored audit records across all tenants. Reverting the code stops future purges but cannot recreate deleted rows. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.\n\nThe purge intentionally deletes millions of expired audit records across all tenants under explicit data-owner and retention-policy authorization. The supplied production-like rehearsal verified the exact deletion predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. An encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed.\n\n### Merge Danger\n\nDeleted audit rows do not return when the code is reverted; a revert only stops future purges. An erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "approvals.pr": "Keeps the selected month in the payment approval screen. Current-head reproduction exposes an open defect in that flow: load March rows, switch to April, and approve a March row, and the API persists its amount against April.\n\nExisting tests and CI pass, but the month-switch path has no regression test. Review remains Request changes with 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up finding:\n\n- The Blocker at `admin/Approvals.tsx:84` leaves old-month rows actionable after the selected month changes. Bind submission to the row month or clear stale rows, and add a failing month-switch test.\n- The Should fix finding at `admin/Approvals.tsx:46` leaves the spinner active after a failed fetch. End loading on failure and exercise that branch.\n- The Nit/follow-up at `admin/Approvals.tsx:22` suggests renaming `data` to `approvalRows` to clarify its purpose. This is optional.\n\n### Merge Danger\n\nThe demonstrated month-switch path can persist a payment approval against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo a submitted approval. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up finding.\n\n- Blocker at `admin/Approvals.tsx:84`: the current-head reproduction loads March rows, selects April, then approves a March row. The API persists its amount against April because old-month rows remain actionable. Bind submission to the row month or clear stale rows, and add a failing month-switch test.\n- Should fix at `admin/Approvals.tsx:46`: when the approvals request fails, loading stays active and the spinner never stops. End loading on failure and exercise that branch.\n- Nit/follow-up at `admin/Approvals.tsx:22`: consider `approvalRows` instead of `data` to make the local view model clearer. This naming change is optional.\n\nThe supplied record reports passing existing tests and CI, alongside the direct current-head reproduction above and the failed-fetch spinner defect. The month-switch path has no regression test yet. Passing checks do not resolve the demonstrated payment defect.\n\n### Merge Danger\n\nApproving an old row after switching months persists the approval against the newly selected month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted payment approvals. Operators must identify affected records and use the correction process; that process has not been exercised.",
+      "maintenance.pr": "Replaces the scheduled record-maintenance entry point. The supplied change record lists files but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.\n\nThe supplied verification is a successful compile. There is no runtime or stored-value observation, and rollback and restore evidence are missing. Repository policy requires a current impact and recovery assessment before this job is ready. The review verdict is Comment with 0 Blockers, 1 Should fix finding, and 0 Nit/follow-up findings. Supply the assessment for `jobs/RecordMaintenance.cs:18`; the readiness gate remains open.\n\n### Merge Danger\n\nThe deployed job's affected state and recoverability remain unverified. Whether a code revert can recover that state is unknown. The missing impact and recovery assessment must establish the job's effects and the required recovery procedure.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix finding, 0 Nit/follow-up findings.\n\nShould fix at `jobs/RecordMaintenance.cs:18`: impact and recovery evidence for the replacement scheduled job are missing. When the entry point runs in its deployed configuration, the supplied record does not establish its affected call path, tenant configuration, write behavior, provider effects, or deployment order. The reviewer cannot establish affected state or recoverability.\n\nThe author supplied a successful compile, with no runtime or stored-value observation and no rollback or restore evidence. Supply the current impact and recovery assessment required by repository policy. The readiness gate remains open.\n\n### Merge Danger\n\nThe job's effects on deployed state and the recovery requirements are unknown. Whether reverting the code can recover affected state has not been established; the required impact and recovery assessment is still missing.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`: The current-head reproduction loads March rows, selects April, and approves a March row; because the old rows remain actionable, the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test.",
+      "approvals.reply": "The passing suite does not cover the demonstrated failure. On the current head, loading March rows, switching to April, and approving a March row persists its amount against April. The Blocker at `admin/Approvals.tsx:84` remains open, and the month-switch path still has no regression test. Bind submission to the row month or clear stale rows, then add a test that fails on the current behavior and verifies the correction."
+    },
+    "drafts_sha256": "806e52b08d813d5a782614e401b6432a9dde442ef79dad01f6fd98f2edf988e5",
+    "response": "Created drafts.json with all 12 requested GitHub drafts and activity.md with the read/command record. Supplied verdicts, severity counts, evidence, and material gaps are preserved. No repository files were modified and no checks were claimed as personally run.\n",
+    "activity_report": "Read only the supplied task context and guidance:\n\n- `prompt.txt`\n- `repo/AGENTS.md`\n- `repo/ARTIFACTS.json`\n- `repo/RECORDS.json`\n- `guidance/shared/engineering-writing/SKILL.md`\n- `guidance/shared/unslop/SKILL.md`\n\nCommands used `cat` to read these files and `rg --files` to locate the supplied repository instructions, records, artifact list, and guidance. A Python command wrote `drafts.json` and this activity record, and checked that the draft keys match all 12 requested artifacts. A final Python check validated JSON, artifact coverage, and required Merge Danger sections.\n\nNo application, tests, or CI checks were run. Verification statements in the drafts come from the supplied records. Repository files were not modified; nothing was committed, pushed, published, or delegated.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-110",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:26:55.934595+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "1b35962014fe62f4120b85db0142362cc1bd46d351c1dc083a439f33a6cd37c0",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "14903dccbd9b422a45130e2f513bfbdb054163783b32e3385d3859bae911d668",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-110/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "status": "manual_required"
+    }
+  },
+  {
+    "task": "release-notes-113",
+    "variant": "baseline",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-113/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-113/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-113/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string, with no parser, runtime, persistence, configuration, or public command signature changes.\n\nThe supplied verification records that the exact `--help` output assertion failed before the edit and passes now. Existing CLI tests and required CI gates pass.\n\n## Merge Danger\n\nThis changes the displayed help text. Reverting restores the previous wording. There is no stored data or external effect to recover.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe supplied production-file diff changes only the help-text spelling. The exact `--help` assertion failed before the edit and passes now, and the existing CLI tests and required CI gates pass. The record identifies no verification gap for this change.\n\n## Merge Danger\n\nOnly the displayed help text changes. Reverting restores the previous wording, with no stored data or external effect to recover.",
+      "preferences.pr": "Add a dashboard default-sort preference for the Birch tenant so its users can save the row order used by two existing views. Other tenants retain the current default. The change does not alter shared wire formats, authorization, payments, or migrations.\n\nThe supplied verification covers target and non-target tenant flows, save and reload, invalid-option rejection, and UI recovery after a failed save on the current build. Required gates pass. A production-like rollback restored the old setting without losing existing preferences.\n\n## Merge Danger\n\nA mistaken setting changes dashboard row order for Birch users. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe preference applies to Birch and feeds two existing views. Other tenants retain their current default, and no shared wire format, authorization, payment, or migration changes are recorded.\n\nThe supplied current-build checks pass for both tenant flows, save and reload, invalid-option rejection, and failed-save UI recovery. Required gates pass. A production-like rollback restored the old setting without losing existing preferences. The record identifies no remaining verification gap.\n\n## Merge Danger\n\nA mistaken setting changes dashboard row order for Birch users. The tenant flag can disable the new reader. The tested rollback restores the prior setting without losing existing preferences.",
+      "retention.pr": "Purge audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of rows.\n\nThe supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. An encrypted pre-purge archive and a complete restore were independently exercised. All required technical and policy gates have passed.\n\n## Merge Danger\n\nMerging enables intentional deletion of audit records across all tenants. Reverting the code stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe deletion of millions of expired audit records across all tenants is intentional and explicitly authorized by the data owner and retention policy. The supplied production-like rehearsal verified the exact predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. The encrypted pre-purge archive and complete restore were independently exercised, and all required technical and policy gates have passed. The record identifies no remaining verification gap.\n\n## Merge Danger\n\nThe job permanently deletes audit records from the live store. Reverting stops future purges but does not recover deleted rows. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "approvals.pr": "Keep the selected month in the payment approval screen. The current change leaves a payment approval defect open when the user switches months.\n\nAll existing tests and CI pass according to the supplied record. A direct current-head reproduction loads March rows, switches to April, and approves an old row. The API persists that row's amount against April because the previous rows remain actionable. The month-switch path has no regression test yet. A failed fetch also leaves the spinner active.\n\nThe supplied review requests changes with 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up. Bind submission to the row month or clear stale rows and add a failing month-switch test. End loading on fetch failure and exercise that branch. Renaming `data` to `approvalRows` is optional.\n\n## Merge Danger\n\nUsers can submit an approval against the wrong month. Reverting the UI prevents subsequent use of this bug but cannot undo a submitted approval. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.\n\n1. [Blocker] `admin/Approvals.tsx:84`: Changing the selected month leaves old rows actionable. The current-head reproduction loads March, selects April, and approves a March row. The API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.\n2. [Should fix] `admin/Approvals.tsx:46`: A rejected approvals fetch leaves loading active, so the spinner never stops. End loading on failure and exercise that branch.\n3. [Nit/follow-up] `admin/Approvals.tsx:22`: Consider `approvalRows` instead of `data` to make the local view model's purpose clearer. This naming change is optional.\n\nThe supplied record reports passing existing tests and CI. It also includes a direct current-head reproduction of the incorrect persisted month and records the failed-fetch spinner defect. The month-switch path has no regression test yet, so the passing suite does not resolve the Blocker.\n\n## Merge Danger\n\nThe change permits payment approvals against the wrong month. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "maintenance.pr": "Replace the scheduled record-maintenance entry point. The supplied change record lists file names but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.\n\nThe author supplied a successful compile. No runtime or stored-value observation is available, and there is no rollback or restore evidence. Repository policy requires a current impact and recovery assessment before the job is ready. That assessment remains missing. The supplied review is Comment with 0 Blockers, 1 Should fix finding, and 0 Nits.\n\n## Merge Danger\n\nThe replacement runs as a scheduled job, but the supplied evidence does not establish what state it affects in its deployed configuration. Whether a code revert can recover affected state is unknown. Recovery requirements remain unverified, and the readiness gate remains open until the required impact and recovery assessment is supplied.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.\n\n[Should fix] `jobs/RecordMaintenance.cs:18`: Impact and recovery evidence for the replacement job are missing. When the scheduled entry point runs in its deployed configuration, the supplied record does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order. Supply the current impact and recovery assessment required by repository policy. The readiness gate remains open.\n\nThe author supplied a successful compile. There is no runtime or stored-value observation and no rollback or restore evidence. Compilation does not establish the affected state or recoverability.\n\n## Merge Danger\n\nThe job's affected state and operational consequences remain unknown. Whether reverting the code can recover that state is also unknown. The required assessment must establish impact and recovery before the job can be considered ready.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`: The current-head reproduction loads March, selects April while March rows remain actionable, and approves a March row, which persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.",
+      "approvals.reply": "The Blocker remains open. The supplied current-head reproduction loads March rows, switches to April, and approves an old row; the API persists its amount against April. Existing tests and CI pass, but the month-switch path has no regression test yet. Bind submission to the row month or clear stale rows, then add a test that fails for this reproduction and verify the corrected behavior."
+    },
+    "drafts_sha256": "97a3a09f469a271b2757024ec958c9b5d745eb87f9782bd4c8123abbb5836fc7",
+    "response": "Drafted all 12 artifacts in [drafts.json](/workspace/scratch/release-notes-113/drafts.json). JSON and requested-key checks passed. The [activity record](/workspace/scratch/release-notes-113/activity.md) lists the reads and commands. All engineering verification claims remain attributed to the supplied records.\n",
+    "activity_report": "# Read and command record\n\n- Read `prompt.txt` with `cat`.\n- Used `pwd` and `rg --files` to locate this task's `AGENTS.md`, `ARTIFACTS.json`, and `RECORDS.json` and list the supplied guidance files.\n- Read `repo/AGENTS.md`, `repo/ARTIFACTS.json`, and `repo/RECORDS.json` with `cat`.\n- Read the supplied `guidance/shared/engineering-writing/SKILL.md` and its required `guidance/shared/unslop/SKILL.md` with `cat`.\n- Used Python to write `drafts.json` and check that it contains all 12 requested keys, nonempty Markdown strings, and the required Merge Danger sections only for PR descriptions and full review summaries.\n- Reparsed the output JSON and checked the artifact count and dash style. Wrote this record and `response.txt` outside the repository.\n\nAll engineering facts and verification claims come from the supplied records. No application, tests, compile, or CI checks were run. Repository files were not modified. Nothing was committed, pushed, published, or delegated.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-113",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:26:55.958848+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "1b35962014fe62f4120b85db0142362cc1bd46d351c1dc083a439f33a6cd37c0",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "c4bb4254c4398ada48b5f61261e1ae8a434f0f858f6c7240a83024bbc7820a44",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-113/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "ddcdbc2e927b5e49c87d327d7963f6fca5bd8d09"
+        }
+      },
+      "status": "manual_required"
+    }
+  },
+  {
+    "task": "release-notes-102",
+    "variant": "candidate",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-102/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-102/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-102/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Correct `recieve` to `receive` in the CLI help text. This fixes the displayed spelling without changing the parser, runtime behavior, persistence, configuration, or public command signatures.\n\nThe supplied verification records that the exact `--help` output assertion failed before the edit and passes afterward. Existing CLI tests and required CI gates pass, and the production-file diff changes only this string.\n\n## Merge Danger\n\nRisk: Low. The change affects only help wording, with no stored data or external effects. Reverting restores the previous text; no data recovery is needed.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.\n\nThe supplied evidence bounds the production change to the help string. The exact `--help` assertion failed before the edit and passes afterward; existing CLI tests and required CI gates pass. No material verification gap is recorded.\n\n## Merge Danger\n\nRisk: Low. Only the displayed spelling changes. Parser behavior, runtime behavior, persistence, configuration, and public command signatures are unchanged. Reverting restores the previous wording, with no stored data or external effects to recover.",
+      "preferences.pr": "Add a dashboard default-sort preference for the Birch tenant so its users can save their preferred row order. Two existing views read the stored preference; other tenants keep their current default. There are no shared wire-format, authorization, payment, or migration changes.\n\nThe supplied verification reports passing target and non-target tenant flows, save/reload, invalid-option rejection, failed-save UI recovery, and required gates on the current build. A production-like rollback restored the old setting without losing existing preferences.\n\n## Merge Danger\n\nRisk: Medium. A mistaken setting changes dashboard row order for Birch users in the two consuming views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.\n\nThe preference affects the Birch tenant and two existing dashboard views. The supplied current-build checks cover target and non-target tenants, save/reload, invalid-option rejection, and failed-save UI recovery. Required gates pass, and a production-like rollback restored the old setting without losing existing preferences. No material verification gap is recorded.\n\n## Merge Danger\n\nRisk: Medium. The stored preference changes dashboard row order for Birch users, with impact bounded to the two consuming views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences. There are no shared wire-format, authorization, payment, or migration changes.",
+      "retention.pr": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion, which intentionally removes millions of stored rows.\n\nThe supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. An encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed.\n\n## Merge Danger\n\nRisk: High. This job intentionally deletes millions of audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime. The required gates have passed, and the supplied review approves the change.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nit/follow-up findings.\n\nThe data owner and retention policy explicitly authorize deletion of expired audit records across all tenants. The supplied production-like rehearsal verified the exact predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. The encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed; no material verification gap is recorded.\n\n## Merge Danger\n\nRisk: High. The authorized purge intentionally deletes millions of stored audit rows. Reverting stops future purges but does not recover deleted records. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime. Approval reflects the supplied authorization and recovery evidence; the deletion consequences remain substantial.",
+      "approvals.pr": "Keep the selected month in the payment approval screen. The current change also leaves rows from the previous month actionable after a month switch, which can persist an approval against the wrong month.\n\nAll existing tests and CI pass according to the supplied records. A direct current-head reproduction loads March rows, switches to April, and approves a March row; the API persists its amount against April. A failed fetch also leaves the spinner active. The month-switch path has no regression test yet, so the passing suite does not establish that this path works.\n\nThe supplied review requests changes with 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up finding. Bind submission to the row month or clear stale rows, and add a failing month-switch test. End loading after a failed fetch and exercise that branch. Renaming `data` to `approvalRows` is optional.\n\n## Merge Danger\n\nRisk: High. Do not merge. The current change can persist payment approvals against the wrong month. Clear the Blocker by binding submission to the row month or clearing stale rows, and add a regression test that fails on the current month-switch path and passes with the correction. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up finding.\n\n- [Blocker] `admin/Approvals.tsx:84`: Stale rows remain actionable after switching months, so an approval can persist against the wrong month. Bind submission to the row month or clear stale rows, and add a failing month-switch test.\n- [Should fix] `admin/Approvals.tsx:46`: A rejected approvals fetch leaves loading active, so the spinner never stops. End loading on failure and exercise that branch.\n- [Nit/follow-up] `admin/Approvals.tsx:22`: Consider `approvalRows` instead of `data` to make the local view model clearer. This naming change is optional.\n\nThe supplied records report passing existing tests and CI. They also document a direct current-head reproduction: load March, switch to April, and approve a March row; the API persists its amount against April. The month-switch path has no regression test yet. The failed-fetch spinner defect is also recorded.\n\n## Merge Danger\n\nRisk: High. Do not merge. The reproduced Blocker affects persisted payment approvals. Bind submission to the row month or clear stale rows, and add a regression test that fails on the current month-switch path and passes with the correction before clearing the hold. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which remains unexercised.",
+      "maintenance.pr": "Replace the scheduled record-maintenance entry point. The supplied record lists file names but does not establish why the replacement is needed or what state the deployed job affects.\n\nThe author supplied a successful compile. There is no runtime or stored-value observation, affected call path, tenant configuration, write behavior, provider-effect assessment, deployment order, or rollback/restore evidence. Repository policy requires a current impact and recovery assessment before the job is ready; that assessment is missing.\n\nThe supplied review is Comment, with 0 Blockers, 1 Should fix finding, and 0 Nit/follow-up findings. The required readiness gate remains open.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. Supply the required current impact and recovery assessment before clearing the readiness gate. The affected state, consumers, write and provider effects, and deployment requirements are unknown. Whether reverting code can recover the affected state, or whether restoration is needed, remains unverified. A successful compile does not supply this evidence.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix finding, 0 Nit/follow-up findings.\n\n[Should fix] `jobs/RecordMaintenance.cs:18`: The replacement job lacks the required impact and recovery assessment. When the scheduled entry point runs in its deployed configuration, the supplied evidence does not establish which state it affects or how to recover it. Supply that assessment; the readiness gate remains open.\n\nThe author supplied a successful compile. There is no runtime or stored-value observation, affected call path, tenant configuration, write behavior, provider-effect assessment, deployment order, or rollback/restore evidence.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. Repository policy requires a current impact and recovery assessment before this job is ready. Supply the missing evidence about affected state and consumers, deployed behavior, and recovery to clear that gate. Whether a code revert restores the affected state or a separate restoration procedure is needed remains unknown.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`: The selected month changes while rows from the old month remain actionable; the supplied current-head reproduction loads March, selects April, and approves a March row, whose amount the API persists against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.",
+      "approvals.reply": "The passing suite does not cover the reproduced failure. The supplied current-head reproduction loads March rows, switches to April, and approves a March row; the API persists its amount against April. The month-switch path has no regression test yet, and the Blocker remains open. Bind submission to the row month or clear stale rows, then add a test that fails on the current behavior and passes with the correction. No fix has been demonstrated."
+    },
+    "drafts_sha256": "2dea035b918bc52d54e403465fb85c4dd0eaa57827a7188b225532ec8f072b94",
+    "response": "Created all 12 requested drafts in [drafts.json](/workspace/scratch/release-notes-102/drafts.json) and the read/command record in [activity.md](/workspace/scratch/release-notes-102/activity.md). Supplied verdicts, counts, severity, and material gaps are preserved. Repository files were not changed, and nothing was published.\n",
+    "activity_report": "# Read and command record\n\nRead the task prompt, repository `AGENTS.md`, `ARTIFACTS.json`, and `RECORDS.json`. Read only the supplied `engineering-writing/SKILL.md` and its required `unslop/SKILL.md` for writing guidance.\n\nCommands used `pwd` and `rg --files` to locate the local inputs, `cat` to read them, and Python to write `drafts.json` and check that its keys match every requested artifact. A final Python check validated the JSON, required closing Merge Danger sections, review counts and verdicts, and absence of Merge Danger in the inline comment and reply.\n\nDrafted all 12 requested artifacts from the supplied records. No application, test suite, CI check, or reproduction was run. Verification claims in the drafts refer to the supplied evidence. Repository files were not modified. Nothing was committed, pushed, published, or delegated.\n\n## Maintenance handoff continuation\n\nUsed the maintenance facts and writing guidance already in context; did not reread source records or guidance. Ran Python to write the internal `handoff.md`, append this entry to `activity.md`, and read both outputs to verify their contents. No application checks were run. `drafts.json` and repository files were not changed. Nothing was published or delegated.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-102",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:29:38.214107+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "7e2443e1b9b6a59c07706f84e3d7dfbc089a8956542774188f972af90f11718c",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "922d916b28740320e4b1c4a4b03ab845ad7511cb3bd175262e5615b2b0bfb213",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-102/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "status": "manual_required"
+    },
+    "internal_handoff": "# Maintenance handoff\n\nThe scheduled record-maintenance entry point is being replaced, but the required current impact and recovery assessment is missing. The supplied review remains Comment, with 0 Blockers, 1 Should fix finding, and 0 Nit/follow-up findings. The readiness gate remains open.\n\nAt `jobs/RecordMaintenance.cs:18`, the next engineer needs to establish the affected call path, deployed tenant configuration, write behavior, provider effects, and deployment order. Supply runtime or stored-value observations and rollback/restore evidence so the assessment identifies affected state and how to recover it. The supplied record contains file names but does not establish these behaviors.\n\nThe author supplied a successful compile. No runtime or stored-value observation is available, and whether a code revert can recover affected state is unknown. Impact and recovery risk remains unassessed. Do not merge until the required assessment satisfies the readiness gate. This missing gate does not change the supplied finding from Should fix to Blocker.\n"
+  },
+  {
+    "task": "release-notes-105",
+    "variant": "candidate",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-105/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-105/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-105/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; the parser, runtime behavior, persistence, configuration, and public command signatures are unchanged.\n\nThe supplied verification records that the exact `--help` output assertion failed before the edit and passes now. Existing CLI tests and required CI gates pass.\n\n## Merge Danger\n\nRisk: Low. The change affects help wording only, with no stored data or external effects. Reverting restores the previous text; no recovery work is needed.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe supplied production-file diff changes only the help-text typo. The exact `--help` assertion failed before the edit and passes now; existing CLI tests and required CI gates pass. No material verification gaps are recorded.\n\n## Merge Danger\n\nRisk: Low. Only CLI help wording changes, with no runtime, stored-data, or external effects. Reverting restores the previous wording; no recovery work is needed.",
+      "preferences.pr": "Add a dashboard default-sort preference for Birch users so their chosen order persists across reloads. Two existing views read the stored preference; other tenants retain the current default. There are no shared wire-format, authorization, payment, or migration changes.\n\nThe supplied verification covers target and non-target tenant flows, save/reload, invalid-option rejection, and failed-save UI recovery on the current build. Required gates pass. A production-like rollback restored the old setting without losing existing preferences.\n\n## Merge Danger\n\nRisk: Medium. An incorrect preference changes dashboard row order for Birch users in two views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe preference affects two existing Birch dashboard views; other tenants keep the current default. The supplied current-build results cover both tenant flows, save/reload, invalid-option rejection, and failed-save UI recovery. Required gates pass, and a production-like rollback restored the prior setting without losing existing preferences. No material verification gaps are recorded.\n\n## Merge Danger\n\nRisk: Medium. Birch users can see dashboard rows in an unintended order. The tenant flag can disable the new reader, and the tested rollback restores the prior setting without preference loss. The supplied evidence bounds the change to this tenant and these views.",
+      "retention.pr": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize this deletion, which intentionally removes millions of rows.\n\nThe supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. The encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed.\n\n## Merge Danger\n\nRisk: High. This job permanently deletes stored audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime. The authorized deletion and completed gates support readiness; they do not remove the recovery cost.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe data owner and retention policy explicitly authorize deletion of expired audit records across all tenants. The supplied production-like rehearsal verified the exact predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. An independent exercise verified the encrypted pre-purge archive and complete restore. All required technical and policy gates have passed; no material verification gaps are recorded.\n\n## Merge Danger\n\nRisk: High. The job intentionally deletes millions of stored audit records across all tenants. Reverting only stops future purges. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime. Approval reflects the authorized scope and verified recovery, while the deletion remains costly to reverse.",
+      "approvals.pr": "Keep the selected month in the payment approval screen. The supplied current-head reproduction shows an unresolved payment defect: load March rows, select April, and approve an old row, and the API persists its amount against April. Bind submission to the row month or clear stale rows, then add a failing month-switch regression test.\n\nExisting tests and CI pass, but the month-switch path has no regression test. A failed fetch also leaves the spinner active; loading must end on failure and that branch needs coverage. Renaming `data` to `approvalRows` is an optional follow-up. The supplied review requests changes with 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up.\n\n## Merge Danger\n\nRisk: High. Do not merge. Stale rows can submit payment approvals against the wrong month. Clear the Blocker and verify the month-switch regression before merging. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.\n\n- [Blocker] `admin/Approvals.tsx:84`: Rows from the previous month remain actionable after switching months, allowing an approval to persist against the wrong month. Bind submission to the row month or clear stale rows, and add a failing month-switch test.\n- [Should fix] `admin/Approvals.tsx:46`: A rejected approvals fetch leaves loading active, so the spinner never stops. End loading on failure and exercise that branch.\n- [Nit/follow-up] `admin/Approvals.tsx:22`: Consider `approvalRows` instead of `data` to make the local view model's purpose clearer. This is optional.\n\nThe supplied current-head reproduction loads March rows, switches to April, and approves an old row; the API persists its amount against April. Existing tests and CI pass, but there is no month-switch regression test yet. The supplied evidence also records the spinner failure. The payment correction process has not been exercised.\n\n## Merge Danger\n\nRisk: High. Do not merge. The demonstrated path writes a payment approval against the wrong month. Fix the Blocker and verify the month-switch regression before merging. A UI revert prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the unexercised correction process.",
+      "maintenance.pr": "Replace the scheduled record-maintenance entry point. The supplied change record lists files but does not establish affected call paths, tenant configuration, write behavior, provider effects, or deployment order.\n\nThe supplied compile succeeded. There are no runtime or stored-value observations, and the required current impact and recovery assessment is missing. The supplied review is Comment with 0 Blockers, 1 Should fix finding, and 0 Nits. The readiness gate remains open.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. The evidence does not establish the job's affected behavior or state, provider effects, or recovery requirements. Whether reverting can recover affected state is unknown. Supply the required current impact and recovery assessment, including deployed configuration and deployment order, before considering the job ready.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.\n\n[Should fix] `jobs/RecordMaintenance.cs:18`: Impact and recovery evidence for the replacement job are missing. When the scheduled entry point runs in its deployed configuration, the supplied record does not establish affected call paths, tenant configuration, writes, provider effects, or deployment order. Supply the required current impact and recovery assessment; the readiness gate remains open.\n\nThe author supplied a successful compile. No runtime or stored-value observation is available, and whether a code revert can recover affected state is unknown.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. Missing impact and recovery evidence prevents a supported risk rating. The affected state, external effects, and recoverability remain unknown; a successful compile does not resolve those gaps. Complete the repository's required current impact and recovery assessment before considering the job ready.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`: The selected month changes while old rows remain actionable. The current-head reproduction loads March rows, selects April, and approves a March row; the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test.",
+      "approvals.reply": "The passing suite does not cover the month-switch path. The current-head reproduction loads March rows, selects April, and approves a March row; the API persists its amount against April. The Blocker remains open. Bind submission to the row month or clear stale rows, and add a regression test that fails for this sequence before the fix and passes afterward. No fix or regression coverage has been supplied yet."
+    },
+    "drafts_sha256": "04a6fcd78aa2dcfd5caaaabf197b8aae1c057ace82c6caf023919dc376afcff0",
+    "response": "Created drafts.json with all 12 requested drafts and activity.md with the read/command record. Supplied verdicts, finding counts, severities, and material gaps are preserved. No application checks were run or repository files modified.\n",
+    "activity_report": "Read /workspace/scratch/release-notes-105/prompt.txt, repo/AGENTS.md, repo/ARTIFACTS.json, repo/RECORDS.json, guidance/shared/engineering-writing/SKILL.md, and guidance/shared/unslop/SKILL.md. Used pwd and rg --files to locate the supplied files and guidance, then cat to read them.\n\nDrafted all 12 requested artifacts in ../drafts.json using only the supplied records. Used Python to serialize the JSON and check that its keys match ARTIFACTS.json. No application checks were run. Repository files were not modified. Nothing was committed, pushed, published, or delegated.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-105",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:29:38.240705+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "7e2443e1b9b6a59c07706f84e3d7dfbc089a8956542774188f972af90f11718c",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "5677471ff2cf1c066ece364cd257e5ea6f69156a4354bb26eae572abffb5030a",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-105/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "status": "manual_required"
+    }
+  },
+  {
+    "task": "release-notes-108",
+    "variant": "candidate",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-108/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-108/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-108/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parsing, runtime behavior, persistence, configuration, and public command signatures stay unchanged.\n\nThe supplied verification records that the exact `--help` output assertion failed before the edit and passes afterward. Existing CLI tests and required CI gates also pass.\n\n## Merge Danger\n\nRisk: Low. The change affects only help wording, with no stored data or external effect to recover. Reverting restores the previous text.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe supplied production-file diff changes only the help string. The recorded exact-output assertion failed before the edit and passes now; existing CLI tests and required CI gates pass. No parser, runtime, persistence, configuration, or public command signature changes are present.\n\n## Merge Danger\n\nRisk: Low. Only CLI help wording changes. Reverting restores the previous text, and there is no stored data or external effect to recover.",
+      "preferences.pr": "Add a dashboard default-sort preference for the Birch tenant. Two existing views read the stored choice; other tenants keep the current default. The change introduces no shared wire format, authorization, payment, or migration changes.\n\nSupplied verification covers target and non-target tenant flows, save/reload, invalid-option rejection, and UI recovery after a failed save on the current build. Required gates pass. A production-like rollback restored the old setting without losing existing preferences.\n\n## Merge Danger\n\nRisk: Medium. A mistaken setting changes dashboard row order for Birch users in two views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe stored default-sort preference affects two existing views for Birch. Other tenants retain the current default, and the change does not alter shared wire formats, authorization, payments, or migrations. The supplied checks pass for both tenant flows, save/reload, invalid-option rejection, and failed-save UI recovery on the current build. Required gates pass, and a production-like rollback restored the prior setting without losing existing preferences.\n\n## Merge Danger\n\nRisk: Medium. An incorrect preference changes dashboard row order for Birch users. The tenant flag can disable the new reader, and the tested rollback restores the previous setting without losing existing preferences.",
+      "retention.pr": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize the deletion of millions of rows.\n\nThe supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, interruption, and restart. An encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed.\n\n## Merge Danger\n\nRisk: High. The job intentionally deletes stored audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime. The required technical and policy gates have passed.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe data owner and retention policy explicitly authorize deletion of expired audit records across all tenants. The supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, interruption, and restart. Independent exercises covered the encrypted pre-purge archive and complete restoration. All required technical and policy gates have passed.\n\n## Merge Danger\n\nRisk: High. The purge intentionally deletes millions of stored audit records. A code revert stops future purges but cannot restore deleted rows. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "approvals.pr": "Keep the selected month in the payment approval screen.\n\nAll existing tests and CI pass, but the supplied direct reproduction on the current head demonstrates an incorrect payment approval. Loading March rows, switching to April, and approving an old row persists its amount against April. Rows from the previous month remain actionable after the selected month changes. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test. That path has no regression test yet.\n\nA rejected fetch also leaves the spinner active. End loading on failure and exercise that branch. The review requests changes with 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up; the optional naming suggestion is `approvalRows` in place of `data`.\n\n## Merge Danger\n\nRisk: High. Do not merge. The current head can persist a payment approval against the wrong month. Fix the stale-row submission and verify the month-switch regression before clearing the hold. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.\n\n- [Blocker] `admin/Approvals.tsx:84`: Rows from the previous month remain actionable after the selected month changes. The supplied current-head reproduction loads March, selects April, and approves a March row; the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.\n- [Should fix] `admin/Approvals.tsx:46`: A rejected approvals fetch leaves loading active, so the spinner never stops. End loading on failure and exercise that branch.\n- [Nit/follow-up] `admin/Approvals.tsx:22`: Consider `approvalRows` instead of `data` to make the local view model clearer. This is optional.\n\nAll existing tests and CI pass, but they do not cover the month-switch path. The supplied direct reproduction demonstrates the payment defect on the current head. The payment correction process has not been exercised.\n\n## Merge Danger\n\nRisk: High. Do not merge. Approvals can persist against the wrong month despite passing tests. Fix the Blocker and verify the month-switch regression before clearing the hold. Reverting prevents subsequent use of the bug but cannot undo submitted approvals; operators must identify affected records and use the unexercised correction process.",
+      "maintenance.pr": "Replace the scheduled record-maintenance entry point. The supplied record names files but does not establish the affected call path, deployed tenant configuration, write behavior, provider effects, deployment order, or recovery procedure.\n\nThe author supplied a successful compile. No runtime or stored-value observation is available. Repository policy requires a current impact and recovery assessment before the job is ready, and that assessment is missing.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. Supply the required impact and recovery assessment to clear the readiness gate. The missing call path, configuration, write behavior, provider effects, and deployment evidence prevent an assessment of affected state and consequences. Whether reverting code can recover that state is unknown; rollback and restore evidence are missing.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.\n\n[Should fix] `jobs/RecordMaintenance.cs:18`: The replacement job lacks the required impact and recovery assessment. When the scheduled entry point runs in its deployed configuration, the supplied evidence does not establish affected state or recoverability. Supply the assessment; the readiness gate remains open.\n\nThe author supplied a successful compile, with no runtime or stored-value observation. The record contains file names but omits the affected call path, tenant configuration, write behavior, provider effects, deployment order, and rollback or restore evidence.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. The required current impact and recovery assessment is missing, so affected state and failure consequences remain unknown. Whether a code revert can recover that state is also unknown. Supply the assessment and recovery evidence to clear the readiness gate; the review verdict remains Comment.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`: Changing the selected month leaves the previous month's rows actionable. The supplied current-head reproduction loads March, selects April, and approves a March row; the API persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.",
+      "approvals.reply": "The passing suite does not cover the month-switch path. The supplied reproduction on the current head loads March rows, switches to April, and approves an old row; the API persists its amount against April. The Blocker remains open. Bind submission to the row month or clear stale rows, then add a regression test that fails for this sequence and verify the correction. No fix has been demonstrated."
+    },
+    "drafts_sha256": "66317057c2d926c59d30eee0312fa5d99c9738c7d7b207fa02ac233c050d1901",
+    "response": "Created all 12 requested drafts in /workspace/scratch/release-notes-108/drafts.json and the read/command record in /workspace/scratch/release-notes-108/activity.md. Draft keys and required Merge Danger sections were validated. Verification claims are attributed to the supplied records. Repository files were not modified.\n",
+    "activity_report": "Read `prompt.txt`, repository `AGENTS.md`, `ARTIFACTS.json`, and `RECORDS.json`. Read the supplied `engineering-writing/SKILL.md` and its required `unslop/SKILL.md` under this task's guidance directory. Used `pwd`, `rg --files`, `ls`, and `cat` to locate and read these inputs.\n\nDrafted all 12 requested artifacts into `drafts.json` with Python. Validated that draft keys exactly match `ARTIFACTS.json` and every draft is a nonempty string. All verification statements come from the supplied records; no application, test suite, or review was run. Repository files were not modified. No commit, push, publication, or delegation occurred.\n\nA final Python check parsed the JSON and confirmed that PR descriptions and full reviews end with Merge Danger sections, while the inline comment and reply omit them. Saved the completion response to `response.txt`.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-108",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:29:38.264875+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "7e2443e1b9b6a59c07706f84e3d7dfbc089a8956542774188f972af90f11718c",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "61a877310fe204280d5c2031108c1b47fdd273967682dcb47aeb1206e3171cea",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-108/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "status": "manual_required"
+    }
+  },
+  {
+    "task": "release-notes-111",
+    "variant": "candidate",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-111/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-111/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-111/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Correct `recieve` to `receive` in the CLI help text. The production-file diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures are unchanged.\n\nThe supplied verification records that the exact `--help` assertion failed before the edit and passes afterward. Existing CLI tests and required CI gates pass.\n\n## Merge Danger\n\nRisk: Low. The change affects help wording only, with no stored data or external effects to recover. Reverting restores the previous text.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix findings, and 0 Nit/follow-up findings.\n\nThe supplied review evidence bounds the production change to one help-text string. The exact `--help` assertion failed before the edit and passes afterward; existing CLI tests and required CI gates pass. Parser behavior, runtime behavior, persistence, configuration, and public command signatures are unchanged.\n\n## Merge Danger\n\nRisk: Low. Only help wording changes, and there is no stored data or external effect to recover. Reverting restores the previous text.",
+      "preferences.pr": "Add a dashboard default-sort preference for Birch users so their saved choice controls row order in two existing views. Other tenants keep the current default. The change does not alter shared wire formats, authorization, payments, or migrations.\n\nThe supplied verification records passing target-tenant and non-target-tenant flows, save/reload, invalid-option rejection, failed-save UI recovery, and required gates. A production-like rollback restored the old setting without losing existing preferences.\n\n## Merge Danger\n\nRisk: Medium. A mistaken stored setting changes dashboard row order for Birch users in two views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix findings, and 0 Nit/follow-up findings.\n\nThe stored sort preference affects two existing Birch dashboard views; other tenants retain their default. The supplied evidence records passing tenant coverage, save/reload, invalid-option rejection, failed-save UI recovery, and required gates. A production-like rollback restored the old setting without losing existing preferences. Shared wire formats, authorization, payments, and migrations are unchanged.\n\n## Merge Danger\n\nRisk: Medium. An incorrect preference changes row order for Birch users in both readers. The tenant flag can disable the new reader, and the exercised rollback restores the prior setting without losing existing preferences.",
+      "retention.pr": "Purge audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize this deletion of millions of rows.\n\nThe supplied production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. An encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed.\n\n## Merge Danger\n\nRisk: High. The job intentionally deletes stored audit records across all tenants. Reverting stops future purges but cannot recreate deleted rows. Recovering an erroneous deletion requires the tested archive restoration procedure and operational downtime; the passed gates and restore rehearsal support readiness but do not remove those consequences.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix findings, and 0 Nit/follow-up findings.\n\nThe data owner and retention policy authorize purging expired audit records across all tenants. The supplied production-like rehearsal verified the exact predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. An encrypted pre-purge archive and complete restore were independently exercised, and all required technical and policy gates have passed.\n\n## Merge Danger\n\nRisk: High. This authorized job deletes millions of stored audit records. Reverting stops subsequent purges but cannot restore deleted rows. An erroneous deletion requires the exercised archive restoration procedure and operational downtime. The supplied evidence supports approval with these recovery costs understood.",
+      "approvals.pr": "Keep the selected month in the payment approval screen. The current change leaves old-month rows actionable after a month switch, so it is not ready to merge.\n\nThe supplied review requests changes with 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up finding. The Blocker at `admin/Approvals.tsx:84` allows an old row's amount to be approved against the newly selected month. A failed fetch also leaves the spinner active at line 46. The optional naming follow-up at line 22 suggests `approvalRows` in place of `data`.\n\nAll existing tests and CI pass in the supplied record. A direct current-head reproduction loads March rows, selects April, and approves an old row; the API persists its amount against April. The record also confirms the spinner remains active after a failed fetch. There is no month-switch regression test yet.\n\n## Merge Danger\n\nRisk: High. Do not merge. The reproduced bug persists payment approvals against the wrong month. Bind submission to the row's month or clear stale rows, and add a regression test that fails on the current month-switch behavior and passes with the fix. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up finding.\n\n1. [Blocker] `admin/Approvals.tsx:84`: A month switch leaves old rows actionable, and the current-head reproduction confirms that approving one persists its amount against the new month. Bind submission to the row's month or clear stale rows, and add the missing month-switch regression test.\n2. [Should fix] `admin/Approvals.tsx:46`: A failed approvals request leaves the spinner active. End loading on failure and exercise that branch.\n3. [Nit/follow-up] `admin/Approvals.tsx:22`: Consider `approvalRows` instead of `data` to make the local view model's purpose clearer. This naming change is optional.\n\nThe supplied evidence records passing existing tests and CI, plus a direct current-head reproduction that loads March rows, switches to April, and approves an old row. The API persists the amount against April. The failed-fetch spinner behavior is also observed. The month-switch path has no regression test yet.\n\n## Merge Danger\n\nRisk: High. Do not merge. Payment approvals can persist against the wrong month despite the green suite. Correct the row/month binding or clear stale rows, and add a regression test that fails on the current behavior and passes with the fix. Reverting the UI prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which remains unexercised.",
+      "maintenance.pr": "Replace the scheduled record-maintenance entry point. The supplied change record names files but does not establish the affected call path, tenant configuration, write behavior, provider effects, or deployment order.\n\nThe author supplied a successful compile. There is no runtime or stored-value observation, and no rollback or restore evidence. Repository policy requires a current impact and recovery assessment before this job is ready; that assessment is missing. The supplied review verdict is Comment with 0 Blockers, 1 Should fix finding at `jobs/RecordMaintenance.cs:18`, and 0 Nit/follow-up findings.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. The affected state and recoverability are unknown, so the compile result cannot support an impact rating. Supply the required assessment of the call path, deployed tenant configuration, writes, provider effects, deployment order, and rollback or restore behavior to clear the readiness gate. Whether reverting code recovers affected state remains unverified.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix finding, and 0 Nit/follow-up findings.\n\n[Should fix] `jobs/RecordMaintenance.cs:18`: The replacement job lacks the required current impact and recovery assessment. When the scheduled entry point runs in its deployed configuration, the supplied evidence does not establish the affected call path, tenant configuration, write behavior, provider effects, deployment order, or recoverability. Supply the assessment; the readiness gate remains open.\n\nThe author supplied a successful compile. No runtime or stored-value observation and no rollback or restore evidence are available.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. Missing impact and recovery evidence prevents a supported rating. The required assessment must establish the job's deployed behavior, affected state, and recovery procedure before the readiness gate can clear. Whether a code revert restores affected state is unknown.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`: The current-head reproduction loads March rows, selects April, and approves a still-actionable March row; the API persists its amount against April because submission uses the selected month while old rows remain actionable. Bind submission to the row's month or clear stale rows, and add a regression test that fails on this behavior and passes with the fix.",
+      "approvals.reply": "The Blocker remains open. The supplied current-head reproduction loads March rows, selects April, and approves an old row; the API persists its amount against April. The passing suite has no month-switch regression test, so it does not disprove this result. Bind submission to the row's month or clear stale rows, then add a test that fails on the current behavior and passes with the fix. No fix or verification of a fix is recorded."
+    },
+    "drafts_sha256": "e3b9b7af1608854fd3a6eaf34fba2dbf90fdd43f327e572b52b7485355c053aa",
+    "response": "Created all 12 requested Markdown drafts in drafts.json and recorded reads and commands in activity.md. Preserved the supplied verdicts, finding counts, severity, and verification gaps. No application checks were run or artifacts published.\n",
+    "activity_report": "# Read and command record\n\nRead the task prompt, repo/AGENTS.md, repo/ARTIFACTS.json, and repo/RECORDS.json. Read only the supplied guidance/shared/engineering-writing/SKILL.md and its required guidance/shared/unslop/SKILL.md. Used `rg --files` to locate the supplied records and guidance.\n\nUsed Python to write drafts.json and check that its 12 keys match ARTIFACTS.json. No application checks were run. All verification statements in the drafts come from RECORDS.json. Repository files remained read-only; nothing was committed, pushed, or published, and no work was delegated.\n\nValidated JSON parsing, requested-key coverage, expected risk ratings and merge holds, required Merge Danger sections, and their absence from the inline comment and reply.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-111",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:29:38.288237+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "7e2443e1b9b6a59c07706f84e3d7dfbc089a8956542774188f972af90f11718c",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "8ae4d62efe3d29d85bb7eb01a602fa2e18df2275686bc8b149c2bc946908ba02",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-111/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "status": "manual_required"
+    }
+  },
+  {
+    "task": "release-notes-114",
+    "variant": "candidate",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-114/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-114/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-114/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "help.pr": "Correct `recieve` to `receive` in the CLI help text. The production diff changes only that string; parser behavior, runtime behavior, persistence, configuration, and public command signatures stay the same.\n\nThe recorded exact `--help` output assertion failed before the edit and passes afterward. Existing CLI tests and required CI gates pass.\n\n## Merge Danger\n\nRisk: Low. The change affects help wording only, with no stored data or external effects to recover. Reverting restores the previous text.",
+      "help.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe supplied production diff changes only the help-text spelling. The recorded exact `--help` output assertion failed before the edit and passes afterward. Existing CLI tests and required CI gates pass. No verification gap is reported.\n\n## Merge Danger\n\nRisk: Low. Only help wording changes; runtime behavior and stored data are unaffected. Reverting restores the previous text, with no external effects to recover.",
+      "preferences.pr": "Add a stored dashboard default-sort preference for the Birch tenant so its users can retain their chosen row order. Two existing views read the preference. Other tenants retain the current default; shared wire formats, authorization, payments, and migrations do not change.\n\nRecorded verification passes for target and non-target tenant flows, save/reload, invalid-option rejection, and recovery after a failed save on the current build. Required gates pass. A production-like rollback restored the old setting without losing existing preferences.\n\n## Merge Danger\n\nRisk: Medium. A mistaken preference changes dashboard row order for Birch users in two views. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences. No material recovery gap is reported.",
+      "preferences.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe preference affects Birch dashboard sorting in two existing views. Other tenants retain their default, and the supplied record identifies no shared wire-format, authorization, payment, or migration changes. Recorded checks pass for target and non-target tenants, save/reload, invalid-option rejection, and failed-save UI recovery on the current build. Required gates pass. A production-like rollback restored the old setting without losing existing preferences. No verification gap is reported.\n\n## Merge Danger\n\nRisk: Medium. Birch users can see an unintended dashboard row order if the stored preference is wrong. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences.",
+      "retention.pr": "Purge expired audit records older than the approved retention limit across all tenants. The data owner and retention policy explicitly authorize this deletion, which intentionally affects millions of rows.\n\nThe recorded production-like rehearsal verified the exact row predicate, tenant coverage, bounded batches, concurrent reads, and interruption and restart. An encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed.\n\n## Merge Danger\n\nRisk: High. This job intentionally deletes stored audit data across all tenants. Reverting stops future purges but cannot recreate deleted rows. An erroneous deletion requires the tested archive restoration procedure and operational downtime. The supplied evidence includes a complete restore and no open required gates.",
+      "retention.review": "Approve. 0 Blockers, 0 Should fix findings, 0 Nits.\n\nThe data owner and retention policy authorize purging expired audit records across all tenants. The recorded production-like rehearsal verified the exact row predicate and tenant coverage, bounded batches, concurrent reads, and interruption and restart. The encrypted pre-purge archive and complete restore were independently exercised. All required technical and policy gates have passed; no material verification gap is reported.\n\n## Merge Danger\n\nRisk: High. The approved job intentionally deletes millions of stored audit records. A code revert stops later purges but cannot recover deleted rows. Recovery from an erroneous deletion requires the tested archive restoration procedure and operational downtime.",
+      "approvals.pr": "Keep the selected month in the payment approval screen. The current change also allows rows from the previous month to remain actionable after a month switch, so a payment approval can persist against the wrong month.\n\nReview status is Request changes, with 1 Blocker, 1 Should fix finding, and 1 Nit/follow-up:\n\n- [Blocker] `admin/Approvals.tsx:84`: Loading March rows, selecting April, and approving a March row persists its amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test.\n- [Should fix] `admin/Approvals.tsx:46`: A failed fetch leaves the spinner active. End loading on failure and exercise that branch.\n- [Nit/follow-up] `admin/Approvals.tsx:22`: Consider `approvalRows` instead of the temporary name `data`.\n\nAll existing tests and CI pass in the supplied record. A direct current-head reproduction demonstrates the wrong-month approval. The record also reports that a failed fetch leaves the spinner active. The month-switch path has no regression test yet; the green suite does not cover the reproduced defect.\n\n## Merge Danger\n\nRisk: High. Do not merge. The current UI can persist a payment approval against the wrong month. Fix the Blocker and add the failing month-switch regression test before clearing the hold. Reverting prevents subsequent use of the bug but cannot undo submitted approvals. Operators must identify affected records and use the correction process, which has not been exercised.",
+      "approvals.review": "Request changes. 1 Blocker, 1 Should fix finding, 1 Nit/follow-up.\n\n- [Blocker] `admin/Approvals.tsx:84`: Stale rows remain actionable after switching months, and the current-head reproduction persists a March row's amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch test.\n- [Should fix] `admin/Approvals.tsx:46`: A rejected approvals request leaves loading active indefinitely. End loading on failure and exercise the failed-fetch branch.\n- [Nit/follow-up] `admin/Approvals.tsx:22`: Consider `approvalRows` for the local view model instead of `data`. This is optional.\n\nThe supplied record reports that existing tests and CI pass. Direct current-head reproduction demonstrates the wrong-month persisted approval. The record also reports that a failed fetch leaves the spinner active. The month-switch path has no regression test yet, and the operational correction process has not been exercised.\n\n## Merge Danger\n\nRisk: High. Do not merge. Wrong-month payment approvals affect persisted financial records despite the green suite. Fix the Blocker and add the failing month-switch test before clearing the hold. Reverting prevents later use of the bug but cannot undo submitted approvals; operators must identify affected records and use the unexercised correction process.",
+      "maintenance.pr": "Replace the scheduled record-maintenance entry point. The supplied change record lists files but does not establish the affected call path, tenant configuration, write behavior, provider effects, deployment order, or rollback and restore behavior.\n\nThe author supplied a successful compile. There is no runtime or stored-value observation. The review verdict is Comment, with 0 Blockers, 1 Should fix finding, and 0 Nits. At `jobs/RecordMaintenance.cs:18`, the impact and recovery evidence required by repository policy is missing, so the readiness gate remains open.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. Supply the required current impact and recovery assessment before treating the job as ready. The affected runtime paths, tenants, writes, provider effects, deployment order, and recovery procedure remain unverified. Whether reverting code can recover the affected state is unknown.",
+      "maintenance.review": "Comment. 0 Blockers, 1 Should fix finding, 0 Nits.\n\n[Should fix] `jobs/RecordMaintenance.cs:18`: The supplied evidence does not establish what state the replacement job affects when it runs in its deployed configuration or how to recover that state. Supply the impact and recovery assessment required by repository policy. The readiness gate remains open.\n\nThe only supplied verification is the author's successful compile. No runtime or stored-value observation is available. The affected call path, tenant configuration, write behavior, provider effects, deployment order, and rollback or restore behavior are unknown.\n\n## Merge Danger\n\nRisk: Unassessed. Do not merge. The missing impact and recovery evidence prevents a supported risk rating and leaves the required readiness gate unmet. Supply the current assessment before clearing the hold. Whether a code revert can recover affected state remains unknown.",
+      "approvals.inline": "[Blocker] `admin/Approvals.tsx:84`: Load March rows, select April, and approve a March row; the old rows remain actionable, and the current-head reproduction shows the API persisting that row's amount against April. Bind submission to the row month or clear stale rows, and add a failing month-switch regression test.",
+      "approvals.reply": "The Blocker remains open. The current-head reproduction loads March rows, switches to April, and approves a March row; the API persists its amount against April. The existing suite and CI pass, but the month-switch path has no regression test, so those results do not disprove the defect. Bind submission to the row month or clear stale rows, then add a test that fails for this reproduction and verify the correction."
+    },
+    "drafts_sha256": "5f2d36aa63a2862189b2f6d5047573ea104436647b402f2dbd1ca79d8cc86c78",
+    "response": "Created all 12 Markdown drafts in drafts.json and the read/command record in activity.md. Preserved the supplied verdicts, findings, and verification gaps. No repository files were modified or application checks run.\n",
+    "activity_report": "Read prompt.txt; checked for ancestor AGENTS.md files; read repo/AGENTS.md, repo/ARTIFACTS.json, and repo/RECORDS.json. Listed the supplied guidance catalog and read guidance/shared/engineering-writing/SKILL.md and guidance/shared/unslop/SKILL.md. Used cat and rg for those reads, then Python to write drafts.json and check that it contains every requested key with a nonempty Markdown draft. No application checks were run. Repository files remained read-only; nothing was committed, pushed, published, or delegated.\nA final Python content check confirmed 12 drafts, the required final Merge Danger sections and ratings, the applicable merge holds, and no risk sections in the inline comment or reply. Adjusted the approvals wording to distinguish the current-head payment reproduction from the separately reported fetch failure.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger",
+      "task_dir": "/workspace/scratch/release-notes-114",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:29:38.310071+00:00",
+      "fixture_sha256": "36717fbee28e7264fb76892f98d8a386729d68f64ef90a1744d834ac8c18f920",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "7e2443e1b9b6a59c07706f84e3d7dfbc089a8956542774188f972af90f11718c",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "0bcca1eff4cb61731c4360b103cc445414c1de68e72b5649a2c592828ba6d22b",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-114/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess ratings, holds, evidence, verdicts, and artifact boundaries against the supplied engineering records; labels alone do not establish correctness."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "13cfc0b074675c0bb1aa496d73e6620e12048828c0cfbd80891f97e7844b9203",
+          "RECORDS.json": "1a978077ec54337c61d0a94fc91324b687967f63903d396b92e93d2ee31377fe"
+        },
+        "heads": {
+          ".": "fedc8246129c2aa6216cf1992ca8390ddd852792"
+        }
+      },
+      "status": "manual_required"
+    }
+  },
+  {
+    "task": "release-notes-116",
+    "variant": "holdout",
+    "prompt": "Use $engineering-writing at /workspace/scratch/release-notes-116/guidance/shared/engineering-writing/SKILL.md. Work in /workspace/scratch/release-notes-116/repo. Draft the GitHub artifacts requested in ARTIFACTS.json from the supplied RECORDS.json. Write ../drafts.json as a JSON object mapping every requested key to its Markdown draft. These are writing assignments using supplied engineering evidence, not requests to implement or re-review an application. Preserve the supplied review verdict, counts, severity, and material gaps. Do not claim that you ran the supplied checks yourself. Read local AGENTS.md and the supplied writing guidance. Do not modify repository files, commit, push, publish, or delegate. Write a concise read/command record to ../activity.md. Read guidance only from /workspace/scratch/release-notes-116/guidance. Work in this one context; do not delegate.\n",
+    "drafts": {
+      "links.pr": "Correct documentation punctuation and replace one link in `docs/usage.md`. The change has no runtime, parser, persistence, configuration, or public API impact.\n\nThe recorded verification includes inspection of the documentation diff and a passing punctuation assertion. The repository-required docs-link check fails because the new destination returns 404. Correct the URL and pass that check before merging.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The impact is limited to documentation, including an unavailable link destination. Reverting restores the previous documentation, with no runtime or stored data to recover. The required docs-link check must pass to clear the merge hold.",
+      "links.review": "Comment. 0 Blockers, 1 Should fix, 0 Nits.\n\n- Should fix at `docs/usage.md:8`. The changed link returns 404 when a reader follows it or the required documentation-link check runs. Readers cannot reach the destination, and the required gate fails. Correct the URL and pass the link check.\n\nThe recorded verification includes inspection of the documentation diff and a passing punctuation assertion. The required docs-link check is still failing.\n\n## Merge Danger\n\nRisk: Low. Do not merge. The change affects documentation only, so the known failure is limited to an unavailable link destination. Reverting restores the previous documentation; no runtime or stored data needs recovery. Correct the URL and pass the required docs-link gate before merging.",
+      "ordering.pr": "Add a saved dashboard default-sort preference for the Birch tenant. Two existing views read the stored preference, while other tenants retain the current default. There are no shared wire format, authorization, payment, or migration changes.\n\nRecorded verification on the current build passes for target and non-target tenant flows, save/reload, invalid-option rejection, and failed-save UI recovery. Required gates pass. A production-like rollback restored the old setting without losing existing preferences.\n\nOne Should fix remains at `dashboard/SortPreference.ts:31`: the two readers duplicate the same sort-selection policy. Current behavior meets the ticket, but the next policy change will require coordination and risks drift. Give the existing preference owner the shared decision and keep the current behavior pins.\n\n## Merge Danger\n\nRisk: Medium. A mistaken setting changes dashboard row order for Birch users in two views. The tenant flag can disable the new reader, and the tested rollback restores the prior setting without losing existing preferences. The duplicated policy leaves future drift risk; recorded behavior checks and required gates pass.",
+      "ordering.review": "Comment. 0 Blockers, 1 Should fix, 0 Nits.\n\n- Should fix at `dashboard/SortPreference.ts:31`. The two readers duplicate the same sort-selection policy. The next policy change will require avoidable coordination and may cause drift, although current behavior meets the ticket. Give the existing preference owner the shared decision and keep the current behavior pins.\n\nRecorded verification on the current build passes for target and non-target tenant flows, save/reload, invalid-option rejection, and failed-save UI recovery. Required gates pass. A production-like rollback restored the old setting without losing existing preferences.\n\n## Merge Danger\n\nRisk: Medium. A mistaken preference affects dashboard row order for Birch users in two existing views. Other tenants retain their current default, and the change does not affect shared wire formats, authorization, payments, or migrations. The tenant flag disables the new reader, and the tested rollback restores the prior setting without losing existing preferences. Future policy drift remains possible while the readers duplicate the decision."
+    },
+    "drafts_sha256": "7065c256d6dee5323a7ea11465c49439ac23290d5c79073b8b9ec745e99657f9",
+    "response": "Created drafts.json with all four requested GitHub drafts and activity.md with the read/command record. Preserved the supplied verdicts, finding counts, required merge gate, and recovery evidence.\n",
+    "activity_report": "Read the task prompt, repository `AGENTS.md`, `ARTIFACTS.json`, and `RECORDS.json`. Applied the supplied `engineering-writing` and referenced `unslop` guidance from this task's guidance directory.\n\nCommands used:\n- `cat` to read the prompt, local instructions, requested artifacts, engineering records, and the two guidance files.\n- `pwd` and `rg --files` to locate task inputs and the supplied guidance.\n- A Python heredoc to write `../drafts.json`, verify valid JSON and exact requested-key coverage, and write this activity record and `../response.txt`.\n\nDrafted all four requested artifacts from the supplied evidence. Kept both review verdicts as Comment with 0 Blockers, 1 Should fix, and 0 Nits. Classified the documentation change as Low risk with a merge hold for the failed required link gate, and the tenant preference change as Medium risk with passing gates and the recorded recovery evidence.\n\nNo application checks were run. All check results in the drafts come from the supplied records. Repository files were not modified; nothing was committed, pushed, or published, and no work was delegated.\n",
+    "preparation_receipt": {
+      "version": 1,
+      "case": "merge-danger-controls",
+      "task_dir": "/workspace/scratch/release-notes-116",
+      "repositories": [
+        "."
+      ],
+      "started_utc": "2026-10-18T02:31:19.813089+00:00",
+      "fixture_sha256": "51aca5cb631439fb3ab17fbb402f02a72822c1c7984263b739d5f3acad6b86cd",
+      "initial_state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "ddd6bec5811206f2a4c121ab00da70706ee8a9cf89ba951ac1d79d86f04b84aa",
+          "RECORDS.json": "fd06cd409cee085d4037dc44f5548ab5e8a7b3d7c310f29482ae59b306eda850"
+        },
+        "heads": {
+          ".": "99d4cb5282eefa67931d965b88a01f82a4816577"
+        }
+      },
+      "guidance": {
+        "commit": "abad57af71d398f34f732b3b48a873579bb1593a",
+        "snapshot_sha256": "7e2443e1b9b6a59c07706f84e3d7dfbc089a8956542774188f972af90f11718c",
+        "mode": "explicit-skill",
+        "entry": "engineering-writing"
+      },
+      "prompt_sha256": "20df813c123fae4b3c4986f1ce422a257cf71aef29791c022776906986e79076",
+      "host": {
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+        "python": "3.12.14"
+      },
+      "requested": {
+        "harness": "manual",
+        "model": null,
+        "effort": null,
+        "sandbox": "workspace-write",
+        "delegation": "instructed_single_context"
+      },
+      "limits": {
+        "wall_seconds": 300,
+        "tokens": null,
+        "tool_calls": null
+      },
+      "execution": {
+        "status": "prepared"
+      }
+    },
+    "source_grade": {
+      "case": "merge-danger-controls",
+      "checks": [
+        {
+          "claim": "Read-only task left source and heads unchanged",
+          "status": "passed"
+        },
+        {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-v"
+          ],
+          "cwd": "/workspace/scratch/release-notes-116/repo",
+          "output": "grade-suite-0.txt",
+          "exit_code": 5,
+          "status": "not_applicable"
+        }
+      ],
+      "manual_review": [
+        "Read ../drafts.json and assess the documentation gate and nonblocking cleanup findings independently of risk; preserve the supplied verdicts."
+      ],
+      "execution_status": "prepared",
+      "environment": {
+        "python": "3.12.14",
+        "platform": "Linux-6.18.55-x86_64-with-glibc2.41"
+      },
+      "grader_sha256": "b0635b5e915278e84ae980d2b40f0bfa2cb727e2c9dc5ac22526f16c9b575a06",
+      "state": {
+        "files": {
+          "AGENTS.md": "e162a605369ae0c54dd87a868d0c8ddcf411af2a782f1ac5a4e10848c187d37b",
+          "ARTIFACTS.json": "ddd6bec5811206f2a4c121ab00da70706ee8a9cf89ba951ac1d79d86f04b84aa",
+          "RECORDS.json": "fd06cd409cee085d4037dc44f5548ab5e8a7b3d7c310f29482ae59b306eda850"
+        },
+        "heads": {
+          ".": "99d4cb5282eefa67931d965b88a01f82a4816577"
+        }
+      },
+      "status": "manual_required"
+    }
+  }
+]
