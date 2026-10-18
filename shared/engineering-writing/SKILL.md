@@ -45,7 +45,7 @@ Never reply with "Fixed", "Done", or "Addressed" alone. Do not add a Merge Dange
 
 Place this section last in PR descriptions and full review summaries. Begin with `Risk: Low`, `Risk: Medium`, or `Risk: High`, using the rubric below. Follow the rating with its concrete reason, affected behavior or data, whether reverting restores the previous state, and any recovery requirement or unverified risk.
 
-Choose the highest level supported by the workflow's evidence. Consider plausible failure consequences, affected consumers, reversibility, recovery, and material verification gaps. These are qualitative judgments, not probabilities or scores out of ten.
+Base the rating on the workflow's evidence about plausible failure consequences, affected consumers, reversibility, recovery, and material verification gaps. When these point to different levels, use the more severe one. These are qualitative judgments, not probabilities or scores out of ten.
 
 | Rating | Meaning |
 | --- | --- |
