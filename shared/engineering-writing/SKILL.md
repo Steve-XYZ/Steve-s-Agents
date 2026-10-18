@@ -57,7 +57,7 @@ If missing impact or recovery evidence prevents a supported rating, write `Risk:
 
 Add `Do not merge` immediately after the rating when a known Blocker or an unmet required merge gate prevents merging. State what must be fixed or verified to clear the hold. Keep the calling workflow's verdict and finding classifications unchanged. High does not automatically mean blocked; Low does not grant approval or waive any gate. A rating never authorizes a merge.
 
-Use a short paragraph for routine changes; expand for material risks. Explain merge consequences and recovery rather than repeating findings. Do not infer safety from diff size, passing tests, or the author's assurance. If reversibility or recovery is unknown, say what remains unverified; do not invent a guarantee. Keep ratings and merge holds out of individual inline comments and review replies, which retain their existing finding severity and disposition.
+Use a short paragraph for routine changes; expand for material risks. Explain merge consequences and recovery rather than repeating findings. Do not infer safety from diff size, passing tests, or the author's assurance. If reversibility or recovery is unknown, say what remains unverified; do not invent a guarantee. Do not add a separate risk rating, merge hold, or Merge Danger section to individual inline comments or review replies. Preserve the caller's finding severity, disposition, and any existing blocking condition.
 
 Weak:
 
