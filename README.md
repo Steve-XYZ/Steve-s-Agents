@@ -1,10 +1,10 @@
 # Steve-s-Agents
 
-Personal agent guidance shared across development machines and agents, including Codex, Claude Code, OpenCode, Antigravity, Cursor, and Grok Build. They use the same AGENTS.md and skills standards; symlinks keep a single source of guidance. The installer maintains the Codex and Claude paths used on this machine.
+Personal agent guidance shared across development machines and agents, including Codex, Claude Code, OpenCode, Antigravity, Cursor, and Grok Build. They use the same AGENTS.md and skills standards; symlinks keep a single source of guidance. The installer maintains the global guidance and skill roots for the installed CLIs. Cursor user rules remain a manual paste because Cursor stores them in the app.
 
 ## Contents
 
-- `shared/global-guidance/ENGINEERING.md`: global defaults, symlinked to `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md`.
+- `shared/global-guidance/ENGINEERING.md`: global defaults, symlinked to each installed CLI's global guidance file: `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.config/opencode/AGENTS.md`, `~/.grok/AGENTS.md`, and `~/.gemini/AGENTS.md`.
 - `shared/`: phase skills `shape-feature`, `deliver-ticket`, `diagnosing-bugs`, `investigate`, `orchestrate`, `code-review`, and `triage-review`; gate skills `verify-work`, `blast-radius`, `unslop`, and `engineering-writing`.
 - `dotnet/aspnet-core/`: the ASP.NET Core facts a model gets wrong from memory — target-framework and breaking changes, middleware order, Blazor render modes. Not a documentation summary.
 - `configs/macos/`, `configs/wsl/`: reference copies of each machine's local configuration, including the untracked BOS project guidance.
@@ -41,7 +41,7 @@ Use shaping for unresolved decisions in existing systems as well as new projects
 
 Self-review checks the integrated change. Fresh independent review is required for material money, authorization, durable concurrency, irreversible migration, or hard-to-undo external-effect changes, and that reviewer reruns the proof of the change's safety facts instead of accepting the author's run. Use one reviewer first. Triage tests findings against evidence before fixing them. A missing reviewer or material proof blocks a readiness claim, not an authorized diagnostic draft.
 
-You normally choose each thread's model yourself. When an agent delegates a worker, reviewer, or verifier and you named no model for it, the global guidance takes the role's usable entry from `~/.config/agents/model-profiles.toml`, then the current session's model, and reports which source applied.
+You normally choose each thread's model yourself. When an agent delegates a worker, reviewer, or verifier and you named no model for it, the global guidance takes the role's usable entry from `~/.config/agents/model-profiles.toml`, then the current session's model, and reports which source applied. Provider IDs and option names are host-specific. T3 Code exposes adapter IDs such as `claudeAgent` and `codex`; a direct OpenCode session exposes provider IDs such as `opencode` or `openrouter`. Fill the profile from the host that launches the worker. The installer does not write this file.
 
 See [the foundation decisions](docs/workflow-foundation.md) for evidence, rejected defaults, and the boundary between this repository and project-owned tools. [AGENTS.md](AGENTS.md) holds the rules for writing and testing a skill change. The WSL audit used a machine-local Claude `user-invocable-only` override; the installer preserves local routing settings.
 
@@ -92,8 +92,8 @@ For a recurring or expensive failure, record the failure, smallest proposed prev
 
 The same shape applies on every machine; only the clone path and the reference configuration directory differ.
 
-- `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` and `~/.claude/CLAUDE.md` are symlinks to `shared/global-guidance/ENGINEERING.md`.
-- Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's skills directory.
+- `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.config/opencode/AGENTS.md`, `~/.grok/AGENTS.md`, and `~/.gemini/AGENTS.md` are symlinks to `shared/global-guidance/ENGINEERING.md`. Cursor user rules are not a file; paste the same guidance into Cursor's User Rules, and paste again after `ENGINEERING.md` changes.
+- Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's native skills directory: `~/.claude/skills`, `~/.agents/skills`, `~/.config/opencode/skills`, `~/.grok/skills`, `~/.gemini/config/skills`, and `~/.cursor/skills`.
 - `~/.claude/settings.json` keeps its existing configuration while the installer ensures `permissions.additionalDirectories` includes this clone, so Claude can resolve skill reference files through the symlinks.
 - BOS repository `AGENTS.md` and `CLAUDE.md` files mirror this machine's `configs/<machine>/bos/` copies and stay untracked through `.git/info/exclude`. Each `CLAUDE.md` is a two-line `@AGENTS.md` include, so the guidance has one source.
 - Machine-specific Codex examples remain reference material; merge selected settings into `~/.codex/config.toml` without replacing it wholesale.
@@ -106,6 +106,19 @@ scripts/install-agent-links.sh
 The installer is idempotent, detects installed CLIs by their configuration directories, discovers skills by scanning for `SKILL.md`, and moves anything already occupying a target path into `~/.agent-links-backup/<timestamp>/` rather than deleting it. When Claude is installed it uses Python 3 to merge the one required directory into existing user settings, backing that file up first. Invalid or unexpected JSON fails without modifying the settings file; other links may already have been updated.
 
 Restart the harness after linking so it refreshes skill discovery. Skill bodies load when invoked.
+
+### Harness paths
+
+| CLI | Global guidance | Skills |
+| --- | --- | --- |
+| Codex | `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` | `~/.agents/skills` |
+| Claude Code | `~/.claude/CLAUDE.md` | `~/.claude/skills` |
+| OpenCode | `~/.config/opencode/AGENTS.md` | `~/.config/opencode/skills` |
+| Grok Build | `~/.grok/AGENTS.md` | `~/.grok/skills` |
+| Antigravity | `~/.gemini/AGENTS.md` | `~/.gemini/config/skills` |
+| Cursor | User Rules in the app | `~/.cursor/skills` |
+
+OpenCode, Grok, and Cursor also read `~/.claude/skills` or `~/.agents/skills`. The installer links each installed CLI's native root, so discovery keeps working when another CLI is absent.
 
 ### Codex skills root
 
@@ -145,23 +158,33 @@ canonicalized here.
 ```sh
 scripts/install-agent-links.sh --dry-run   # expect linked=0 backed-up=0 retired=0 failed=0
 # claude-settings is kept when Claude is installed, otherwise skipped.
-for agent_dir in "$HOME/.claude" "${CODEX_HOME:-$HOME/.codex}"; do
-  [ -d "$agent_dir" ] || continue
-  if [ "$agent_dir" = "$HOME/.claude" ]; then
-    ls -l "$agent_dir/skills"
-  else
-    ls -l "$HOME/.agents/skills"
-  fi
-  for guidance_file in "$agent_dir/CLAUDE.md" "$agent_dir/AGENTS.md"; do
-    [ -L "$guidance_file" ] && readlink "$guidance_file"
-  done
+for guidance_file in \
+  "$HOME/.claude/CLAUDE.md" \
+  "${CODEX_HOME:-$HOME/.codex}/AGENTS.md" \
+  "$HOME/.config/opencode/AGENTS.md" \
+  "$HOME/.grok/AGENTS.md" \
+  "$HOME/.gemini/AGENTS.md"; do
+  [ -L "$guidance_file" ] && printf '%s -> %s\n' "$guidance_file" "$(readlink "$guidance_file")"
+done
+for skills_root in \
+  "$HOME/.claude/skills" \
+  "$HOME/.agents/skills" \
+  "$HOME/.config/opencode/skills" \
+  "$HOME/.grok/skills" \
+  "$HOME/.gemini/config/skills" \
+  "$HOME/.cursor/skills"; do
+  [ -d "$skills_root" ] || continue
+  printf '%s\n' "$skills_root"
+  ls -l "$skills_root"
 done
 ```
 
-Pass the same `--codex-skills-root` override to the dry run if installation used
-one, and inspect that directory instead of the default skills path.
+Cursor user rules are not part of this check. Confirm them in Cursor's User
+Rules. Pass the same `--codex-skills-root` override to the dry run if
+installation used one, and inspect that directory instead of the default skills
+path.
 
-Installer regression checks use disposable homes and do not run either CLI:
+Installer regression checks use disposable homes and do not run any CLI:
 
 ```sh
 python3 scripts/test-install-agent-links.py
@@ -183,7 +206,7 @@ Worktrees start detached at each line; the agent creates the ticket branches. T3
 
 The `blast-radius` ticket-scope reference treats a ticket's repositories and blast radius as leads, maps each changed fact across the workspace, and looks for related tickets and in-flight work with `scripts/related-work.py`. Ticket relatedness needs a tracker tool in the harness; without one the agent reports it as unassessed.
 
-Several tickets with required edits in two or more repositories follow `orchestrate`: one orchestrator at the workspace root writes shared contracts and cases, then launches one persistent worker per repository in dependency order with a fixed brief, and keeps the set note as a ledger keyed by head SHA. One ticket across two repositories stays in one thread and still runs the shared cases in both. Worker models come from your instruction, then a local profile, then the session's model; copy `configs/<machine>/agents/model-profiles.toml.example` to `~/.config/agents/model-profiles.toml` and fill in the exact IDs and thinking options your providers report. A missing profile no longer stops the work. Without a host that can bind threads to worktrees, the agent says so and works in one thread. The mode's effect stays unassessed until a ticket-set replay.
+Several tickets with required edits in two or more repositories follow `orchestrate`: one orchestrator at the workspace root writes shared contracts and cases, then launches one persistent worker per repository in dependency order with a fixed brief, and keeps the set note as a ledger keyed by head SHA. One ticket across two repositories stays in one thread and still runs the shared cases in both. Worker models come from your instruction, then a local profile, then the session's model; copy `configs/<machine>/agents/model-profiles.toml.example` to `~/.config/agents/model-profiles.toml` and fill in the exact IDs and thinking options your providers report. Provider IDs and option names come from the launching host, not from another host's catalog. A missing profile no longer stops the work. Without a host that can bind threads to worktrees, the agent says so and works in one thread. The mode's effect stays unassessed until a ticket-set replay.
 
 ## Worktree guidance
 

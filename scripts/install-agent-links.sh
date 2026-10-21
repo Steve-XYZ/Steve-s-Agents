@@ -2,6 +2,10 @@
 
 # Create or repair this machine's canonical agent symlinks.
 #
+# Covers Codex, Claude Code, OpenCode, Grok Build, Antigravity, and Cursor
+# skills. Cursor user rules are stored in the app, not on disk, so they remain
+# a manual paste.
+#
 # Idempotent: a target that is already the correct link is left untouched.
 # Anything else occupying a target path is moved into a timestamped backup
 # directory before the link is created, so nothing is silently discarded.
@@ -14,6 +18,9 @@ Usage: install-agent-links.sh [--dry-run]
 Links the global guidance file into every installed agent CLI, grants Claude
 read access to on-demand guidance, and links each skill directory under shared/
 and dotnet/ into every skills directory that belongs to an installed agent CLI.
+
+Cursor user rules are stored in the app, not on disk. The installer links
+Cursor's skill root but cannot set its user rules.
 
   --dry-run             report the actions without changing anything
   --codex-skills-root=DIR
@@ -97,8 +104,14 @@ link() {
 	linked=$((linked + 1))
 }
 
-# Global guidance, once per installed CLI.
-for target in "$HOME/.claude/CLAUDE.md" "$codex_home_dir/AGENTS.md"; do
+# Global guidance, once per installed CLI. Cursor has no file for user rules,
+# so it has no guidance target here.
+for target in \
+	"$HOME/.claude/CLAUDE.md" \
+	"$codex_home_dir/AGENTS.md" \
+	"$HOME/.config/opencode/AGENTS.md" \
+	"$HOME/.grok/AGENTS.md" \
+	"$HOME/.gemini/AGENTS.md"; do
 	# Only install for a CLI that is actually present on this machine.
 	[ -d "$(dirname "$target")" ] || continue
 	link "$guidance" "$target"
@@ -152,12 +165,19 @@ elif [ -d "$codex_home_dir" ]; then
 	codex_skills_root="$HOME/.agents/skills"
 fi
 
+# Each CLI gets its native root. OpenCode, Grok, and Cursor also read the
+# Claude or Codex compatibility roots, but linking the native root keeps their
+# discovery working when those other CLIs are absent.
 set --
 [ -d "$HOME/.claude" ] && set -- "$@" "$HOME/.claude/skills"
 if [ -n "$codex_skills_root" ]; then
 	set -- "$@" "$codex_skills_root"
 	echo "codex personal skills root: $codex_skills_root"
 fi
+[ -d "$HOME/.config/opencode" ] && set -- "$@" "$HOME/.config/opencode/skills"
+[ -d "$HOME/.grok" ] && set -- "$@" "$HOME/.grok/skills"
+[ -d "$HOME/.gemini/config" ] && set -- "$@" "$HOME/.gemini/config/skills"
+[ -d "$HOME/.cursor" ] && set -- "$@" "$HOME/.cursor/skills"
 
 for skills_root do
 	if [ ! -d "$skills_root" ]; then

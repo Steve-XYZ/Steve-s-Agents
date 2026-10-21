@@ -35,7 +35,7 @@ Take the model and thinking option from the first source that has a usable entry
 2. `~/.config/agents/model-profiles.toml`: the tier entry, or its `fallback` entry when the preferred model is unavailable;
 3. the current session's provider, model, and thinking option.
 
-An entry is usable when it has no `<placeholder>` and the provider reports its model as supported. Option names and values differ between providers; read them from the provider. When the host cannot set a thinking option, launch with the model alone and record the option as the host default. Record each worker's model, thinking option, tier, and source (`user`, `profile`, `fallback`, or `session`) in the set note before launch, and pass all of them explicitly in the launch.
+An entry is usable when it has no `<placeholder>` and the provider reports its model as supported. Option names and values differ between providers; read them from the provider. Provider IDs are host-specific too: T3 Code uses adapter IDs such as `claudeAgent` and `codex`, while a direct OpenCode session uses provider IDs such as `opencode` or `openrouter`. When the host cannot set a thinking option, launch with the model alone and record the option as the host default. Record each worker's model, thinking option, tier, and source (`user`, `profile`, `fallback`, or `session`) in the set note before launch, and pass all of them explicitly in the launch.
 
 A low-tier worker that finds work above its tier stops and reports. Reclassify the work and launch it at the new tier.
 

@@ -1,6 +1,10 @@
 # Reference copy. Install at ~/.config/agents/model-profiles.toml and fill in the
 # exact provider instance IDs, model IDs and thinking options that the installed
 # providers report. Display names in comments are the intended models only.
+# Provider IDs and thinking options are host-specific. T3 Code exposes adapter
+# IDs such as `claudeAgent` and `codex`; a direct OpenCode session exposes
+# provider IDs such as `opencode` or `openrouter`. Fill this file from the host
+# that launches the worker.
 # Agents read this file only when the user has not named a model for a delegated
 # role. An entry with a <placeholder>, or a model the provider does not offer, is
 # skipped: the role uses its fallback entry, then the current session's model,
