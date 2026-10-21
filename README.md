@@ -93,7 +93,7 @@ For a recurring or expensive failure, record the failure, smallest proposed prev
 The same shape applies on every machine; only the clone path and the reference configuration directory differ.
 
 - `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, `~/.claude/CLAUDE.md`, `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/AGENTS.md`, `${GROK_HOME:-$HOME/.grok}/AGENTS.md`, and `~/.gemini/AGENTS.md` are symlinks to `shared/global-guidance/ENGINEERING.md`. Cursor user rules are not a file; paste the same guidance into Cursor's User Rules, and paste again after `ENGINEERING.md` changes.
-- Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's native skills directory: `~/.claude/skills`, `~/.agents/skills`, `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills`, `${GROK_HOME:-$HOME/.grok}/skills`, `~/.gemini/config/skills`, and `~/.cursor/skills`.
+- Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's native skills directory: `~/.claude/skills`, `~/.agents/skills`, `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills`, `${GROK_HOME:-$HOME/.grok}/skills`, `~/.gemini/config/skills`, `~/.gemini/antigravity-cli/skills`, and `~/.cursor/skills`.
 - `~/.claude/settings.json` keeps its existing configuration while the installer ensures `permissions.additionalDirectories` includes this clone, so Claude can resolve skill reference files through the symlinks.
 - BOS repository `AGENTS.md` and `CLAUDE.md` files mirror this machine's `configs/<machine>/bos/` copies and stay untracked through `.git/info/exclude`. Each `CLAUDE.md` is a two-line `@AGENTS.md` include, so the guidance has one source.
 - Machine-specific Codex examples remain reference material; merge selected settings into `~/.codex/config.toml` without replacing it wholesale.
@@ -115,7 +115,8 @@ Restart the harness after linking so it refreshes skill discovery. Skill bodies 
 | Claude Code | `~/.claude/CLAUDE.md` | `~/.claude/skills` |
 | OpenCode | `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/AGENTS.md` | `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills` |
 | Grok Build | `${GROK_HOME:-$HOME/.grok}/AGENTS.md` | `${GROK_HOME:-$HOME/.grok}/skills` |
-| Antigravity | `~/.gemini/AGENTS.md` | `~/.gemini/config/skills` |
+| Antigravity app/IDE | `~/.gemini/AGENTS.md` | `~/.gemini/config/skills` |
+| [Antigravity CLI](https://www.antigravity.google/docs/skills#cli-skill-locations) | `~/.gemini/AGENTS.md` | `~/.gemini/antigravity-cli/skills` |
 | Cursor | User Rules in the app | `~/.cursor/skills` |
 
 OpenCode, Grok, and Cursor also read `~/.claude/skills` or `~/.agents/skills`. The installer links each installed CLI's native root, so discovery keeps working when another CLI is absent.
@@ -172,6 +173,7 @@ for skills_root in \
   "${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills" \
   "${GROK_HOME:-$HOME/.grok}/skills" \
   "$HOME/.gemini/config/skills" \
+  "$HOME/.gemini/antigravity-cli/skills" \
   "$HOME/.cursor/skills"; do
   [ -d "$skills_root" ] || continue
   printf '%s\n' "$skills_root"
