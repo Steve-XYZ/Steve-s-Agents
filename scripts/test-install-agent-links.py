@@ -23,7 +23,8 @@ class InstallerTests(unittest.TestCase):
         self.user_dir = self.root / "user with spaces"
         self.user_dir.mkdir()
         self.env = {**os.environ, "HOME": str(self.user_dir)}
-        self.env.pop("CODEX_HOME", None)
+        for key in ("CODEX_HOME", "GROK_HOME", "XDG_CONFIG_HOME"):
+            self.env.pop(key, None)
         self.guidance = self.repo / "shared/global-guidance/ENGINEERING.md"
 
     def run_install(self, *args, expected=0):
@@ -113,6 +114,59 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(next(backups.glob("*/.config_opencode_skills_unslop/custom.txt")).read_text(), "custom skill")
         self.assert_link(opencode / "AGENTS.md", self.guidance)
         self.assert_link(opencode / "skills/unslop", self.repo / "shared/unslop")
+
+    def test_custom_grok_home(self):
+        custom = self.root / "custom grok home"
+        custom.mkdir()
+        self.env["GROK_HOME"] = str(custom)
+        default = self.user_dir / ".grok"
+        for default_present in (False, True):
+            with self.subTest(default_present=default_present):
+                if default_present:
+                    default.mkdir()
+                    (default / "AGENTS.md").write_text("unrelated guidance")
+                before = self.snapshot()
+                self.run_install("--dry-run")
+                self.assertEqual(before, self.snapshot())
+                self.run_install()
+                self.assert_link(custom / "AGENTS.md", self.guidance)
+                for skill in list((self.repo / "shared").glob("*/SKILL.md")) + list((self.repo / "dotnet").glob("*/SKILL.md")):
+                    self.assert_link(custom / "skills" / skill.parent.name, skill.parent)
+                if default_present:
+                    self.assertEqual((default / "AGENTS.md").read_text(), "unrelated guidance")
+                    self.assertFalse((default / "skills").exists())
+                else:
+                    self.assertFalse(default.exists())
+                before = self.snapshot()
+                self.assertIn("linked=0", self.run_install())
+                self.assertEqual(before, self.snapshot())
+
+    def test_custom_opencode_config_home(self):
+        custom = self.root / "custom config home"
+        opencode = custom / "opencode"
+        opencode.mkdir(parents=True)
+        self.env["XDG_CONFIG_HOME"] = str(custom)
+        default = self.user_dir / ".config/opencode"
+        for default_present in (False, True):
+            with self.subTest(default_present=default_present):
+                if default_present:
+                    default.mkdir(parents=True)
+                    (default / "AGENTS.md").write_text("unrelated guidance")
+                before = self.snapshot()
+                self.run_install("--dry-run")
+                self.assertEqual(before, self.snapshot())
+                self.run_install()
+                self.assert_link(opencode / "AGENTS.md", self.guidance)
+                for skill in list((self.repo / "shared").glob("*/SKILL.md")) + list((self.repo / "dotnet").glob("*/SKILL.md")):
+                    self.assert_link(opencode / "skills" / skill.parent.name, skill.parent)
+                if default_present:
+                    self.assertEqual((default / "AGENTS.md").read_text(), "unrelated guidance")
+                    self.assertFalse((default / "skills").exists())
+                else:
+                    self.assertFalse(default.exists())
+                before = self.snapshot()
+                self.assertIn("linked=0", self.run_install())
+                self.assertEqual(before, self.snapshot())
 
     def test_custom_codex_home_and_explicit_skill_root(self):
         custom = self.root / "custom codex home"

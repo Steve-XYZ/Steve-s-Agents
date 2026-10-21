@@ -4,7 +4,7 @@ Personal agent guidance shared across development machines and agents, including
 
 ## Contents
 
-- `shared/global-guidance/ENGINEERING.md`: global defaults, symlinked to each installed CLI's global guidance file: `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.config/opencode/AGENTS.md`, `~/.grok/AGENTS.md`, and `~/.gemini/AGENTS.md`.
+- `shared/global-guidance/ENGINEERING.md`: global defaults, symlinked to each installed CLI's global guidance file: `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, `~/.claude/CLAUDE.md`, `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/AGENTS.md`, `${GROK_HOME:-$HOME/.grok}/AGENTS.md`, and `~/.gemini/AGENTS.md`.
 - `shared/`: phase skills `shape-feature`, `deliver-ticket`, `diagnosing-bugs`, `investigate`, `orchestrate`, `code-review`, and `triage-review`; gate skills `verify-work`, `blast-radius`, `unslop`, and `engineering-writing`.
 - `dotnet/aspnet-core/`: the ASP.NET Core facts a model gets wrong from memory — target-framework and breaking changes, middleware order, Blazor render modes. Not a documentation summary.
 - `configs/macos/`, `configs/wsl/`: reference copies of each machine's local configuration, including the untracked BOS project guidance.
@@ -92,8 +92,8 @@ For a recurring or expensive failure, record the failure, smallest proposed prev
 
 The same shape applies on every machine; only the clone path and the reference configuration directory differ.
 
-- `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, `~/.claude/CLAUDE.md`, `~/.config/opencode/AGENTS.md`, `~/.grok/AGENTS.md`, and `~/.gemini/AGENTS.md` are symlinks to `shared/global-guidance/ENGINEERING.md`. Cursor user rules are not a file; paste the same guidance into Cursor's User Rules, and paste again after `ENGINEERING.md` changes.
-- Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's native skills directory: `~/.claude/skills`, `~/.agents/skills`, `~/.config/opencode/skills`, `~/.grok/skills`, `~/.gemini/config/skills`, and `~/.cursor/skills`.
+- `${CODEX_HOME:-$HOME/.codex}/AGENTS.md`, `~/.claude/CLAUDE.md`, `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/AGENTS.md`, `${GROK_HOME:-$HOME/.grok}/AGENTS.md`, and `~/.gemini/AGENTS.md` are symlinks to `shared/global-guidance/ENGINEERING.md`. Cursor user rules are not a file; paste the same guidance into Cursor's User Rules, and paste again after `ENGINEERING.md` changes.
+- Every directory holding a `SKILL.md` under `shared/` and `dotnet/` is symlinked into each installed CLI's native skills directory: `~/.claude/skills`, `~/.agents/skills`, `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills`, `${GROK_HOME:-$HOME/.grok}/skills`, `~/.gemini/config/skills`, and `~/.cursor/skills`.
 - `~/.claude/settings.json` keeps its existing configuration while the installer ensures `permissions.additionalDirectories` includes this clone, so Claude can resolve skill reference files through the symlinks.
 - BOS repository `AGENTS.md` and `CLAUDE.md` files mirror this machine's `configs/<machine>/bos/` copies and stay untracked through `.git/info/exclude`. Each `CLAUDE.md` is a two-line `@AGENTS.md` include, so the guidance has one source.
 - Machine-specific Codex examples remain reference material; merge selected settings into `~/.codex/config.toml` without replacing it wholesale.
@@ -113,8 +113,8 @@ Restart the harness after linking so it refreshes skill discovery. Skill bodies 
 | --- | --- | --- |
 | Codex | `${CODEX_HOME:-$HOME/.codex}/AGENTS.md` | `~/.agents/skills` |
 | Claude Code | `~/.claude/CLAUDE.md` | `~/.claude/skills` |
-| OpenCode | `~/.config/opencode/AGENTS.md` | `~/.config/opencode/skills` |
-| Grok Build | `~/.grok/AGENTS.md` | `~/.grok/skills` |
+| OpenCode | `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/AGENTS.md` | `${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills` |
+| Grok Build | `${GROK_HOME:-$HOME/.grok}/AGENTS.md` | `${GROK_HOME:-$HOME/.grok}/skills` |
 | Antigravity | `~/.gemini/AGENTS.md` | `~/.gemini/config/skills` |
 | Cursor | User Rules in the app | `~/.cursor/skills` |
 
@@ -161,16 +161,16 @@ scripts/install-agent-links.sh --dry-run   # expect linked=0 backed-up=0 retired
 for guidance_file in \
   "$HOME/.claude/CLAUDE.md" \
   "${CODEX_HOME:-$HOME/.codex}/AGENTS.md" \
-  "$HOME/.config/opencode/AGENTS.md" \
-  "$HOME/.grok/AGENTS.md" \
+  "${XDG_CONFIG_HOME:-$HOME/.config}/opencode/AGENTS.md" \
+  "${GROK_HOME:-$HOME/.grok}/AGENTS.md" \
   "$HOME/.gemini/AGENTS.md"; do
   [ -L "$guidance_file" ] && printf '%s -> %s\n' "$guidance_file" "$(readlink "$guidance_file")"
 done
 for skills_root in \
   "$HOME/.claude/skills" \
   "$HOME/.agents/skills" \
-  "$HOME/.config/opencode/skills" \
-  "$HOME/.grok/skills" \
+  "${XDG_CONFIG_HOME:-$HOME/.config}/opencode/skills" \
+  "${GROK_HOME:-$HOME/.grok}/skills" \
   "$HOME/.gemini/config/skills" \
   "$HOME/.cursor/skills"; do
   [ -d "$skills_root" ] || continue

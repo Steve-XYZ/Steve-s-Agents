@@ -56,6 +56,8 @@ moved=0
 failed=0
 retired=0
 codex_home_dir=${CODEX_HOME:-$HOME/.codex}
+grok_home_dir=${GROK_HOME:-$HOME/.grok}
+opencode_config_dir=${XDG_CONFIG_HOME:-$HOME/.config}/opencode
 
 backup() {
 	# Refuse collisions rather than overwriting a backup from an earlier run.
@@ -109,8 +111,8 @@ link() {
 for target in \
 	"$HOME/.claude/CLAUDE.md" \
 	"$codex_home_dir/AGENTS.md" \
-	"$HOME/.config/opencode/AGENTS.md" \
-	"$HOME/.grok/AGENTS.md" \
+	"$opencode_config_dir/AGENTS.md" \
+	"$grok_home_dir/AGENTS.md" \
 	"$HOME/.gemini/AGENTS.md"; do
 	# Only install for a CLI that is actually present on this machine.
 	[ -d "$(dirname "$target")" ] || continue
@@ -174,8 +176,8 @@ if [ -n "$codex_skills_root" ]; then
 	set -- "$@" "$codex_skills_root"
 	echo "codex personal skills root: $codex_skills_root"
 fi
-[ -d "$HOME/.config/opencode" ] && set -- "$@" "$HOME/.config/opencode/skills"
-[ -d "$HOME/.grok" ] && set -- "$@" "$HOME/.grok/skills"
+[ -d "$opencode_config_dir" ] && set -- "$@" "$opencode_config_dir/skills"
+[ -d "$grok_home_dir" ] && set -- "$@" "$grok_home_dir/skills"
 [ -d "$HOME/.gemini/config" ] && set -- "$@" "$HOME/.gemini/config/skills"
 [ -d "$HOME/.cursor" ] && set -- "$@" "$HOME/.cursor/skills"
 
