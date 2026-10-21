@@ -70,12 +70,14 @@ class InstallerTests(unittest.TestCase):
             self.user_dir / ".config/opencode/skills",
             self.user_dir / ".grok/skills",
             self.user_dir / ".gemini/config/skills",
+            self.user_dir / ".gemini/antigravity-cli/skills",
             self.user_dir / ".cursor/skills",
         ]
         for directory in (
             self.user_dir / ".config/opencode",
             self.user_dir / ".grok",
             self.user_dir / ".gemini/config",
+            self.user_dir / ".gemini/antigravity-cli",
             self.user_dir / ".cursor",
         ):
             directory.mkdir(parents=True)
@@ -90,6 +92,21 @@ class InstallerTests(unittest.TestCase):
         for skills_root in skills_roots:
             for skill in list((self.repo / "shared").glob("*/SKILL.md")) + list((self.repo / "dotnet").glob("*/SKILL.md")):
                 self.assert_link(skills_root / skill.parent.name, skill.parent)
+        before = self.snapshot()
+        self.assertIn("linked=0", self.run_install())
+        self.assertEqual(before, self.snapshot())
+
+    def test_antigravity_cli_only_install(self):
+        cli = self.user_dir / ".gemini/antigravity-cli"
+        cli.mkdir(parents=True)
+        before = self.snapshot()
+        self.run_install("--dry-run")
+        self.assertEqual(before, self.snapshot())
+        self.run_install()
+        self.assert_link(self.user_dir / ".gemini/AGENTS.md", self.guidance)
+        for skill in list((self.repo / "shared").glob("*/SKILL.md")) + list((self.repo / "dotnet").glob("*/SKILL.md")):
+            self.assert_link(cli / "skills" / skill.parent.name, skill.parent)
+        self.assertFalse((self.user_dir / ".gemini/config").exists())
         before = self.snapshot()
         self.assertIn("linked=0", self.run_install())
         self.assertEqual(before, self.snapshot())

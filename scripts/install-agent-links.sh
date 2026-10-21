@@ -179,6 +179,7 @@ fi
 [ -d "$opencode_config_dir" ] && set -- "$@" "$opencode_config_dir/skills"
 [ -d "$grok_home_dir" ] && set -- "$@" "$grok_home_dir/skills"
 [ -d "$HOME/.gemini/config" ] && set -- "$@" "$HOME/.gemini/config/skills"
+[ -d "$HOME/.gemini/antigravity-cli" ] && set -- "$@" "$HOME/.gemini/antigravity-cli/skills"
 [ -d "$HOME/.cursor" ] && set -- "$@" "$HOME/.cursor/skills"
 
 for skills_root do
