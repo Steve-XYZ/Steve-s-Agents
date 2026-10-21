@@ -23,7 +23,8 @@ class InstallerTests(unittest.TestCase):
         self.user_dir = self.root / "user with spaces"
         self.user_dir.mkdir()
         self.env = {**os.environ, "HOME": str(self.user_dir)}
-        self.env.pop("CODEX_HOME", None)
+        for key in ("CODEX_HOME", "GROK_HOME", "XDG_CONFIG_HOME"):
+            self.env.pop(key, None)
         self.guidance = self.repo / "shared/global-guidance/ENGINEERING.md"
 
     def run_install(self, *args, expected=0):
@@ -63,6 +64,109 @@ class InstallerTests(unittest.TestCase):
         before = self.snapshot()
         self.assertIn("linked=0", self.run_install())
         self.assertEqual(before, self.snapshot())
+
+    def test_other_cli_roots_receive_guidance_and_skills(self):
+        skills_roots = [
+            self.user_dir / ".config/opencode/skills",
+            self.user_dir / ".grok/skills",
+            self.user_dir / ".gemini/config/skills",
+            self.user_dir / ".cursor/skills",
+        ]
+        for directory in (
+            self.user_dir / ".config/opencode",
+            self.user_dir / ".grok",
+            self.user_dir / ".gemini/config",
+            self.user_dir / ".cursor",
+        ):
+            directory.mkdir(parents=True)
+        self.run_install()
+        for guidance_path in (
+            self.user_dir / ".config/opencode/AGENTS.md",
+            self.user_dir / ".grok/AGENTS.md",
+            self.user_dir / ".gemini/AGENTS.md",
+        ):
+            self.assert_link(guidance_path, self.guidance)
+        self.assertFalse((self.user_dir / ".cursor/AGENTS.md").exists())
+        for skills_root in skills_roots:
+            for skill in list((self.repo / "shared").glob("*/SKILL.md")) + list((self.repo / "dotnet").glob("*/SKILL.md")):
+                self.assert_link(skills_root / skill.parent.name, skill.parent)
+        before = self.snapshot()
+        self.assertIn("linked=0", self.run_install())
+        self.assertEqual(before, self.snapshot())
+
+    def test_other_cli_dirs_are_not_created(self):
+        (self.user_dir / ".grok").mkdir()
+        self.run_install()
+        self.assert_link(self.user_dir / ".grok/AGENTS.md", self.guidance)
+        self.assert_link(self.user_dir / ".grok/skills/unslop", self.repo / "shared/unslop")
+        self.assertFalse((self.user_dir / ".config/opencode").exists())
+        self.assertFalse((self.user_dir / ".gemini").exists())
+        self.assertFalse((self.user_dir / ".cursor").exists())
+
+    def test_opencode_conflicts_are_backed_up(self):
+        opencode = self.user_dir / ".config/opencode"
+        (opencode / "skills/unslop").mkdir(parents=True)
+        (opencode / "skills/unslop/custom.txt").write_text("custom skill")
+        (opencode / "AGENTS.md").write_text("custom guidance")
+        self.run_install()
+        backups = self.user_dir / ".agent-links-backup"
+        self.assertEqual(next(backups.glob("*/.config_opencode_AGENTS.md")).read_text(), "custom guidance")
+        self.assertEqual(next(backups.glob("*/.config_opencode_skills_unslop/custom.txt")).read_text(), "custom skill")
+        self.assert_link(opencode / "AGENTS.md", self.guidance)
+        self.assert_link(opencode / "skills/unslop", self.repo / "shared/unslop")
+
+    def test_custom_grok_home(self):
+        custom = self.root / "custom grok home"
+        custom.mkdir()
+        self.env["GROK_HOME"] = str(custom)
+        default = self.user_dir / ".grok"
+        for default_present in (False, True):
+            with self.subTest(default_present=default_present):
+                if default_present:
+                    default.mkdir()
+                    (default / "AGENTS.md").write_text("unrelated guidance")
+                before = self.snapshot()
+                self.run_install("--dry-run")
+                self.assertEqual(before, self.snapshot())
+                self.run_install()
+                self.assert_link(custom / "AGENTS.md", self.guidance)
+                for skill in list((self.repo / "shared").glob("*/SKILL.md")) + list((self.repo / "dotnet").glob("*/SKILL.md")):
+                    self.assert_link(custom / "skills" / skill.parent.name, skill.parent)
+                if default_present:
+                    self.assertEqual((default / "AGENTS.md").read_text(), "unrelated guidance")
+                    self.assertFalse((default / "skills").exists())
+                else:
+                    self.assertFalse(default.exists())
+                before = self.snapshot()
+                self.assertIn("linked=0", self.run_install())
+                self.assertEqual(before, self.snapshot())
+
+    def test_custom_opencode_config_home(self):
+        custom = self.root / "custom config home"
+        opencode = custom / "opencode"
+        opencode.mkdir(parents=True)
+        self.env["XDG_CONFIG_HOME"] = str(custom)
+        default = self.user_dir / ".config/opencode"
+        for default_present in (False, True):
+            with self.subTest(default_present=default_present):
+                if default_present:
+                    default.mkdir(parents=True)
+                    (default / "AGENTS.md").write_text("unrelated guidance")
+                before = self.snapshot()
+                self.run_install("--dry-run")
+                self.assertEqual(before, self.snapshot())
+                self.run_install()
+                self.assert_link(opencode / "AGENTS.md", self.guidance)
+                for skill in list((self.repo / "shared").glob("*/SKILL.md")) + list((self.repo / "dotnet").glob("*/SKILL.md")):
+                    self.assert_link(opencode / "skills" / skill.parent.name, skill.parent)
+                if default_present:
+                    self.assertEqual((default / "AGENTS.md").read_text(), "unrelated guidance")
+                    self.assertFalse((default / "skills").exists())
+                else:
+                    self.assertFalse(default.exists())
+                before = self.snapshot()
+                self.assertIn("linked=0", self.run_install())
+                self.assertEqual(before, self.snapshot())
 
     def test_custom_codex_home_and_explicit_skill_root(self):
         custom = self.root / "custom codex home"
